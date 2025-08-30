@@ -11,6 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
+import React from 'react';
 import { type Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -55,7 +56,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
     },
   });
 
-  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
+  if (profile?.role !== 'ADMIN' && profile?.role !== 'MODERATOR') {
     redirect('/dashboard');
   }
 
@@ -122,7 +123,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
             </Link>
             <Separator orientation="vertical" className="h-6" />
             <span className="text-sm text-muted-foreground">
-              {profile?.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+              {profile?.role === 'ADMIN' ? 'Admin' : 'Moderator'}
             </span>
           </div>
           <div className="ml-auto flex items-center gap-4">

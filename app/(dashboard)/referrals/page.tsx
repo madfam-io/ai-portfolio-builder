@@ -28,7 +28,7 @@ import { useAuth } from '@/lib/contexts/AuthContext';
 export function ReferralsPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, loading: isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading) {

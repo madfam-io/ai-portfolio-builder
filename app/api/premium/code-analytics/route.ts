@@ -407,7 +407,7 @@ export async function GET(_request: NextRequest) {
       );
     }
 
-    const userTier = user.user_metadata?.plan || 'free';
+    const userTier = user.subscriptionTier || 'free';
     const usageData = await getUserUsageAnalytics(user.id, userTier);
 
     return NextResponse.json({

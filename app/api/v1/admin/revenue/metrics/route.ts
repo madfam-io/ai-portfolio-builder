@@ -39,7 +39,10 @@ export async function GET(req: NextRequest) {
       select: { role: true },
     });
 
-    if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
+    if (
+      !profile ||
+      (profile.role !== 'ADMIN' && profile.role !== 'MODERATOR')
+    ) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

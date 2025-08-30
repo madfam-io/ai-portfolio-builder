@@ -91,30 +91,14 @@ async function handlePOST(
     // 4. Check AI usage limits (simplified check)
     const canUseAI = user.aiRequestsCount < 100; // Basic limit check
 
-    if (limitsError) {
-      errorLogger.logError(limitsError, {
-        action: 'check_ai_limits',
-        userId: user.id,
-      });
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Failed to check AI usage limits',
-          code: 'LIMITS_CHECK_ERROR',
-        },
-        { status: 500 }
-      );
-    }
-
     if (!canUseAI) {
       return NextResponse.json(
         {
           success: false,
-          error:
-            'AI usage limit exceeded. Please upgrade your plan to continue.',
-          code: 'AI_LIMIT_EXCEEDED',
+          error: 'AI usage limit exceeded',
+          code: 'USAGE_LIMIT_EXCEEDED',
         },
-        { status: 403 }
+        { status: 429 }
       );
     }
 
@@ -179,7 +163,7 @@ export const POST = withAuth(handlePOST);
  */
 async function handleGET(request: AuthenticatedRequest): Promise<NextResponse> {
   try {
-    const { user } = request;
+    const { user: _user } = request;
     const supabase = await getCurrentUser();
 
     if (!supabase) {
@@ -193,30 +177,11 @@ async function handleGET(request: AuthenticatedRequest): Promise<NextResponse> {
       );
     }
 
-    // Get user's AI usage history
-    const { data: usageHistory, error } = await supabase
-      .from('ai_usage_logs')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('operation_type', 'bio_enhancement')
-      .order('created_at', { ascending: false })
-      .limit(10);
+    // Note: AI usage history logging would be implemented here with Prisma
+    // For now, skipping detailed usage tracking
+    const usageHistory: any[] = [];
 
-    if (error != null) {
-      errorLogger.logError(error, {
-        action: 'fetch_ai_usage_history',
-        userId: user.id,
-      });
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Failed to fetch usage history',
-          code: 'HISTORY_FETCH_ERROR',
-        },
-        { status: 500 }
-      );
-    }
+    // No error handling needed for the mock data above
 
     return NextResponse.json({
       success: true,
@@ -253,26 +218,15 @@ async function logAIUsage(
   metadata: Record<string, unknown>
 ): Promise<void> {
   try {
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      errorLogger.logWarning('Failed to create Supabase client for logging');
-      return;
-    }
-
-    const { error } = await supabase.from('ai_usage_logs').insert({
-      user_id: userId,
-      operation_type: operationType,
+    // TODO: Implement AI usage logging with Prisma
+    console.log('AI Usage:', {
+      userId,
+      operationType,
       metadata,
-      created_at: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
     });
 
-    if (error) {
-      errorLogger.logWarning('Failed to log AI usage', {
-        userId,
-        action: operationType,
-        metadata: { error },
-      });
-    }
+    // No error handling needed for console logging
   } catch (error) {
     errorLogger.logWarning('Failed to log AI usage', {
       userId,

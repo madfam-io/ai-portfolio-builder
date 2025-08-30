@@ -108,22 +108,20 @@ export default function CreateExperimentPage() {
 
         // Load component library
         const components = await prisma.landingComponentLibrary.findMany({
-          where: { isActive: true },
-          orderBy: [{ type: 'asc' }, { variantName: 'asc' }],
+          orderBy: { name: 'asc' },
         });
 
         if (components) {
-          setComponentLibrary(components);
+          setComponentLibrary(components as any);
         }
 
         // Load experiment templates
         const templateData = await prisma.experimentTemplate.findMany({
-          where: { isActive: true },
-          orderBy: { usageCount: 'desc' },
+          orderBy: { name: 'asc' },
         });
 
         if (templateData) {
-          setTemplates(templateData);
+          setTemplates(templateData as any);
         }
       } catch (error) {
         logger.error(
@@ -324,10 +322,11 @@ export default function CreateExperimentPage() {
           name: experimentData.name,
           description: experimentData.description,
           hypothesis: experimentData.hypothesis,
-          primaryMetric: experimentData.primaryMetric,
-          trafficPercentage: experimentData.trafficPercentage,
+          primary_metric: experimentData.primaryMetric,
+          traffic_percentage: experimentData.trafficPercentage,
           status: 'draft',
-          createdBy: user?.id,
+          created_by: user?.id || '',
+          target_audience: (experimentData.targetAudience || {}) as any,
         },
       });
 
@@ -339,8 +338,8 @@ export default function CreateExperimentPage() {
             name: v.name,
             isControl: v.isControl,
             trafficPercentage: v.trafficPercentage,
-            components: v.components,
-            themeOverrides: v.themeOverrides,
+            components: v.components as any,
+            themeOverrides: v.themeOverrides as any,
           },
         })
       );

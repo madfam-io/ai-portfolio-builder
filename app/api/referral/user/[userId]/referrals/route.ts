@@ -45,10 +45,7 @@ async function getUserReferralsHandler(
     // Verify authentication
     const currentUser = await getCurrentUser();
     if (!currentUser || currentUser.id !== userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Build query with Prisma
@@ -63,24 +60,12 @@ async function getUserReferralsHandler(
 
     const referrals = await prisma.referral.findMany({
       where: whereClause,
-      include: {
-        campaign: {
-          select: {
-            id: true,
-            name: true,
-            type: true,
-            referrerReward: true,
-            refereeReward: true,
-          },
-        },
-      },
       orderBy: {
         createdAt: 'desc',
       },
       skip: offset,
       take: limit,
     });
-
 
     // Get total count for pagination
     const count = await prisma.referral.count({

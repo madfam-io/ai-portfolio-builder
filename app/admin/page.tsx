@@ -56,16 +56,12 @@ export default async function AdminOverviewPage() {
     },
   });
 
-  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
+  if (profile?.role !== 'ADMIN' && profile?.role !== 'MODERATOR') {
     redirect('/dashboard');
   }
 
   // Get quick stats
-  const [
-    totalUsers,
-    activeSubscriptions,
-    totalPortfolios,
-  ] = await Promise.all([
+  const [totalUsers, activeSubscriptions, totalPortfolios] = await Promise.all([
     prisma.user.count(),
     prisma.subscription.count({
       where: {

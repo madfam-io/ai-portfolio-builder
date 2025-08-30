@@ -39,6 +39,7 @@ export const cache = {
 // Cache key constants for backward compatibility
 export const CACHE_KEYS = {
   AI_MODEL: 'ai:model:',
+  AI_RESULT: 'ai:',
   GEO_DATA: 'geo:data:',
   USER_PROFILE: 'user:profile:',
   PORTFOLIO: 'portfolio:',

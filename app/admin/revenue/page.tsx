@@ -38,7 +38,7 @@ export default async function AdminRevenuePage() {
     },
   });
 
-  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
+  if (profile?.role !== 'ADMIN' && profile?.role !== 'MODERATOR') {
     redirect('/dashboard');
   }
 
