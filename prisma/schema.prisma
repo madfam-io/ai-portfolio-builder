@@ -1,0 +1,399 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  emailVerified     DateTime?
+  password          String?   // For email/password auth
+  name              String?
+  image             String?
+  
+  // Subscription info
+  subscriptionTier    SubscriptionTier @default(FREE)
+  subscriptionStatus  SubscriptionStatus @default(ACTIVE)
+  subscriptionExpiresAt DateTime?
+  
+  // Usage tracking
+  portfolioCount      Int @default(0)
+  aiRequestsCount     Int @default(0)
+  aiRequestsResetAt   DateTime @default(now())
+  
+  // Preferences
+  preferredLanguage   String @default("en")
+  preferredCurrency   String @default("USD")
+  timezone            String @default("UTC")
+  
+  // Timestamps
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  
+  // Relations
+  accounts           Account[]
+  sessions           Session[]
+  portfolios         Portfolio[]
+  experiments        Experiment[]
+  analyticsEvents    AnalyticsEvent[]
+  payments           Payment[]
+  referrals          Referral[]
+  referredBy         Referral? @relation("ReferredUsers")
+}
+
+// Account model for OAuth providers
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+}
+
+// Session model for user sessions
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Portfolio model
+model Portfolio {
+  id              String   @id @default(uuid())
+  userId          String
+  
+  // Basic information
+  name            String
+  title           String
+  bio             String   @default("")
+  tagline         String?
+  avatarUrl       String?
+  
+  // Contact & social (stored as JSON)
+  contact         Json     @default("{}")
+  social          Json     @default("{}")
+  
+  // Professional content (stored as JSON arrays)
+  experience      Json     @default("[]")
+  education       Json     @default("[]")
+  projects        Json     @default("[]")
+  skills          Json     @default("[]")
+  certifications  Json     @default("[]")
+  
+  // Template and customization
+  template        TemplateType @default(DEVELOPER)
+  customization   Json     @default("{}")
+  colors          Json     @default("{}")
+  fonts           Json     @default("{}")
+  
+  // Publishing
+  status          PortfolioStatus @default(DRAFT)
+  publishedAt     DateTime?
+  subdomain       String?  @unique
+  customDomain    String?  @unique
+  
+  // Analytics
+  totalViews      Int      @default(0)
+  viewsLast6h     Int      @default(0)
+  uniqueVisitors  Int      @default(0)
+  
+  // SEO
+  seoTitle        String?
+  seoDescription  String?
+  seoKeywords     String[]
+  ogImage         String?
+  
+  // AI enhancements
+  aiEnhanced      Boolean  @default(false)
+  aiTone          EnhancementTone @default(PROFESSIONAL)
+  aiLength        EnhancementLength @default(CONCISE)
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variants        PortfolioVariant[]
+  views           PortfolioView[]
+}
+
+// Portfolio variants for A/B testing
+model PortfolioVariant {
+  id              String   @id @default(uuid())
+  portfolioId     String
+  name            String
+  description     String?
+  
+  // Variant content
+  content         Json
+  customization   Json
+  
+  // Performance metrics
+  views           Int      @default(0)
+  conversions     Int      @default(0)
+  conversionRate  Float    @default(0)
+  
+  isActive        Boolean  @default(true)
+  isControl       Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  portfolio       Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+}
+
+// Portfolio view tracking
+model PortfolioView {
+  id              String   @id @default(uuid())
+  portfolioId     String
+  
+  // Visitor info
+  visitorId       String?
+  ipAddress       String?
+  userAgent       String?
+  referrer        String?
+  
+  // Location
+  country         String?
+  city            String?
+  region          String?
+  
+  // Session info
+  sessionId       String?
+  duration        Int?     // in seconds
+  
+  createdAt       DateTime @default(now())
+  
+  portfolio       Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+}
+
+// Experiments for A/B testing
+model Experiment {
+  id              String   @id @default(uuid())
+  userId          String?
+  
+  name            String
+  description     String?
+  type            ExperimentType
+  status          ExperimentStatus @default(DRAFT)
+  
+  // Targeting
+  targetAudience  Json     @default("{}")
+  
+  // Variants
+  variants        Json     @default("[]")
+  
+  // Metrics
+  metrics         Json     @default("{}")
+  results         Json     @default("{}")
+  
+  startedAt       DateTime?
+  endedAt         DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+// Analytics events
+model AnalyticsEvent {
+  id              String   @id @default(uuid())
+  userId          String?
+  
+  eventType       String
+  eventName       String
+  properties      Json     @default("{}")
+  
+  // Context
+  sessionId       String?
+  pageUrl         String?
+  referrer        String?
+  userAgent       String?
+  ipAddress       String?
+  
+  createdAt       DateTime @default(now())
+  
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+// Payment records
+model Payment {
+  id              String   @id @default(uuid())
+  userId          String
+  
+  stripePaymentId String?  @unique
+  stripeCustomerId String?
+  
+  amount          Int      // in cents
+  currency        String   @default("USD")
+  status          PaymentStatus
+  
+  description     String?
+  metadata        Json     @default("{}")
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Referral system
+model Referral {
+  id              String   @id @default(uuid())
+  referrerId      String
+  referredId      String?  @unique
+  
+  code            String   @unique
+  status          ReferralStatus @default(PENDING)
+  
+  // Rewards
+  rewardAmount    Int?     // in cents
+  rewardType      RewardType @default(CREDIT)
+  rewardPaidAt    DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  referrer        User     @relation(fields: [referrerId], references: [id], onDelete: Cascade)
+  referred        User?    @relation("ReferredUsers", fields: [referredId], references: [id], onDelete: SetNull)
+}
+
+// Revenue analytics
+model RevenueAnalytics {
+  id              String   @id @default(uuid())
+  
+  periodStart     DateTime
+  periodEnd       DateTime
+  
+  totalRevenue    Int      // in cents
+  transactionCount Int
+  
+  metrics         Json     // detailed breakdown
+  
+  createdAt       DateTime @default(now())
+}
+
+// Funnel events for conversion tracking
+model FunnelEvent {
+  id              String   @id @default(uuid())
+  
+  eventType       FunnelEventType
+  userId          String?
+  sessionId       String?
+  
+  metadata        Json     @default("{}")
+  
+  createdAt       DateTime @default(now())
+}
+
+// Enums
+enum SubscriptionTier {
+  FREE
+  PRO
+  BUSINESS
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+enum TemplateType {
+  DEVELOPER
+  DESIGNER
+  CONSULTANT
+  EDUCATOR
+  CREATIVE
+  BUSINESS
+}
+
+enum PortfolioStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EnhancementTone {
+  PROFESSIONAL
+  CASUAL
+  CREATIVE
+}
+
+enum EnhancementLength {
+  CONCISE
+  DETAILED
+  COMPREHENSIVE
+}
+
+enum ExperimentType {
+  AB_TEST
+  MULTIVARIATE
+  FEATURE_FLAG
+}
+
+enum ExperimentStatus {
+  DRAFT
+  RUNNING
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum ReferralStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  EXPIRED
+  CANCELLED
+}
+
+enum RewardType {
+  CREDIT
+  DISCOUNT
+  SUBSCRIPTION
+}
+
+enum FunnelEventType {
+  PAGE_VIEW
+  SIGNUP
+  PORTFOLIO_CREATED
+  PORTFOLIO_PUBLISHED
+  PAYMENT_COMPLETED
+}

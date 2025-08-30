@@ -13,7 +13,7 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { getToken } from 'next-auth/jwt';
 
 import { logger } from '@/lib/utils/logger';
 import { apiVersionMiddleware } from './middleware/api-version';
@@ -21,6 +21,7 @@ import {
   securityMiddleware,
   applySecurityToResponse,
 } from './middleware/security';
+import { prisma } from '@/lib/db/prisma';
 
 /**
  * Middleware for handling authentication, route protection, rate limiting, CSRF, and API versioning
@@ -29,11 +30,10 @@ import {
  * 1. Implements Redis-based rate limiting for all endpoints
  * 2. Implements CSRF protection for state-changing operations
  * 3. Implements API versioning with automatic redirection and deprecation warnings
- * 4. Creates a Supabase client for server-side auth
- * 5. Refreshes the session if needed
- * 6. Protects dashboard and editor routes
- * 7. Redirects unauthenticated users to sign in
- * 8. Redirects authenticated users away from auth pages
+ * 4. Uses NextAuth for authentication
+ * 5. Protects dashboard and editor routes
+ * 6. Redirects unauthenticated users to sign in
+ * 7. Redirects authenticated users away from auth pages
  */
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl;
@@ -70,33 +70,10 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     },
   });
 
-  // Import environment config at the top of the function to avoid module initialization issues
-  const { env, services } = await import('@/lib/config');
-
   // Handle custom domain routing
   if (isCustomDomain) {
-    // Create a Supabase client for custom domain lookup
-    const supabase = createServerClient(
-      env.NEXT_PUBLIC_SUPABASE_URL || '',
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-      {
-        cookies: {
-          get(name: string) {
-            return req.cookies.get(name)?.value;
-          },
-          set() {},
-          remove() {},
-        },
-      }
-    );
-
     try {
-      const result = await handleCustomDomain(
-        supabase,
-        hostname,
-        pathname,
-        req
-      );
+      const result = await handleCustomDomain(hostname, pathname, req);
       if (result) {
         return result;
       }
@@ -110,70 +87,11 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     return NextResponse.rewrite(url);
   }
 
-  // If Supabase is not configured, skip authentication checks (development mode)
-  if (!services.supabase) {
-    logger.warn(
-      'Supabase service not configured. Authentication middleware disabled.'
-    );
-    return response;
-  }
-
-  // Create a Supabase client configured to use cookies
-  const supabase = createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL || '',
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-    {
-      cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          req.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: req.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          req.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: req.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-        },
-      },
-    }
-  );
-
-  // Refresh session if expired - required for Server Components
-  let session = null;
-  try {
-    const { data } = await supabase.auth.getSession();
-    session = data.session;
-  } catch (error) {
-    logger.warn('Error getting session', { error: (error as Error).message });
-    // Continue without session if there's an error
-  }
+  // Get session using NextAuth
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
   // Protected routes that require authentication
   const protectedRoutes = ['/dashboard', '/editor', '/profile'];
@@ -190,7 +108,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
   // If user is not authenticated and trying to access protected route
-  if (isProtectedRoute && !session) {
+  if (isProtectedRoute && !token) {
     const redirectUrl = new URL('/auth/signin', req.url);
     // Add the original URL as a redirect parameter
     redirectUrl.searchParams.set('redirectTo', pathname);
@@ -198,7 +116,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   }
 
   // If user is authenticated and trying to access auth routes
-  if (isAuthRoute && session) {
+  if (isAuthRoute && token) {
     // Check if there's a redirectTo parameter
     const redirectTo = req.nextUrl.searchParams.get('redirectTo');
     if (
@@ -220,29 +138,21 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
  * Handle custom domain requests
  */
 async function handleCustomDomain(
-  supabase: any,
   hostname: string,
   pathname: string,
   req: NextRequest
 ): Promise<NextResponse | null> {
-  // Look up the domain in the database
-  const { data: domain } = await supabase
-    .from('custom_domains')
-    .select('portfolio_id, status')
-    .eq('domain', hostname)
-    .eq('status', 'active')
-    .single();
-
-  if (!domain || !domain.portfolio_id) {
-    return null;
-  }
-
-  // Get portfolio details
-  const { data: portfolio } = await supabase
-    .from('portfolios')
-    .select('subdomain')
-    .eq('id', domain.portfolio_id)
-    .single();
+  // Look up the domain in the database using Prisma
+  const portfolio = await prisma.portfolio.findFirst({
+    where: {
+      customDomain: hostname,
+      status: 'PUBLISHED',
+    },
+    select: {
+      id: true,
+      subdomain: true,
+    },
+  });
 
   if (!portfolio || !portfolio.subdomain) {
     return null;
@@ -251,23 +161,26 @@ async function handleCustomDomain(
   // Track page view analytics (async, don't block request)
   const userAgent = req.headers.get('user-agent') || '';
   const referrer = req.headers.get('referer') || '';
+  const visitorId =
+    req.headers.get('x-forwarded-for') ||
+    req.headers.get('x-real-ip') ||
+    'unknown';
 
   // Fire and forget analytics tracking
-  void supabase.from('domain_analytics').insert({
-    domain_id: domain.portfolio_id,
-    event_type: 'page_view',
-    path: pathname,
-    referrer: referrer || null,
-    user_agent: userAgent,
-    visitor_id:
-      req.headers.get('x-forwarded-for') ||
-      req.headers.get('x-real-ip') ||
-      'unknown',
-    session_id:
-      req.headers.get('x-forwarded-for') ||
-      req.headers.get('x-real-ip') ||
-      'unknown',
-  });
+  void prisma.portfolioView
+    .create({
+      data: {
+        portfolioId: portfolio.id,
+        visitorId,
+        userAgent,
+        referrer: referrer || null,
+        ipAddress: visitorId,
+        sessionId: visitorId,
+      },
+    })
+    .catch(error => {
+      logger.error('Failed to track portfolio view', { error });
+    });
 
   // Rewrite to the portfolio route
   const url = req.nextUrl.clone();
@@ -295,7 +208,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
+     * - api/auth (NextAuth routes)
      */
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public/|api/auth).*)',
   ],
 };

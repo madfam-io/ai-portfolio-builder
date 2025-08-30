@@ -92,3 +92,4 @@ test-results/
 
 # Redis dump
 dump.rdb
+/generated/prisma

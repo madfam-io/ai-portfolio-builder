@@ -56,12 +56,37 @@ const BaseEnvSchema = z.object({
  * Development environment schema - optional in development
  */
 const DevelopmentEnvSchema = BaseEnvSchema.extend({
-  // All services optional in development
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  // Database
+  DATABASE_URL: z.string().optional(),
+
+  // NextAuth
+  NEXTAUTH_URL: z.string().url().optional(),
+  NEXTAUTH_SECRET: z.string().optional(),
+
+  // OAuth (optional)
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GITHUB_CLIENT_ID: z.string().optional(),
+  GITHUB_CLIENT_SECRET: z.string().optional(),
+
+  // Cloudflare R2
+  CLOUDFLARE_ACCOUNT_ID: z.string().optional(),
+  CLOUDFLARE_R2_ACCESS_KEY_ID: z.string().optional(),
+  CLOUDFLARE_R2_SECRET_ACCESS_KEY: z.string().optional(),
+  CLOUDFLARE_R2_BUCKET_NAME: z.string().optional(),
+  CLOUDFLARE_R2_PUBLIC_URL: z.string().url().optional(),
+
+  // AI Services
   HUGGINGFACE_API_KEY: z.string().optional(),
-  REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
+
+  // Vercel KV (for rate limiting)
+  KV_URL: z.string().optional(),
+  KV_REST_API_URL: z.string().optional(),
+  KV_REST_API_TOKEN: z.string().optional(),
+  KV_REST_API_READ_ONLY_TOKEN: z.string().optional(),
+
+  // Cron API
+  CRON_API_KEY: z.string().optional(),
 
   // Security (optional in development)
   JWT_SECRET: z.string().min(32).optional(),
@@ -73,30 +98,51 @@ const DevelopmentEnvSchema = BaseEnvSchema.extend({
  * Production environment schema - all services required
  */
 const ProductionEnvSchema = BaseEnvSchema.extend({
-  // Supabase (required in production)
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  // Database (Railway PostgreSQL - required)
+  DATABASE_URL: z.string(),
+
+  // NextAuth (required)
+  NEXTAUTH_URL: z.string().url(),
+  NEXTAUTH_SECRET: z.string().min(32),
+
+  // OAuth (at least one required)
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GITHUB_CLIENT_ID: z.string().optional(),
+  GITHUB_CLIENT_SECRET: z.string().optional(),
+
+  // Cloudflare R2 (required)
+  CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
+  CLOUDFLARE_R2_ACCESS_KEY_ID: z.string().min(1),
+  CLOUDFLARE_R2_SECRET_ACCESS_KEY: z.string().min(1),
+  CLOUDFLARE_R2_BUCKET_NAME: z.string().min(1),
+  CLOUDFLARE_R2_PUBLIC_URL: z.string().url(),
 
   // AI Services (required in production)
   HUGGINGFACE_API_KEY: z.string().min(1),
 
-  // Redis (optional with fallback to in-memory)
-  REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
+  // Vercel KV (required for rate limiting)
+  KV_URL: z.string(),
+  KV_REST_API_URL: z.string(),
+  KV_REST_API_TOKEN: z.string(),
+  KV_REST_API_READ_ONLY_TOKEN: z.string().optional(),
+
+  // Cron API (required)
+  CRON_API_KEY: z.string().min(32),
 
   // OAuth (optional, for future use)
   LINKEDIN_CLIENT_ID: z.string().optional(),
   LINKEDIN_CLIENT_SECRET: z.string().optional(),
   NEXT_PUBLIC_LINKEDIN_CLIENT_ID: z.string().optional(),
-  GITHUB_CLIENT_ID: z.string().optional(),
-  GITHUB_CLIENT_SECRET: z.string().optional(),
-  GITHUB_APP_ID: z.string().optional(),
-  GITHUB_APP_PRIVATE_KEY: z.string().optional(),
 
   // Stripe (optional, for future use)
   STRIPE_SECRET_KEY: z.string().optional(),
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
+  // PostHog Analytics
+  NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
+  NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
 
   // Security (required in production)
   CORS_ALLOWED_ORIGINS: z.string().optional(),
@@ -215,15 +261,21 @@ export const features = {
  * Service availability checks
  */
 export const services = {
-  supabase: Boolean(
-    env.NEXT_PUBLIC_SUPABASE_URL && env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  database: Boolean(env.DATABASE_URL),
+  auth: Boolean(env.NEXTAUTH_URL && env.NEXTAUTH_SECRET),
+  storage: Boolean(
+    env.CLOUDFLARE_R2_ACCESS_KEY_ID &&
+      env.CLOUDFLARE_R2_SECRET_ACCESS_KEY &&
+      env.CLOUDFLARE_R2_BUCKET_NAME
   ),
-  redis: Boolean(env.REDIS_URL),
+  rateLimit: Boolean(env.KV_URL && env.KV_REST_API_TOKEN),
   huggingface: Boolean(env.HUGGINGFACE_API_KEY),
-  github: Boolean(env.GITHUB_APP_ID && env.GITHUB_APP_PRIVATE_KEY),
+  github: Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET),
+  google: Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
   stripe: Boolean(
     env.STRIPE_SECRET_KEY && env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   ),
+  posthog: Boolean(env.NEXT_PUBLIC_POSTHOG_KEY),
 } as const;
 
 /**
