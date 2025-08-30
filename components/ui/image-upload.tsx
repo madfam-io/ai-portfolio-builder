@@ -13,23 +13,47 @@
 
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import {
-  ALLOWED_IMAGE_TYPES,
-  MAX_FILE_SIZE,
-  validateFile,
-} from '@/lib/supabase/storage';
 import { useAsyncForm } from '@/lib/hooks/useAsyncError';
 import {
   errorLogger,
   ValidationError,
   ExternalServiceError,
 } from '@/lib/services/error';
+
+// File validation constants
+const ALLOWED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+// File validation function
+const validateFile = (file: File): { valid: boolean; error?: string } => {
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return {
+      valid: false,
+      error:
+        'Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.',
+    };
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    return {
+      valid: false,
+      error: `File too large. Please upload an image smaller than ${MAX_FILE_SIZE / 1024 / 1024}MB.`,
+    };
+  }
+
+  return { valid: true };
+};
 
 interface ImageUploadProps {
   value?: string;

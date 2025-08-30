@@ -11,17 +11,13 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import {
   apiSuccess,
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
-import {
-  uploadFile,
-  generateFilePath,
-  STORAGE_BUCKETS,
-} from '@/lib/supabase/storage';
+import { uploadToR2, deleteFromR2 } from '@/lib/storage/r2';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -49,26 +45,21 @@ export const POST = versionedApiHandler(
         return apiError('Portfolio ID is required', { status: 400 });
       }
 
-      // Determine bucket based on type
-      let bucket: keyof typeof STORAGE_BUCKETS;
-      let prefix: string;
+      // Determine folder based on type
+      let folder: string;
 
       switch (type) {
         case 'avatar':
-          bucket = 'AVATARS';
-          prefix = 'profile';
+          folder = 'avatars';
           break;
         case 'project':
-          bucket = 'PROJECTS';
-          prefix = portfolioId;
+          folder = 'projects';
           break;
         case 'certificate':
-          bucket = 'CERTIFICATES';
-          prefix = portfolioId;
+          folder = 'certificates';
           break;
         case 'company':
-          bucket = 'COMPANIES';
-          prefix = portfolioId;
+          folder = 'companies';
           break;
         default:
           return apiError('Invalid upload type', { status: 400 });
@@ -76,18 +67,16 @@ export const POST = versionedApiHandler(
 
       // Generate file path
       const userId = request.user.id;
-      const path = generateFilePath(userId, file.name, prefix);
+      const fileExtension = file.name.split('.').pop();
+      const filename = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExtension}`;
+      const path = `${folder}/${userId}/${portfolioId}/${filename}`;
 
-      // Upload file
-      const result = await uploadFile({
-        bucket,
-        path,
-        file,
-      });
+      // Convert file to buffer
+      const fileBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(fileBuffer);
 
-      if (!result.success) {
-        return apiError(result.error || 'Upload failed', { status: 400 });
-      }
+      // Upload file to R2
+      const result = await uploadToR2(buffer, path, file.type);
 
       logger.info('Image uploaded successfully', {
         userId,
@@ -97,8 +86,8 @@ export const POST = versionedApiHandler(
       });
 
       return apiSuccess({
-        url: result.publicUrl,
-        path,
+        url: result.url,
+        path: result.key,
         type,
       });
     } catch (error) {
@@ -123,40 +112,14 @@ export const DELETE = versionedApiHandler(
         return apiError('Path and type are required', { status: 400 });
       }
 
-      // Determine bucket based on type
-      let bucket: keyof typeof STORAGE_BUCKETS;
-
-      switch (type) {
-        case 'avatar':
-          bucket = 'AVATARS';
-          break;
-        case 'project':
-          bucket = 'PROJECTS';
-          break;
-        case 'certificate':
-          bucket = 'CERTIFICATES';
-          break;
-        case 'company':
-          bucket = 'COMPANIES';
-          break;
-        default:
-          return apiError('Invalid upload type', { status: 400 });
-      }
-
-      // Ensure user owns the file (path should start with userId)
+      // Ensure user owns the file (path should contain userId)
       const userId = request.user.id;
-      if (!path.startsWith(userId)) {
+      if (!path.includes(userId)) {
         return apiError('Unauthorized', { status: 403 });
       }
 
-      // Import deleteFile function
-      const { deleteFile } = await import('@/lib/supabase/storage');
-
-      const success = await deleteFile(bucket, path);
-
-      if (!success) {
-        return apiError('Failed to delete file', { status: 400 });
-      }
+      // Delete file from R2
+      await deleteFromR2(path);
 
       logger.info('Image deleted successfully', {
         userId,

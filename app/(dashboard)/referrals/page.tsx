@@ -22,35 +22,23 @@
 
 import { useEffect, useState } from 'react';
 import { ReferralDashboard } from '@madfam/referral/components';
-import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 export function ReferralsPage() {
-  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    const checkUser = async () => {
-      if (!supabase) {
-        router.push('/auth/signin');
-        return;
-      }
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (!isLoading) {
       if (!user) {
         router.push('/auth/signin');
         return;
       }
-      setUserId(user.id);
       setLoading(false);
-    };
-
-    checkUser();
-  }, [router, supabase]);
+    }
+  }, [user, isLoading, router]);
 
   if (loading) {
     return (
@@ -60,13 +48,13 @@ export function ReferralsPage() {
     );
   }
 
-  if (!userId) {
+  if (!user) {
     return null;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <ReferralDashboard userId={userId} />
+      <ReferralDashboard userId={user.id} />
     </div>
   );
 }

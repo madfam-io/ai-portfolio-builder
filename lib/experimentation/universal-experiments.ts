@@ -24,7 +24,7 @@
  * @version 2.0.0 - Universal Platform
  */
 
-import { createClient } from '@/lib/supabase/client';
+import prisma from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 export type ExperimentContext =
@@ -301,7 +301,6 @@ export class UniversalExperimentEngine {
   private experiments = new Map<string, UniversalExperimentConfig>();
   private assignments = new Map<string, Map<string, ExperimentAssignment>>();
   private results = new Map<string, Map<string, ExperimentResult[]>>();
-  private supabase = createClient();
 
   /**
    * Create a new universal experiment
@@ -1081,23 +1080,77 @@ export class UniversalExperimentEngine {
     };
   }
 
-  private persistExperiment(_config: UniversalExperimentConfig): void {
-    // Persist to Supabase database
-    // This would extend the existing landing_page_experiments table
-    // or create a new universal_experiments table
-    // console.log(`Persisting universal experiment: ${config.id}`);
+  private async persistExperiment(
+    config: UniversalExperimentConfig
+  ): Promise<void> {
+    try {
+      // Store experiment in database using Prisma
+      await prisma.universalExperiment.create({
+        data: {
+          id: config.id,
+          name: config.name,
+          description: config.description,
+          hypothesis: config.hypothesis,
+          context: config.context,
+          type: config.type,
+          component: config.component,
+          status: config.status,
+          priority: config.priority,
+          targeting: config.targeting,
+          variants: config.variants,
+          metrics: config.metrics,
+          schedule: config.schedule,
+          statistics: config.statistics,
+          business: config.business,
+          tags: config.tags,
+          createdBy: config.createdBy,
+          approvedBy: config.approvedBy,
+          createdAt: config.createdAt,
+          updatedAt: config.updatedAt,
+        },
+      });
+
+      logger.info(`Universal experiment persisted: ${config.id}`);
+    } catch (error) {
+      logger.error(
+        'Failed to persist experiment',
+        error instanceof Error ? error : new Error(String(error))
+      );
+      throw error;
+    }
   }
 
-  private trackEvent(
+  private async trackEvent(
     userId: string,
     experimentId: string,
     variantId: string,
     event: ExperimentEvent
-  ): void {
-    // Track to PostHog and other analytics systems
-    logger.info(
-      `Tracking experiment event: ${event.eventName} for ${experimentId}:${variantId}`
-    );
+  ): Promise<void> {
+    try {
+      // Store event in database using Prisma
+      await prisma.experimentEvent.create({
+        data: {
+          id: event.eventId,
+          userId,
+          experimentId,
+          variantId,
+          eventName: event.eventName,
+          timestamp: event.timestamp,
+          properties: event.properties,
+        },
+      });
+
+      // Track to PostHog and other analytics systems
+      logger.info(
+        `Tracking experiment event: ${event.eventName} for ${experimentId}:${variantId}`
+      );
+    } catch (error) {
+      logger.error(
+        'Failed to track experiment event',
+        error instanceof Error ? error : new Error(String(error))
+      );
+      // Don't throw error as this shouldn't break the experiment flow
+    }
   }
 }
 

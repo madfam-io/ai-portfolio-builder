@@ -21,12 +21,12 @@ import ComponentGallery from '@/components/admin/experiments/ComponentGallery';
 import { ComponentLayout } from '@/components/admin/experiments/create/ComponentLayout';
 import { ExperimentForm } from '@/components/admin/experiments/create/ExperimentForm';
 import {
-  VariantConfig,
+  type VariantConfig,
   VariantConfiguration,
 } from '@/components/admin/experiments/create/VariantConfiguration';
 import VariantPreview from '@/components/admin/experiments/VariantPreview';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { createClient } from '@/lib/supabase/client';
+import prisma from '@/lib/db/prisma';
 import {
   getRemainingTrafficPercentage,
   validateExperimentForm,
@@ -98,35 +98,30 @@ export default function CreateExperimentPage() {
   useEffect(() => {
     const loadData = async (): Promise<void> => {
       try {
-        const supabase = createClient();
-        if (!supabase) {
+        if (!prisma) {
           logger.error(
             'Database connection not available',
-            new Error('Supabase client is null')
+            new Error('Prisma client is null')
           );
           return;
         }
 
         // Load component library
-        const { data: components, error: componentsError } = await supabase
-          .from('landing_component_library')
-          .select('*')
-          .eq('is_active', true)
-          .order('type, variant_name');
+        const components = await prisma.landingComponentLibrary.findMany({
+          where: { isActive: true },
+          orderBy: [{ type: 'asc' }, { variantName: 'asc' }],
+        });
 
-        if (componentsError) throw componentsError;
         if (components) {
           setComponentLibrary(components);
         }
 
         // Load experiment templates
-        const { data: templateData, error: templatesError } = await supabase
-          .from('experiment_templates')
-          .select('*')
-          .eq('is_active', true)
-          .order('usage_count', { ascending: false });
+        const templateData = await prisma.experimentTemplate.findMany({
+          where: { isActive: true },
+          orderBy: { usageCount: 'desc' },
+        });
 
-        if (templatesError) throw templatesError;
         if (templateData) {
           setTemplates(templateData);
         }
@@ -300,11 +295,10 @@ export default function CreateExperimentPage() {
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      if (!supabase) {
+      if (!prisma) {
         logger.error(
           'Database connection not available',
-          new Error('Supabase client is null')
+          new Error('Prisma client is null')
         );
         setLoading(false);
         return;
@@ -325,31 +319,29 @@ export default function CreateExperimentPage() {
         })),
       };
 
-      const { data, error } = await supabase
-        .from('landing_page_experiments')
-        .insert({
+      const data = await prisma.landingPageExperiment.create({
+        data: {
           name: experimentData.name,
           description: experimentData.description,
           hypothesis: experimentData.hypothesis,
-          primary_metric: experimentData.primaryMetric,
-          traffic_percentage: experimentData.trafficPercentage,
+          primaryMetric: experimentData.primaryMetric,
+          trafficPercentage: experimentData.trafficPercentage,
           status: 'draft',
-          created_by: user?.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
+          createdBy: user?.id,
+        },
+      });
 
       // Create variants
       const variantPromises = experimentData.variants.map(v =>
-        supabase.from('landing_page_variants').insert({
-          experiment_id: data.id,
-          name: v.name,
-          is_control: v.isControl,
-          traffic_percentage: v.trafficPercentage,
-          components: v.components,
-          theme_overrides: v.themeOverrides,
+        prisma.landingPageVariant.create({
+          data: {
+            experimentId: data.id,
+            name: v.name,
+            isControl: v.isControl,
+            trafficPercentage: v.trafficPercentage,
+            components: v.components,
+            themeOverrides: v.themeOverrides,
+          },
         })
       );
 

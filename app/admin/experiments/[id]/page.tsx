@@ -18,7 +18,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { createClient } from '@/lib/supabase/client';
+import prisma from '@/lib/db/prisma';
 import {
   calculateExperimentResults,
   generateTimeline,
@@ -129,45 +129,39 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   // Fetch experiment data
   const fetchExperimentData = useCallback(async (): Promise<void> => {
     try {
-      const supabase = createClient();
-      if (!supabase) {
+      if (!prisma) {
         logger.error(
           'Database connection not available',
-          new Error('Supabase client is null')
+          new Error('Prisma client is null')
         );
         return;
       }
       // Fetch experiment
-      const { data: experimentData, error: experimentError } = await supabase
-        .from('landing_page_experiments')
-        .select('*')
-        .eq('id', experimentId)
-        .single();
+      const experimentData = await prisma.landingPageExperiment.findUnique({
+        where: { id: experimentId },
+      });
 
-      if (experimentError !== null && experimentError !== undefined)
-        throw experimentError;
+      if (!experimentData) {
+        throw new Error(`Experiment ${experimentId} not found`);
+      }
       setExperiment(experimentData);
 
       // Fetch variants with analytics
-      const { data: variantsData, error: variantsError } = await supabase
-        .from('landing_page_variants')
-        .select(
-          `
-          *,
-          analytics:landing_page_analytics(
-            session_id,
-            visitor_id,
-            converted,
-            time_on_page,
-            clicks,
-            created_at
-          )
-        `
-        )
-        .eq('experiment_id', experimentId);
-
-      if (variantsError !== null && variantsError !== undefined)
-        throw variantsError;
+      const variantsData = await prisma.landingPageVariant.findMany({
+        where: { experimentId },
+        include: {
+          analytics: {
+            select: {
+              sessionId: true,
+              visitorId: true,
+              converted: true,
+              timeOnPage: true,
+              clicks: true,
+              createdAt: true,
+            },
+          },
+        },
+      });
 
       // Process variants with analytics
       const processedVariants = variantsData.map(processVariantAnalytics);
@@ -209,26 +203,23 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   // Handle status change
   const handleStatusChange = async (newStatus: string): Promise<void> => {
     try {
-      const supabase = createClient();
-      if (!supabase) {
+      if (!prisma) {
         logger.error(
           'Database connection not available',
-          new Error('Supabase client is null')
+          new Error('Prisma client is null')
         );
         return;
       }
-      const { error } = await supabase
-        .from('landing_page_experiments')
-        .update({
-          _status: newStatus as ExperimentStatus,
-          _updated_at: new Date().toISOString(),
-        })
-        .eq('id', experimentId);
-
-      if (error !== null && error !== undefined) throw error;
+      await prisma.landingPageExperiment.update({
+        where: { id: experimentId },
+        data: {
+          status: newStatus as ExperimentStatus,
+          updatedAt: new Date(),
+        },
+      });
 
       setExperiment(prev =>
-        prev ? { ...prev, _status: newStatus as ExperimentStatus } : null
+        prev ? { ...prev, status: newStatus as ExperimentStatus } : null
       );
     } catch (error) {
       logger.error(
