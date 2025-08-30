@@ -14,7 +14,8 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -33,17 +34,7 @@ const updateSelectionSchema = z.object({
  */
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
     if (!user) {
       // Return default model selection for unauthenticated users
@@ -107,17 +98,7 @@ export async function GET(): Promise<Response> {
  */
 export async function PUT(request: NextRequest): Promise<Response> {
   try {
-    const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
     if (!user) {
       return NextResponse.json(

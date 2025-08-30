@@ -16,7 +16,8 @@ import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { type UserProfile, AIServiceError } from '@/lib/ai/types';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -480,17 +481,12 @@ async function logAIUsage(
   metadata: Record<string, unknown>
 ): Promise<void> {
   try {
-    const supabase = await createClient();
-    if (!supabase) {
-      logger.error('Failed to create Supabase client for logging');
-      return;
-    }
-
-    await supabase.from('ai_usage_logs').insert({
-      user_id: userId,
-      operation_type: operationType,
-      metadata,
-      created_at: new Date().toISOString(),
+    await prisma.aiUsageLog.create({
+      data: {
+        userId,
+        operationType,
+        metadata,
+      },
     });
   } catch (error) {
     logger.error(

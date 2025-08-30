@@ -15,7 +15,6 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { createClient } from '@/lib/supabase/server';
 import { parseJsonBody, errorLogger } from '@/lib/services/error';
 import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 
