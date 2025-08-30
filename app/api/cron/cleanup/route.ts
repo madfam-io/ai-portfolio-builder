@@ -35,14 +35,15 @@ export async function POST(request: Request) {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     cleanupTasks.push(
-      prisma.session.deleteMany({
-        where: {
-          updatedAt: {
-            lt: thirtyDaysAgo,
+      prisma.session
+        .deleteMany({
+          where: {
+            updatedAt: {
+              lt: thirtyDaysAgo,
+            },
           },
-        },
-      })
-        .then(result => ({
+        })
+        .then((result: { count: number }) => ({
           task: 'expired_sessions',
           deleted: result.count,
         }))
@@ -58,15 +59,16 @@ export async function POST(request: Request) {
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
     cleanupTasks.push(
-      prisma.portfolio.deleteMany({
-        where: {
-          status: 'DRAFT',
-          updatedAt: {
-            lt: ninetyDaysAgo,
+      prisma.portfolio
+        .deleteMany({
+          where: {
+            status: 'DRAFT',
+            updatedAt: {
+              lt: ninetyDaysAgo,
+            },
           },
-        },
-      })
-        .then(result => ({
+        })
+        .then((result: { count: number }) => ({
           task: 'orphaned_drafts',
           deleted: result.count,
         }))
@@ -82,14 +84,15 @@ export async function POST(request: Request) {
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     cleanupTasks.push(
-      prisma.analyticsEvent.deleteMany({
-        where: {
-          createdAt: {
-            lt: sixMonthsAgo,
+      prisma.analyticsEvent
+        .deleteMany({
+          where: {
+            createdAt: {
+              lt: sixMonthsAgo,
+            },
           },
-        },
-      })
-        .then(result => ({
+        })
+        .then((result: { count: number }) => ({
           task: 'old_analytics',
           deleted: result.count,
         }))
@@ -105,15 +108,16 @@ export async function POST(request: Request) {
     sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
     cleanupTasks.push(
-      prisma.payment.deleteMany({
-        where: {
-          status: 'FAILED',
-          createdAt: {
-            lt: sixtyDaysAgo,
+      prisma.payment
+        .deleteMany({
+          where: {
+            status: 'FAILED',
+            createdAt: {
+              lt: sixtyDaysAgo,
+            },
           },
-        },
-      })
-        .then(result => ({
+        })
+        .then((result: { count: number }) => ({
           task: 'failed_payments',
           deleted: result.count,
         }))
