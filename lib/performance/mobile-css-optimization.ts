@@ -17,7 +17,7 @@
  * Provides responsive CSS classes and optimizations for mobile devices
  * to ensure excellent performance and user experience across all templates.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

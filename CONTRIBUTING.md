@@ -1,4 +1,4 @@
-# Contributing to PRISMA by MADFAM
+# Contributing to Portfolio Builder by MADFAM
 
 We appreciate your interest in contributing to PRISMA! This document outlines the process for contributing to our code available project.
 
@@ -484,4 +484,4 @@ This agreement is governed by the laws of MADFAM's jurisdiction.
 
 ---
 
-Thank you for contributing to PRISMA by MADFAM! 🚀
+Thank you for contributing to Portfolio Builder by MADFAM! 🚀

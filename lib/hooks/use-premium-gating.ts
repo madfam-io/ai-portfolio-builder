@@ -21,7 +21,7 @@
  * - Conversion optimization hooks
  * - A/B testing integration
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 1.0.0 - Business Excellence Foundation
  */
 

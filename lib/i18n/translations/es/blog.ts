@@ -18,7 +18,7 @@
 
 export default {
   // Page
-  blogPageTitle: 'Blog de PRISMA',
+  blogPageTitle: 'Blog de Portfolio Builder',
   blogSubtitle:
     'Perspectivas, consejos y estrategias para ayudarte a crear portafolios destacados y avanzar en tu carrera profesional.',
 
@@ -36,7 +36,7 @@ export default {
   // Newsletter
   blogStayUpdated: 'Mantente Actualizado',
   blogNewsletterDesc:
-    'Recibe los últimos consejos de portafolios, perspectivas de la industria y actualizaciones de PRISMA en tu bandeja de entrada.',
+    'Recibe los últimos consejos de portafolios, perspectivas de la industria y actualizaciones de Portfolio Builder en tu bandeja de entrada.',
   blogEmailPlaceholder: 'Ingresa tu correo electrónico',
   blogSubscribe: 'Suscribirse',
 

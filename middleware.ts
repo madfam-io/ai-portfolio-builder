@@ -41,7 +41,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
   // Check if this is a custom domain request
   const isCustomDomain =
-    !hostname.includes('prisma.madfam.io') &&
+    !hostname.includes('portfolio-builder.madfam.io') &&
     !hostname.includes('localhost') &&
     !hostname.includes('vercel.app') &&
     !hostname.includes('127.0.0.1');

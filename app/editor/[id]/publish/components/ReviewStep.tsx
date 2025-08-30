@@ -156,7 +156,7 @@ export function ReviewStep({
       <div className="space-y-4">
         <ReviewCard icon={Globe} title={t.webAddress || 'Web Address'}>
           <p className="font-mono text-sm">
-            https://{publishData.subdomain}.prisma.madfam.io
+            https://{publishData.subdomain}.portfolio-builder.madfam.io
           </p>
         </ReviewCard>
 

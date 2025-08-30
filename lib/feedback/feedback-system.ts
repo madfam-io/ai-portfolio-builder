@@ -17,7 +17,7 @@
  * Comprehensive feedback collection and analytics system for beta users
  * to gather insights and improve the platform before full launch.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

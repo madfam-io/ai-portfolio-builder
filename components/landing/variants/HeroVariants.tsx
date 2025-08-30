@@ -304,7 +304,7 @@ export function HeroSplit(props: HeroProps): React.ReactElement {
             {props.backgroundImage ? (
               <Image
                 src={props.backgroundImage}
-                alt="PRISMA Portfolio Builder"
+                alt="Portfolio Builder"
                 width={600}
                 height={400}
                 className="w-full h-auto rounded-2xl shadow-2xl"

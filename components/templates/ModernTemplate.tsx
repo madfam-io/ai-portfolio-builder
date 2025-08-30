@@ -49,7 +49,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Dark background with cyan/blue accents
  * Target Audience: Tech professionals, startup founders, modern professionals
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 
@@ -377,7 +377,7 @@ export function ModernTemplate({ portfolio }: ModernTemplateProps) {
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-gray-400">
               © {new Date().getFullYear()} {portfolio.name}. Crafted with
-              PRISMA Portfolio Builder.
+              Portfolio Builder Portfolio Builder.
             </p>
           </div>
         </footer>

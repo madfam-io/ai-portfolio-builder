@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 import { TestHelpers } from './utils/test-helpers';
 
-test.describe('PRISMA Navigation', () => {
+test.describe('Portfolio Builder Navigation', () => {
   let helpers: TestHelpers;
 
   test.beforeEach(({ page }) => {
@@ -17,12 +17,12 @@ test.describe('PRISMA Navigation', () => {
     // Test navigation to features section
     await page.locator('text=Características').click();
     await expect(page.locator('#features')).toBeInViewport();
-    await expect(page.locator('text=Qué hace PRISMA')).toBeVisible();
+    await expect(page.locator('text=Qué hace Portfolio Builder')).toBeVisible();
 
     // Test navigation to how it works
     await page.locator('text=Cómo Funciona').click();
     await expect(page.locator('#how-it-works')).toBeInViewport();
-    await expect(page.locator('text=Cómo Funciona PRISMA')).toBeVisible();
+    await expect(page.locator('text=Cómo Funciona Portfolio Builder')).toBeVisible();
 
     // Test navigation to templates
     await page.locator('text=Plantillas').click();
@@ -43,18 +43,18 @@ test.describe('PRISMA Navigation', () => {
     await expect(page).toHaveURL(/\/about/);
 
     // Check About page content
-    await expect(page.locator('text=Acerca de PRISMA')).toBeVisible();
+    await expect(page.locator('text=Acerca de Portfolio Builder')).toBeVisible();
     await expect(page.locator('text=Nuestra Misión')).toBeVisible();
     await expect(
       page.locator('text=democratizar la creación de portafolios')
     ).toBeVisible();
 
-    // Check PRISMA branding persists
-    await expect(page.locator('text=PRISMA')).toBeVisible();
+    // Check Portfolio Builder branding persists
+    await expect(page.locator('text=Portfolio Builder')).toBeVisible();
     await expect(page.locator('text=by MADFAM')).toBeVisible();
 
     // Navigate back to home via logo
-    await page.locator('text=PRISMA').first().click();
+    await page.locator('text=Portfolio Builder').first().click();
     await expect(page).toHaveURL('/');
     await expect(
       page.locator('text=Tu portafolio, elevado por IA')
@@ -107,14 +107,14 @@ test.describe('PRISMA Navigation', () => {
     }
   });
 
-  test('should maintain PRISMA branding across all pages', async ({ page }) => {
+  test('should maintain Portfolio Builder branding across all pages', async ({ page }) => {
     const pages = ['/', '/about', '/auth/signin', '/auth/signup'];
 
     for (const pagePath of pages) {
       await helpers.goto(pagePath);
 
-      // Check PRISMA logo and branding
-      await expect(page.locator('text=PRISMA')).toBeVisible();
+      // Check Portfolio Builder logo and branding
+      await expect(page.locator('text=Portfolio Builder')).toBeVisible();
 
       // Check that MADFAM attribution is present
       if (pagePath !== '/auth/signin' && pagePath !== '/auth/signup') {
@@ -138,13 +138,13 @@ test.describe('PRISMA Navigation', () => {
     // Navigate to About from mobile menu
     await page.locator('text=About').click();
     await expect(page).toHaveURL(/\/about/);
-    await expect(page.locator('text=Acerca de PRISMA')).toBeVisible();
+    await expect(page.locator('text=Acerca de Portfolio Builder')).toBeVisible();
 
     // Test mobile navigation persistence
-    await expect(page.locator('text=PRISMA')).toBeVisible();
+    await expect(page.locator('text=Portfolio Builder')).toBeVisible();
 
     // Go back to home
-    await page.locator('text=PRISMA').first().click();
+    await page.locator('text=Portfolio Builder').first().click();
     await expect(page).toHaveURL('/');
   });
 
@@ -194,7 +194,7 @@ test.describe('PRISMA Navigation', () => {
     await expect(page).toHaveURL(/\/about/);
 
     // Should still be in English
-    await expect(page.locator('text=About PRISMA')).toBeVisible();
+    await expect(page.locator('text=About Portfolio Builder')).toBeVisible();
     await expect(page.locator('text=Our Mission')).toBeVisible();
 
     // Navigate to signup
@@ -228,9 +228,11 @@ test.describe('PRISMA Navigation', () => {
     await page.locator('footer').locator('text=Acerca de').click();
     await expect(page).toHaveURL(/\/about/);
 
-    // Check PRISMA branding in footer
+    // Check Portfolio Builder branding in footer
     await page.locator('footer').scrollIntoViewIfNeeded();
-    await expect(page.locator('text=© 2025 PRISMA by MADFAM')).toBeVisible();
+    await expect(
+      page.locator('text=© 2025 Portfolio Builder by MADFAM')
+    ).toBeVisible();
     await expect(
       page.locator('text=Todos los derechos reservados')
     ).toBeVisible();
@@ -257,12 +259,12 @@ test.describe('PRISMA Navigation', () => {
 
     // Should either show 404 or redirect to home
     if (response?.status() === 404) {
-      // Check for 404 content or should still have PRISMA branding
+      // Check for 404 content or should still have Portfolio Builder branding
       const hasError =
         (await page
           .locator('text=404, text=Not Found, text=Page not found')
           .count()) > 0;
-      const hasPrisma = (await page.locator('text=PRISMA').count()) > 0;
+      const hasPrisma = (await page.locator('text=Portfolio Builder').count()) > 0;
 
       expect(hasError || hasPrisma).toBeTruthy();
     } else {

@@ -17,7 +17,7 @@
  * Specialized optimizations for mobile devices to ensure excellent
  * performance on smartphones and tablets with limited resources.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

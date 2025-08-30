@@ -12,7 +12,7 @@
  */
 
 /**
- * Analytics-related type definitions for PRISMA
+ * Analytics-related type definitions for Portfolio Builder
  * Enterprise GitHub Analytics Feature
  */
 

@@ -66,7 +66,8 @@ const nextConfig = {
             key: 'Access-Control-Allow-Origin',
             value:
               process.env.NODE_ENV === 'production'
-                ? process.env.CORS_ALLOWED_ORIGINS || 'https://prisma.madfam.io'
+                ? process.env.CORS_ALLOWED_ORIGINS ||
+                  'https://portfolio-builder.madfam.io'
                 : '*',
           },
           {

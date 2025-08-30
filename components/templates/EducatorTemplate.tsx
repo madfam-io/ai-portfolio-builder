@@ -51,7 +51,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Warm earth tones with green accents
  * Target Audience: Teachers, professors, corporate trainers, educational consultants
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 
@@ -448,7 +448,7 @@ export function EducatorTemplate({ portfolio }: EducatorTemplateProps) {
             through education
           </p>
           <p className="text-xs text-gray-400 mt-2">
-            Created with PRISMA Portfolio Builder
+            Created with Portfolio Builder Portfolio Builder
           </p>
         </footer>
       </div>

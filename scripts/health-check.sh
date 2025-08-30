@@ -111,7 +111,7 @@ case $ENVIRONMENT in
         DB_PORT=5434
         REDIS_PORT=6381
         if [[ "$APP_URL" == "http://localhost:3000" ]]; then
-            APP_URL="https://prisma.madfam.io"
+            APP_URL="https://portfolio-builder.madfam.io"
         fi
         ;;
     *)

@@ -44,7 +44,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Pink/Purple gradients with creative accents
  * Target Audience: Graphic designers, UI/UX designers, creative professionals
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 0.0.1-alpha
  */
 

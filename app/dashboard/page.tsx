@@ -415,7 +415,7 @@ function DashboardContent(): React.ReactElement {
                             <div className="flex items-center gap-2">
                               <Globe className="h-3 w-3" />
                               <span className="text-xs">
-                                {portfolio.subdomain}.prisma.madfam.io
+                                {portfolio.subdomain}.portfolio-builder.madfam.io
                               </span>
                             </div>
                           )}
@@ -444,7 +444,7 @@ function DashboardContent(): React.ReactElement {
                           portfolio.subdomain && (
                             <Button variant="ghost" size="icon" asChild>
                               <a
-                                href={`https://${portfolio.subdomain}.prisma.madfam.io`}
+                                href={`https://${portfolio.subdomain}.portfolio-builder.madfam.io`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 title={t.viewLive || 'View live'}

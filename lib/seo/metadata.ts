@@ -23,7 +23,7 @@ import { Portfolio, SEOMetadata } from '@/types/portfolio';
  */
 export function generatePortfolioMetadata(
   portfolio: Portfolio,
-  baseUrl: string = 'https://prisma.madfam.io'
+  baseUrl: string = 'https://portfolio-builder.madfam.io'
 ): SEOMetadata {
   const url = portfolio.customDomain
     ? `https://${portfolio.customDomain}`

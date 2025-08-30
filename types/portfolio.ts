@@ -12,7 +12,7 @@
  */
 
 /**
- * Portfolio-related type definitions for PRISMA
+ * Portfolio-related type definitions for Portfolio Builder
  * Enhanced with comprehensive types for the full SaaS implementation
  */
 

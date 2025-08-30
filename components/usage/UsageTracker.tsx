@@ -273,7 +273,7 @@ export function UsageTracker() {
                 <p className="font-medium text-sm">Usage Limit Reached</p>
                 <p className="text-sm text-muted-foreground mt-1">
                   {
-                    "You've reached the limit for one or more features. Upgrade to continue using PRISMA without restrictions."
+                    "You've reached the limit for one or more features. Upgrade to continue using Portfolio Builder without restrictions."
                   }
                 </p>
               </div>

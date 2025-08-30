@@ -1,10 +1,10 @@
-# 📚 PRISMA Documentation Hub
+# 📚 Portfolio Builder Documentation Hub
 
 [↑ Back to Main README](../README.md)
 
 ---
 
-Welcome to the complete documentation for **PRISMA by MADFAM** - the AI-powered portfolio builder that transforms CVs into stunning websites in under 3 minutes.
+Welcome to the complete documentation for **Portfolio Builder by MADFAM** - the AI-powered portfolio builder that transforms CVs into stunning websites in under 3 minutes.
 
 **Current Version**: v0.4.0-beta | **Status**: Market-Ready with Enterprise Architecture
 
@@ -150,7 +150,7 @@ See [Contributing Guidelines](../CONTRIBUTING.md) for documentation standards.
 
 <div align="center">
 
-**PRISMA by MADFAM** - Building Business Empires Through Code Excellence
+**Portfolio Builder by MADFAM** - Building Business Empires Through Code Excellence
 
 [GitHub](https://github.com/aldoruizluna/ai-portfolio-builder) | [Issues](https://github.com/aldoruizluna/ai-portfolio-builder/issues) | [Discussions](https://github.com/aldoruizluna/ai-portfolio-builder/discussions)
 

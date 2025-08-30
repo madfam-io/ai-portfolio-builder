@@ -17,13 +17,13 @@ import { Page, expect } from '@playwright/test';
 export const testUser = {
   email: 'e2e.test@prismaportfolio.com',
   password: 'ValidPassword123!@#', // Updated to meet 12-character requirement with symbols
-  fullName: 'PRISMA E2E Test User',
+  fullName: 'Portfolio Builder E2E Test User',
 };
 
 export const testPortfolio = {
-  title: 'PRISMA Test Portfolio',
-  bio: 'This is a test bio for PRISMA E2E testing with AI enhancement',
-  tagline: 'PRISMA Professional Portfolio',
+  title: 'Portfolio Builder Test Portfolio',
+  bio: 'This is a test bio for Portfolio Builder E2E testing with AI enhancement',
+  tagline: 'Portfolio Builder Professional Portfolio',
 };
 
 // Helper functions for common E2E operations
@@ -325,11 +325,11 @@ export class TestHelpers {
   }
 }
 
-// PRISMA-specific helpers
-export class PRISMATestHelpers extends TestHelpers {
-  // Check for PRISMA branding elements
-  async verifyPRISMABranding() {
-    await expect(this.page.locator('text=PRISMA')).toBeVisible();
+// Portfolio Builder-specific helpers
+export class Portfolio BuilderTestHelpers extends TestHelpers {
+  // Check for Portfolio Builder branding elements
+  async verifyPortfolio BuilderBranding() {
+    await expect(this.page.locator('text=Portfolio Builder')).toBeVisible();
     await expect(this.page.locator('text=by MADFAM')).toBeVisible();
   }
 
@@ -366,13 +366,13 @@ export class PRISMATestHelpers extends TestHelpers {
 
 // Database helpers for E2E testing
 export function cleanupTestData(): void {
-  // Clean up PRISMA test data after tests
-  console.log('🧹 Cleaning up PRISMA E2E test data');
+  // Clean up Portfolio Builder test data after tests
+  console.log('🧹 Cleaning up Portfolio Builder E2E test data');
   // TODO: Implement cleanup for Supabase test database
 }
 
 export function seedTestData(): void {
-  // Seed PRISMA test data before tests
-  console.log('🌱 Seeding PRISMA E2E test data');
+  // Seed Portfolio Builder test data before tests
+  console.log('🌱 Seeding Portfolio Builder E2E test data');
   // TODO: Implement seeding for portfolios, users, etc.
 }

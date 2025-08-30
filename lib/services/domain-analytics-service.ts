@@ -12,6 +12,7 @@
  */
 
 import { createClient } from '@/lib/supabase/client';
+import { logger } from '@/lib/utils/logger';
 
 interface DetailedDomainAnalytics {
   totalViews: number;
@@ -51,7 +52,7 @@ export class DomainAnalyticsService {
         session_id: this.generateSessionId(),
       });
     } catch (error) {
-      console.error('Failed to track page view:', error);
+      logger.error('Failed to track page view', error instanceof Error ? error : new Error(String(error)));
     }
   }
 
@@ -201,7 +202,7 @@ export class DomainAnalyticsService {
         metadata: details,
       });
     } catch (error) {
-      console.error('Failed to record SSL event:', error);
+      logger.error('Failed to record SSL event', error instanceof Error ? error : new Error(String(error)));
     }
   }
 

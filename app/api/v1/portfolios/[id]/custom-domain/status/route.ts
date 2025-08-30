@@ -94,7 +94,7 @@ export const GET = withErrorHandling(
           dnsModule: { resolveCname: (domain: string) => Promise<string[]> },
           portfolioData: { subdomain: string; custom_domain: string }
         ): Promise<boolean> {
-          const expectedTarget = `${portfolioData.subdomain}.prisma.madfam.io`;
+          const expectedTarget = `${portfolioData.subdomain}.portfolio-builder.madfam.io`;
 
           // Try main domain first
           try {

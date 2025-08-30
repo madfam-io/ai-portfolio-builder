@@ -23,7 +23,7 @@ import { Portfolio } from '@/types/portfolio';
  */
 export function generatePortfolioSitemap(
   portfolio: Portfolio,
-  baseUrl: string = 'https://prisma.madfam.io'
+  baseUrl: string = 'https://portfolio-builder.madfam.io'
 ): string {
   const portfolioUrl = portfolio.customDomain
     ? `https://${portfolio.customDomain}`
@@ -106,7 +106,7 @@ export function generatePortfolioSitemap(
  */
 export function generateSitemapIndex(
   portfolios: Portfolio[],
-  baseUrl: string = 'https://prisma.madfam.io'
+  baseUrl: string = 'https://portfolio-builder.madfam.io'
 ): string {
   const sitemaps = portfolios
     .filter(p => p.status === 'published')

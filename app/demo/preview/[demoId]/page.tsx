@@ -40,7 +40,7 @@ export function generateMetadata({ params }: PageProps): Metadata {
   }
 
   return {
-    title: `${demo.name} - Demo Portfolio | PRISMA`,
+    title: `${demo.name} - Demo Portfolio | Portfolio Builder`,
     description: demo.description,
   };
 }

@@ -31,7 +31,7 @@ const landing = {
   rating: '4.9/5 Calificación',
 
   // Features Section
-  featuresTitle: 'Qué hace PRISMA',
+  featuresTitle: 'Qué hace Portfolio Builder',
   standOut: 'Destacar',
   featuresSubtitle:
     'Hecho para profesionales que saben que su presencia digital importa.',
@@ -48,7 +48,7 @@ const landing = {
     'Plantillas profesionales listas para destacar en cualquier dispositivo.',
   customDomainTitle: 'Subdominio o dominio propio',
   customDomainDesc:
-    'Hazlo tuyo. Usa un subdominio de PRISMA o conecta tu marca personal.',
+    'Hazlo tuyo. Usa un subdominio de Portfolio Builder o conecta tu marca personal.',
   seoTitle: 'Visible en Google',
   seoDesc:
     'Optimización integrada para destacar en los resultados de búsqueda.',
@@ -56,7 +56,7 @@ const landing = {
   analyticsDesc:
     'Desde tu CV o LinkedIn hasta un sitio web funcional en menos de media hora.',
   publishTitle: 'Publica en menos de 3 minutos',
-  mobileTitle: 'Para quien es PRISMA',
+  mobileTitle: 'Para quien es Portfolio Builder',
   mobileDesc:
     'Freelancers, desarrolladores, consultores y creativos que quieren impresionar.',
 
@@ -69,7 +69,7 @@ const landing = {
   step1Number: '01',
   step1Title: 'Conecta tus perfiles',
   step1Desc:
-    'Sube tu CV o conecta LinkedIn/GitHub. PRISMA extrae tu información profesional.',
+    'Sube tu CV o conecta LinkedIn/GitHub. Portfolio Builder extrae tu información profesional.',
 
   step2Number: '02',
   step2Title: 'Mejora con IA',
@@ -116,7 +116,7 @@ const landing = {
   freePlan: 'GRATIS',
   planFree: 'Gratis',
   planPro: 'PRO',
-  planBusiness: 'PRISMA+',
+  planBusiness: 'Portfolio Builder+',
   planEnterprise: 'Enterprise',
   proPlan: 'PRO',
   businessPlan: 'BUSINESS',
@@ -138,7 +138,7 @@ const landing = {
   basicAI: 'IA básica',
   advancedAI: 'IA avanzada',
   aiPoweredInsights: 'IA + insights avanzados',
-  subdomainHosting: 'Subdominio de PRISMA',
+  subdomainHosting: 'Subdominio de Portfolio Builder',
   customDomain: 'Dominio personalizado',
   multipleCustomDomains: 'Múltiples dominios personalizados',
   communitySupport: 'Soporte comunitario',
@@ -153,7 +153,7 @@ const landing = {
   // Pricing features
   portfolio1: '1 portafolio',
   portfolios3: '3 portafolios',
-  madfamSubdomain: 'Subdominio PRISMA',
+  madfamSubdomain: 'Subdominio Portfolio Builder',
   aiRewrites3: '3 reescrituras con IA',
   unlimitedAiRewrites: 'Reescrituras IA ilimitadas',
   analyticsTools: 'Herramientas de análisis',
@@ -186,14 +186,14 @@ const landing = {
   // CTA Section
   ctaTitle: '¿Listo para crear tu portafolio profesional?',
   ctaSubtitle:
-    'Únete a miles de profesionales que han creado portafolios increíbles con PRISMA',
+    'Únete a miles de profesionales que han creado portafolios increíbles con Portfolio Builder',
   ctaButton: 'Comienza a construir tu portafolio',
   ctaFooter: 'Sin tarjeta de crédito • Plan gratuito para siempre disponible',
 
   // Social Proof
   trustedBy: 'Con la confianza de',
   professionals: 'profesionales',
-  companiesHiring: 'Empresas que contratan a través de PRISMA',
+  companiesHiring: 'Empresas que contratan a través de Portfolio Builder',
 
   // Footer
   footerTagline: 'Crea portafolios profesionales con IA en menos de 3 minutos',

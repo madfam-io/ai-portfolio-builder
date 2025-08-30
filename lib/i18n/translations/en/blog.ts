@@ -18,8 +18,8 @@
 
 export default {
   blogPageTitle: 'Blog',
-  blogTitle: 'PRISMA Blog',
-  blogSubtitle: 'Latest insights, tutorials, and updates from the PRISMA team',
+  blogTitle: 'Portfolio Builder Blog',
+  blogSubtitle: 'Latest insights, tutorials, and updates from the Portfolio Builder team',
   blogComingSoon: 'Coming Soon',
   blogComingSoonDesc:
     'Our blog is coming soon! Stay tuned for the latest updates, tutorials, and insights about portfolio building and AI-powered content creation.',

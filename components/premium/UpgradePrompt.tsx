@@ -21,7 +21,7 @@
  * - Social proof integration
  * - A/B testing ready components
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 1.0.0 - Business Excellence Foundation
  */
 
@@ -135,7 +135,7 @@ export function UpgradePrompt({
         return {
           title: 'Join 10,000+ Successful Professionals',
           description:
-            'See why top performers choose PRISMA Professional for their portfolios.',
+            'See why top performers choose Portfolio Builder Professional for their portfolios.',
           urgency: false,
           scarcity: false,
         };

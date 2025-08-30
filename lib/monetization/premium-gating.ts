@@ -23,7 +23,7 @@
  *
  * Designed for market leadership and business excellence.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 1.0.0 - Business Excellence Foundation
  */
 
@@ -79,7 +79,7 @@ export const BUSINESS_USER_TIERS: Record<string, UserTier> = {
     name: 'Free',
     monthlyPrice: 0,
     yearlyPrice: 0,
-    marketingPosition: 'Get started with PRISMA',
+    marketingPosition: 'Get started with Portfolio Builder',
     targetRevenue: 0,
     features: {
       portfolios: {
@@ -156,7 +156,7 @@ export const BUSINESS_USER_TIERS: Record<string, UserTier> = {
         resetPeriod: 'never',
         overageAllowed: false,
         upgradeRequired: true,
-        marketingMessage: 'Remove PRISMA branding',
+        marketingMessage: 'Remove Portfolio Builder branding',
       },
       collaboration: {
         enabled: false,
@@ -672,7 +672,7 @@ export class PremiumGatingEngine {
     if (userTier === 'free') {
       return {
         enabled: true,
-        text: 'Created with PRISMA',
+        text: 'Created with Portfolio Builder',
         position: 'footer',
         opacity: 0.8,
         upgradeMessage: 'Remove branding with Professional plan',

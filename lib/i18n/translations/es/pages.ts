@@ -18,14 +18,14 @@
 
 export default {
   // About Page
-  aboutTitle: 'Acerca de PRISMA',
+  aboutTitle: 'Acerca de Portfolio Builder',
   aboutSubtitle:
     'Estamos en una misión de democratizar la creación de portafolios profesionales usando el poder de la inteligencia artificial.',
   ourMission: 'Nuestra Misión',
   missionText1:
     'Todo profesional merece un portafolio impresionante que muestre sus habilidades y logros. La creación tradicional de portafolios consume tiempo, es costosa y a menudo requiere experiencia en diseño que no todos tienen. Creemos que la IA puede cambiar eso.',
   missionText2:
-    'PRISMA transforma tu información profesional existente en hermosos portafolios personalizados en menos de 30 minutos. Ya seas desarrollador, diseñador, consultor o profesional creativo, facilitamos presentar tu mejor trabajo al mundo.',
+    'Portfolio Builder transforma tu información profesional existente en hermosos portafolios personalizados en menos de 30 minutos. Ya seas desarrollador, diseñador, consultor o profesional creativo, facilitamos presentar tu mejor trabajo al mundo.',
   trustedWorldwide: 'Confianza de Profesionales a Nivel Mundial',
   portfoliosCreated: 'Portafolios Creados',
   companiesHiring: 'Empresas Contratando',
@@ -63,7 +63,7 @@ export default {
   // API Page
   apiPageTitle: 'API',
   apiPageSubtitle:
-    'Integra las capacidades de generación de portafolios de PRISMA en tus aplicaciones con nuestra API RESTful completa.',
+    'Integra las capacidades de generación de portafolios de Portfolio Builder en tus aplicaciones con nuestra API RESTful completa.',
   apiRestfulTitle: 'API RESTful',
   apiRestfulDesc:
     'Endpoints REST simples e intuitivos para crear, gestionar y personalizar portafolios programáticamente.',

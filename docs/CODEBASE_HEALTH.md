@@ -1,6 +1,6 @@
 # 📊 Codebase Health Report
 
-## PRISMA by MADFAM - AI Portfolio Builder
+## Portfolio Builder by MADFAM - AI Portfolio Builder
 
 **Last Updated**: June 22, 2025  
 **Version**: 0.4.0-beta  

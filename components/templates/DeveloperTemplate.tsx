@@ -44,7 +44,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Blue-based with technical accent colors
  * Target Audience: Software developers, engineers, technical leads
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 0.0.1-alpha
  */
 

@@ -2,18 +2,18 @@ import { test, expect } from '@playwright/test';
 
 import { TestHelpers } from './utils/test-helpers';
 
-test.describe('PRISMA Authentication', () => {
+test.describe('Portfolio Builder Authentication', () => {
   let helpers: TestHelpers;
 
   test.beforeEach(({ page }) => {
     helpers = new TestHelpers(page);
   });
 
-  test('should display signup page with PRISMA branding', async ({ page }) => {
+  test('should display signup page with Portfolio Builder branding', async ({ page }) => {
     await helpers.goto('/auth/signup');
 
-    // Check PRISMA branding in header
-    await expect(page.locator('text=PRISMA')).toBeVisible();
+    // Check Portfolio Builder branding in header
+    await expect(page.locator('text=Portfolio Builder')).toBeVisible();
     await expect(page.locator('text=by MADFAM')).toBeVisible();
 
     // Check signup form elements
@@ -39,11 +39,11 @@ test.describe('PRISMA Authentication', () => {
     ).toBeVisible();
   });
 
-  test('should display signin page with PRISMA branding', async ({ page }) => {
+  test('should display signin page with Portfolio Builder branding', async ({ page }) => {
     await helpers.goto('/auth/signin');
 
-    // Check PRISMA branding
-    await expect(page.locator('text=PRISMA')).toBeVisible();
+    // Check Portfolio Builder branding
+    await expect(page.locator('text=Portfolio Builder')).toBeVisible();
 
     // Check signin form elements
     await expect(page.locator('text=Iniciar Sesión')).toBeVisible();

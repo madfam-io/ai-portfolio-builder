@@ -25,7 +25,7 @@ import {
 export { PLAN_FEATURES } from '@/types/auth';
 
 /**
- * Role-based Access Control (RBAC) utilities for PRISMA
+ * Role-based Access Control (RBAC) utilities for Portfolio Builder
  * Handles permission checking, role management, and admin mode switching
  */
 
@@ -170,10 +170,10 @@ export function canImpersonateUsers(user: User): boolean {
  */
 export function getPlanDisplayName(plan: SubscriptionPlan): string {
   const displayNames: Record<SubscriptionPlan, string> = {
-    free: 'PRISMA Free',
-    pro: 'PRISMA Pro',
-    business: 'PRISMA Business',
-    enterprise: 'PRISMA Enterprise',
+    free: 'Portfolio Builder Free',
+    pro: 'Portfolio Builder Pro',
+    business: 'Portfolio Builder Business',
+    enterprise: 'Portfolio Builder Enterprise',
   };
   return displayNames[plan];
 }

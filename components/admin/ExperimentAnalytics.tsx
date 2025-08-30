@@ -21,7 +21,7 @@
  * - Bayesian analysis and confidence intervals
  * - Revenue impact calculations
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

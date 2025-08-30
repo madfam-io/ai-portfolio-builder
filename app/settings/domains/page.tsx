@@ -16,7 +16,7 @@ import { ProtectedRoute } from '@/components/auth/protected-route';
 import { DomainSettingsContent } from './components/DomainSettingsContent';
 
 export const metadata: Metadata = {
-  title: 'Custom Domain Settings | PRISMA',
+  title: 'Custom Domain Settings | Portfolio Builder',
   description: 'Connect your custom domain to your portfolio',
 };
 

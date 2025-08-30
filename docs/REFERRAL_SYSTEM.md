@@ -81,7 +81,7 @@ supabase db reset
 ### 2. Environment Configuration
 ```env
 # Already configured in existing .env
-NEXT_PUBLIC_APP_URL=https://prisma.madfam.io
+NEXT_PUBLIC_APP_URL=https://portfolio-builder.madfam.io
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key

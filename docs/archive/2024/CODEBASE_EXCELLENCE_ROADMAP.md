@@ -1,6 +1,6 @@
 # 🎯 Codebase Excellence Roadmap
 
-**Project**: PRISMA by MADFAM - AI Portfolio Builder  
+**Project**: Portfolio Builder by MADFAM - AI Portfolio Builder  
 **Vision**: Achieve 100/100 Codebase Health Score  
 **Timeline**: 6 weeks (June 13 - July 25, 2025)
 

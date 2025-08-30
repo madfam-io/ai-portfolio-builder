@@ -24,7 +24,7 @@ import { createClient } from '@/lib/supabase/server';
 // import { redirect } from 'next/navigation'; // Currently unused
 
 export const metadata: Metadata = {
-  title: 'Quick Start - Choose Your Template | PRISMA',
+  title: 'Quick Start - Choose Your Template | Portfolio Builder',
   description:
     'Get started quickly with our professionally designed portfolio templates. Choose your industry and customize your portfolio in minutes.',
 };

@@ -38,7 +38,7 @@ services:
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
-      - NEXT_PUBLIC_APP_URL=https://prisma.madfam.io
+      - NEXT_PUBLIC_APP_URL=https://portfolio-builder.madfam.io
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=redis://production-redis-cluster:6379
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
@@ -64,11 +64,11 @@ services:
       start_period: 40s
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.production-app.rule=Host(`prisma.madfam.io`) || Host(`www.prisma.madfam.io`)'
+      - 'traefik.http.routers.production-app.rule=Host(`portfolio-builder.madfam.io`) || Host(`www.portfolio-builder.madfam.io`)'
       - 'traefik.http.routers.production-app.tls=true'
       - 'traefik.http.routers.production-app.tls.certresolver=letsencrypt'
-      - 'traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www.prisma.madfam.io/(.*)'
-      - 'traefik.http.middlewares.redirect-www.redirectregex.replacement=https://prisma.madfam.io/$${1}'
+      - 'traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www.portfolio-builder.madfam.io/(.*)'
+      - 'traefik.http.middlewares.redirect-www.redirectregex.replacement=https://portfolio-builder.madfam.io/$${1}'
 
   # PostgreSQL Database (Production - Primary)
   production-postgres:
@@ -227,7 +227,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_SERVER_DOMAIN=monitoring.prisma.madfam.io
+      - GF_SERVER_DOMAIN=monitoring.portfolio-builder.madfam.io
       - GF_SECURITY_COOKIE_SECURE=true
       - GF_SECURITY_STRICT_TRANSPORT_SECURITY=true
     volumes:

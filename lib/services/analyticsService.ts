@@ -32,7 +32,7 @@ import type {
  * Main service layer for GitHub analytics operations.
  * Coordinates between specialized services for different analytics domains.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 0.0.1-alpha
  */
 

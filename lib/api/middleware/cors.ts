@@ -17,7 +17,7 @@
  * Simple CORS middleware to handle cross-origin requests
  * in Next.js API routes.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta
  */
 

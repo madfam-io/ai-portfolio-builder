@@ -17,7 +17,7 @@ import { logger } from '@/lib/utils/logger';
 /**
  * @fileoverview Performance Monitoring and Optimization Utilities
  *
- * A comprehensive suite of performance monitoring tools for the PRISMA platform.
+ * A comprehensive suite of performance monitoring tools for the Portfolio Builder platform.
  * Provides real-time metrics, performance profiling, and optimization suggestions.
  *
  * Features:
@@ -28,7 +28,7 @@ import { logger } from '@/lib/utils/logger';
  * - Network performance analysis
  * - User experience metrics
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

@@ -35,12 +35,12 @@ const mockEsTranslations: unknown = {
     heroTitle2: 'Portafolio Profesional',
     heroTitle3: 'que Impresiona',
     heroDesc:
-      'PRISMA by MADFAM utiliza inteligencia artificial para transformar tu experiencia en un portafolio deslumbrante que destaca entre la competencia.',
+      'Portfolio Builder by MADFAM utiliza inteligencia artificial para transformar tu experiencia en un portafolio deslumbrante que destaca entre la competencia.',
     poweredByAi: 'Potenciado por IA',
     startFreeTrial: 'Comenzar gratis',
     watchDemo: 'Ver demo',
     features: 'Características',
-    whatPrismaDoes: 'Qué hace PRISMA',
+    whatPrismaDoes: 'Qué hace Portfolio Builder',
     pricing: 'Precios',
     getStartedToday: 'Accede hoy.',
     professionalPortfolio: 'portafolio profesional',
@@ -53,7 +53,7 @@ const mockEsTranslations: unknown = {
     step2Number: '02',
     step2Title: 'La IA lo mejora',
     step2Desc:
-      'PRISMA optimiza tu contenido, sugiere mejoras y crea descripciones impactantes que resaltan tus logros.',
+      'Portfolio Builder optimiza tu contenido, sugiere mejoras y crea descripciones impactantes que resaltan tus logros.',
     step3Number: '03',
     step3Title: 'Publica y comparte',
     step3Desc:
@@ -89,12 +89,12 @@ const mockEnTranslations: unknown = {
     heroTitle2: 'Professional Portfolio',
     heroTitle3: 'That Stands Out',
     heroDesc:
-      'PRISMA by MADFAM uses artificial intelligence to transform your experience into a stunning portfolio that stands out from the competition.',
+      'Portfolio Builder by MADFAM uses artificial intelligence to transform your experience into a stunning portfolio that stands out from the competition.',
     poweredByAi: 'AI-Powered',
     startFreeTrial: 'Start free',
     watchDemo: 'Watch demo',
     features: 'Features',
-    whatPrismaDoes: 'What PRISMA Does',
+    whatPrismaDoes: 'What Portfolio Builder Does',
     pricing: 'Pricing',
     getStartedToday: 'Get started today.',
     professionalPortfolio: 'professional portfolio',
@@ -107,7 +107,7 @@ const mockEnTranslations: unknown = {
     step2Number: '02',
     step2Title: 'AI enhances it',
     step2Desc:
-      'PRISMA optimizes your content, suggests improvements and creates impactful descriptions that highlight your achievements.',
+      'Portfolio Builder optimizes your content, suggests improvements and creates impactful descriptions that highlight your achievements.',
     step3Number: '03',
     step3Title: 'Publish and share',
     step3Desc:

@@ -35,8 +35,8 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Admin Overview | PRISMA',
-  description: 'Admin dashboard overview for PRISMA portfolio builder',
+  title: 'Admin Overview | Portfolio Builder',
+  description: 'Admin dashboard overview for Portfolio Builder portfolio builder',
 };
 
 export default async function AdminOverviewPage() {
@@ -120,7 +120,7 @@ export default async function AdminOverviewPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Admin Overview</h1>
         <p className="text-muted-foreground">
-          Welcome to the PRISMA admin dashboard. Monitor and manage your
+          Welcome to the Portfolio Builder admin dashboard. Monitor and manage your
           platform.
         </p>
       </div>

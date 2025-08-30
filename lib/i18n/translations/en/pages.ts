@@ -18,14 +18,14 @@
 
 export default {
   // About Page
-  aboutTitle: 'About PRISMA',
+  aboutTitle: 'About Portfolio Builder',
   aboutSubtitle:
     "We're on a mission to democratize professional portfolio creation using the power of artificial intelligence.",
   ourMission: 'Our Mission',
   missionText1:
     'Every professional deserves a stunning portfolio that showcases their skills and achievements. Traditional portfolio creation is time-consuming, expensive, and often requires design expertise that not everyone has. We believe AI can change that.',
   missionText2:
-    "PRISMA transforms your existing professional information into beautiful, personalized portfolios in under 30 minutes. Whether you're a developer, designer, consultant, or creative professional, we make it easy to present your best work to the world.",
+    "Portfolio Builder transforms your existing professional information into beautiful, personalized portfolios in under 30 minutes. Whether you're a developer, designer, consultant, or creative professional, we make it easy to present your best work to the world.",
   trustedWorldwide: 'Trusted by Professionals Worldwide',
   portfoliosCreated: 'Portfolios Created',
   companiesHiring: 'Companies Hiring',
@@ -63,7 +63,7 @@ export default {
   // API Page
   apiPageTitle: 'API',
   apiPageSubtitle:
-    "Integrate PRISMA's portfolio generation capabilities into your applications with our comprehensive RESTful API.",
+    "Integrate Portfolio Builder's portfolio generation capabilities into your applications with our comprehensive RESTful API.",
   apiRestfulTitle: 'RESTful API',
   apiRestfulDesc:
     'Simple and intuitive REST endpoints for creating, managing, and customizing portfolios programmatically.',
@@ -92,7 +92,7 @@ export default {
     'Enable students to showcase their work and projects professionally.',
 
   // Blog Page
-  blogPageTitle: 'PRISMA Blog',
+  blogPageTitle: 'Portfolio Builder Blog',
   blogSubtitle:
     'Insights, tips, and strategies to help you create standout portfolios and advance your professional career.',
   blogAllPosts: 'All Posts',
@@ -104,7 +104,7 @@ export default {
   blogReadMore: 'Read More',
   blogStayUpdated: 'Stay Updated',
   blogNewsletterDesc:
-    'Get the latest portfolio tips, industry insights, and PRISMA updates delivered to your inbox.',
+    'Get the latest portfolio tips, industry insights, and Portfolio Builder updates delivered to your inbox.',
   blogEmailPlaceholder: 'Enter your email',
   blogSubscribe: 'Subscribe',
 
@@ -127,7 +127,7 @@ export default {
   blogPost3ReadTime: '6 min read',
 
   // Careers Page
-  careersPageTitle: 'Join the PRISMA Team',
+  careersPageTitle: 'Join the Portfolio Builder Team',
   careersSubtitle:
     'Help us revolutionize how professionals showcase their work. Build the future of portfolio creation with AI-powered tools.',
   careersWhyMadfam: 'Why MADFAM?',
@@ -167,7 +167,7 @@ export default {
   careersPosition2Location: 'Mexico City / Remote',
   careersPosition2Type: 'Full-time',
   careersPosition2Description:
-    'Shape the user experience of PRISMA and help millions of professionals create stunning portfolios. Design for web and mobile platforms.',
+    'Shape the user experience of Portfolio Builder and help millions of professionals create stunning portfolios. Design for web and mobile platforms.',
   careersPosition2Req1: '3+ years of product design experience',
   careersPosition2Req2: 'Proficiency in Figma/Adobe Creative Suite',
   careersPosition2Req3: 'SaaS product experience',
@@ -185,13 +185,13 @@ export default {
   careersPosition4Location: 'Austin, TX / Remote',
   careersPosition4Type: 'Full-time',
   careersPosition4Description:
-    'Drive customer adoption and success, ensuring our users get maximum value from PRISMA. Work closely with product and engineering teams.',
+    'Drive customer adoption and success, ensuring our users get maximum value from Portfolio Builder. Work closely with product and engineering teams.',
   careersPosition4Req1: '3+ years customer success experience',
   careersPosition4Req2: 'SaaS platform experience',
   careersPosition4Req3: 'Bilingual (English/Spanish) preferred',
 
   // Contact Page
-  contactPageTitle: 'Contact PRISMA',
+  contactPageTitle: 'Contact Portfolio Builder',
   contactSubtitle:
     "Have questions? Need support? Want to discuss business opportunities? We're here to help.",
   contactSendMessage: 'Send us a message',
@@ -240,7 +240,7 @@ export default {
   // GDPR Page
   gdprPageTitle: 'GDPR Compliance',
   gdprSubtitle:
-    'Your data protection rights under the General Data Protection Regulation (GDPR) and how PRISMA respects your privacy.',
+    'Your data protection rights under the General Data Protection Regulation (GDPR) and how Portfolio Builder respects your privacy.',
   gdprCommitment: 'Our Commitment to Your Privacy',
   gdprCommitmentDesc:
     'MADFAM is committed to protecting your personal data and respecting your privacy rights. We comply with GDPR requirements and implement appropriate technical and organizational measures to safeguard your information.',
@@ -352,7 +352,7 @@ export default {
   })(),
   termsAcceptanceTitle: 'Acceptance of Terms',
   termsAcceptanceText:
-    'By accessing and using PRISMA, you agree to be bound by these Terms of Service.',
+    'By accessing and using Portfolio Builder, you agree to be bound by these Terms of Service.',
   termsUseLicenseTitle: 'Use License',
   termsUseLicenseText:
     'Permission is granted to temporarily use our service for personal and commercial use.',

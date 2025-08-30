@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       record.includes(`prisma-verify=${domain.verification_token}`)
     );
 
-    const hasCnameRecord = cnameRecord === 'portfolios.prisma.madfam.io';
+    const hasCnameRecord = cnameRecord === 'portfolios.portfolio-builder.madfam.io';
 
     // Both records must be present for full verification
     const verified = hasVerificationToken && hasCnameRecord;

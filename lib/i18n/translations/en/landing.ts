@@ -31,7 +31,7 @@ const landing = {
   rating: '4.9/5 Rating',
 
   // Features Section
-  featuresTitle: 'What PRISMA does',
+  featuresTitle: 'What Portfolio Builder does',
   standOut: 'Stand Out',
   featuresSubtitle:
     'Built for professionals who know their digital presence matters.',
@@ -51,7 +51,7 @@ const landing = {
   analyticsTitle: 'Real-time metrics',
   analyticsDesc: 'Track visits, downloads and performance of your portfolio.',
   publishTitle: 'Publish in under 3 minutes',
-  mobileTitle: 'Who PRISMA is for',
+  mobileTitle: 'Who Portfolio Builder is for',
   mobileDesc: 'Responsive designs that look perfect on any device.',
 
   // How it Works Section
@@ -62,7 +62,7 @@ const landing = {
   step1Number: '01',
   step1Title: 'Connect your profiles',
   step1Desc:
-    'Upload your CV or connect LinkedIn/GitHub. PRISMA extracts your professional information.',
+    'Upload your CV or connect LinkedIn/GitHub. Portfolio Builder extracts your professional information.',
 
   step2Number: '02',
   step2Title: 'Enhance with AI',
@@ -109,7 +109,7 @@ const landing = {
   freePlan: 'FREE',
   planFree: 'Free',
   planPro: 'PRO',
-  planBusiness: 'PRISMA+',
+  planBusiness: 'Portfolio Builder+',
   planEnterprise: 'Enterprise',
   proPlan: 'PRO',
   businessPlan: 'BUSINESS',
@@ -131,7 +131,7 @@ const landing = {
   basicAI: 'Basic AI',
   advancedAI: 'Advanced AI',
   aiPoweredInsights: 'AI + advanced insights',
-  subdomainHosting: 'PRISMA subdomain',
+  subdomainHosting: 'Portfolio Builder subdomain',
   customDomain: 'Custom domain',
   multipleCustomDomains: 'Multiple custom domains',
   communitySupport: 'Community support',
@@ -179,14 +179,14 @@ const landing = {
   // CTA Section
   ctaTitle: 'Ready to Create Your Professional Portfolio?',
   ctaSubtitle:
-    'Join thousands of professionals who have built stunning portfolios with PRISMA',
+    'Join thousands of professionals who have built stunning portfolios with Portfolio Builder',
   ctaButton: 'Start Building Your Portfolio',
   ctaFooter: 'No credit card required • Free forever plan available',
 
   // Social Proof
   trustedBy: 'Trusted by',
   professionals: 'professionals',
-  companiesHiring: 'Companies hiring through PRISMA',
+  companiesHiring: 'Companies hiring through Portfolio Builder',
 
   // Footer
   footerTagline: 'Create professional portfolios with AI in under 3 minutes',

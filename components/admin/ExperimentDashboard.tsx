@@ -15,10 +15,10 @@
  * @fileoverview Universal Experiment Management Dashboard
  *
  * Comprehensive admin interface for creating, managing, and analyzing experiments
- * across the entire PRISMA platform. Part of v0.4.0-beta universal experimentation
+ * across the entire Portfolio Builder platform. Part of v0.4.0-beta universal experimentation
  * framework that enables A/B testing absolutely everywhere.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 
@@ -143,7 +143,7 @@ export function ExperimentDashboard({
               Universal Experiments
             </h1>
             <p className="text-gray-600 mt-2">
-              Manage A/B tests across the entire PRISMA platform - v0.4.0-beta
+              Manage A/B tests across the entire Portfolio Builder platform - v0.4.0-beta
             </p>
           </div>
           <div className="flex gap-3">
@@ -170,7 +170,7 @@ export function ExperimentDashboard({
                 <DialogHeader>
                   <DialogTitle>Create Universal Experiment</DialogTitle>
                   <DialogDescription>
-                    Set up a new A/B test for any part of the PRISMA platform
+                    Set up a new A/B test for any part of the Portfolio Builder platform
                   </DialogDescription>
                 </DialogHeader>
                 <ExperimentCreator onClose={() => setShowCreateDialog(false)} />

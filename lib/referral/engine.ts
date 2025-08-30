@@ -691,7 +691,7 @@ export class ReferralEngine {
 
   private generateShareUrl(code: string, campaign?: ReferralCampaign): string {
     const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io';
+      process.env.NEXT_PUBLIC_APP_URL || 'https://portfolio-builder.madfam.io';
     const params = new URLSearchParams({
       ref: code,
     });
@@ -708,7 +708,7 @@ export class ReferralEngine {
     attributionData: Partial<AttributionData>
   ): string {
     const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io';
+      process.env.NEXT_PUBLIC_APP_URL || 'https://portfolio-builder.madfam.io';
     const params = new URLSearchParams({
       ref: referral.code,
     });

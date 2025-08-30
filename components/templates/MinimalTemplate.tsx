@@ -47,7 +47,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Black and white with subtle gray accents
  * Target Audience: Writers, consultants, academics, minimalists
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 
@@ -343,7 +343,7 @@ export function MinimalTemplate({ portfolio }: MinimalTemplateProps) {
             © {new Date().getFullYear()} {portfolio.name}
           </p>
           <p className="text-xs text-gray-400 mt-2">
-            Created with PRISMA Portfolio Builder
+            Created with Portfolio Builder Portfolio Builder
           </p>
         </footer>
       </div>

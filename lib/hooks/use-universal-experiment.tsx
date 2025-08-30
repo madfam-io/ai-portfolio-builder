@@ -21,7 +21,7 @@
  * - Automatic exposure and conversion tracking
  * - Performance monitoring and analytics
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 2.0.0 - Universal Platform
  */
 

@@ -18,7 +18,7 @@
 
 const common = {
   // Brand
-  brandName: 'PRISMA',
+  brandName: 'Portfolio Builder',
   brandTagline: 'by MADFAM',
 
   // Navigation

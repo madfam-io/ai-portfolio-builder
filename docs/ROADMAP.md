@@ -1,10 +1,10 @@
-# 🗺️ PRISMA by MADFAM - Development Roadmap
+# 🗺️ Portfolio Builder by MADFAM - Development Roadmap
 
 > Last Updated: June 22, 2025
 
 ## 📋 Overview
 
-This document tracks the development roadmap, known issues, and feature requests for the PRISMA by MADFAM project. It serves as the central reference for project status and planning.
+This document tracks the development roadmap, known issues, and feature requests for the Portfolio Builder by MADFAM project. It serves as the central reference for project status and planning.
 
 ## 🎯 Project Vision
 
@@ -381,7 +381,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on:
 ### v0.0.1-alpha (January 2025)
 
 - PRISMA Foundation Alpha Release
-- Complete rebrand to PRISMA by MADFAM
+- Complete rebrand to Portfolio Builder by MADFAM
 - Intelligent geolocation-based language detection
 - Enhanced authentication with Supabase and OAuth
 - Multi-currency support with automatic detection

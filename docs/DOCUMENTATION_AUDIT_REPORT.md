@@ -140,6 +140,6 @@ The documentation now provides an excellent developer experience and serves as a
 
 <div align="center">
 
-**PRISMA by MADFAM** - Excellence in Documentation, Excellence in Code
+**Portfolio Builder by MADFAM** - Excellence in Documentation, Excellence in Code
 
 </div>

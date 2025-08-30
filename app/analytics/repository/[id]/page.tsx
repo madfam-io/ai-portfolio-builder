@@ -45,7 +45,7 @@ import type { RepositoryAnalytics } from '@/types/analytics';
  * Detailed analytics view for a specific GitHub repository.
  * Shows code metrics, contributor insights, and historical trends.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 0.0.1-alpha - Phase 1 MVP
  */
 
@@ -165,7 +165,7 @@ export default function RepositoryAnalyticsPage() {
   };
 
   /**
-   * Chart colors matching PRISMA theme
+   * Chart colors matching Portfolio Builder theme
    */
   const chartColors = {
     primary: '#8b5cf6',

@@ -79,8 +79,8 @@ export async function generateMetadata({
       title,
       description,
       type: 'website',
-      url: `https://${params.subdomain}.prisma.madfam.io`,
-      siteName: 'PRISMA Portfolio',
+      url: `https://${params.subdomain}.portfolio-builder.madfam.io`,
+      siteName: 'Portfolio Builder Portfolio',
       images: portfolio.avatarUrl
         ? [
             {

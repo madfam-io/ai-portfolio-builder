@@ -18,7 +18,7 @@
 
 export default {
   // Page
-  careersPageTitle: 'Únete al Equipo PRISMA',
+  careersPageTitle: 'Únete al Equipo Portfolio Builder',
   careersSubtitle:
     'Ayúdanos a revolucionar cómo los profesionales muestran su trabajo. Construye el futuro de la creación de portafolios con herramientas impulsadas por IA.',
 
@@ -63,7 +63,7 @@ export default {
   careersPosition2Location: 'Ciudad de México / Remoto',
   careersPosition2Type: 'Tiempo completo',
   careersPosition2Description:
-    'Dale forma a la experiencia de usuario de PRISMA y ayuda a millones de profesionales a crear portafolios impresionantes. Diseña para plataformas web y móviles.',
+    'Dale forma a la experiencia de usuario de Portfolio Builder y ayuda a millones de profesionales a crear portafolios impresionantes. Diseña para plataformas web y móviles.',
   careersPosition2Req1: '3+ años de experiencia en diseño de producto',
   careersPosition2Req2: 'Competencia en Figma/Adobe Creative Suite',
   careersPosition2Req3: 'Experiencia en productos SaaS',
@@ -81,7 +81,7 @@ export default {
   careersPosition4Location: 'Austin, TX / Remoto',
   careersPosition4Type: 'Tiempo completo',
   careersPosition4Description:
-    'Impulsa la adopción y el éxito del cliente, asegurando que nuestros usuarios obtengan el máximo valor de PRISMA. Trabaja estrechamente con los equipos de producto e ingeniería.',
+    'Impulsa la adopción y el éxito del cliente, asegurando que nuestros usuarios obtengan el máximo valor de Portfolio Builder. Trabaja estrechamente con los equipos de producto e ingeniería.',
   careersPosition4Req1: '3+ años de experiencia en éxito del cliente',
   careersPosition4Req2: 'Experiencia en plataformas SaaS',
   careersPosition4Req3: 'Bilingüe (Inglés/Español) preferido',

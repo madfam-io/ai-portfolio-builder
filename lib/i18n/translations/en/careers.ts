@@ -18,7 +18,7 @@
 
 export default {
   // Page
-  careersPageTitle: 'Join the PRISMA Team',
+  careersPageTitle: 'Join the Portfolio Builder Team',
   careersSubtitle:
     'Help us revolutionize how professionals showcase their work. Build the future of portfolio creation with AI-powered tools.',
 
@@ -63,7 +63,7 @@ export default {
   careersPosition2Location: 'Mexico City / Remote',
   careersPosition2Type: 'Full-time',
   careersPosition2Description:
-    'Shape the user experience of PRISMA and help millions of professionals create stunning portfolios. Design for web and mobile platforms.',
+    'Shape the user experience of Portfolio Builder and help millions of professionals create stunning portfolios. Design for web and mobile platforms.',
   careersPosition2Req1: '3+ years product design experience',
   careersPosition2Req2: 'Proficiency in Figma/Adobe Creative Suite',
   careersPosition2Req3: 'Experience with SaaS products',
@@ -81,7 +81,7 @@ export default {
   careersPosition4Location: 'Austin, TX / Remote',
   careersPosition4Type: 'Full-time',
   careersPosition4Description:
-    'Drive customer adoption and success, ensuring our users get maximum value from PRISMA. Work closely with product and engineering teams.',
+    'Drive customer adoption and success, ensuring our users get maximum value from Portfolio Builder. Work closely with product and engineering teams.',
   careersPosition4Req1: '3+ years customer success experience',
   careersPosition4Req2: 'Background in SaaS platforms',
   careersPosition4Req3: 'Bilingual (English/Spanish) preferred',

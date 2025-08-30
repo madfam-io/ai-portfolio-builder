@@ -35,7 +35,7 @@ services:
       EMAIL_PORT: ${EMAIL_PORT:-25}
       EMAIL_USE_TLS: ${EMAIL_USE_TLS:-false}
       EMAIL_USE_SSL: ${EMAIL_USE_SSL:-false}
-      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@prisma.madfam.io}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@portfolio-builder.madfam.io}
       SITE_URL: ${POSTHOG_SITE_URL:-http://localhost:8000}
     volumes:
       - ./posthog-plugins:/plugins

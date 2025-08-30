@@ -74,10 +74,10 @@ export default function DemoPage(): React.ReactElement {
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              See PRISMA <span className="gradient-text">in Action</span>
+              See Portfolio Builder <span className="gradient-text">in Action</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-              Watch how PRISMA transforms a simple resume into a stunning
+              Watch how Portfolio Builder transforms a simple resume into a stunning
               professional portfolio in under 5 minutes.
             </p>
 
@@ -193,7 +193,7 @@ export default function DemoPage(): React.ReactElement {
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 <div className="flex-1 text-center">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    https://johndoe.prisma.madfam.io
+                    https://johndoe.portfolio-builder.madfam.io
                   </span>
                 </div>
               </div>
@@ -282,7 +282,7 @@ export default function DemoPage(): React.ReactElement {
             </h2>
             <p className="text-xl mb-8 opacity-90">
               Join thousands of professionals who have transformed their careers
-              with PRISMA.
+              with Portfolio Builder.
             </p>
             <div className="flex flex-col _sm:flex-row gap-4 justify-center">
               <Link

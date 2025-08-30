@@ -315,7 +315,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 * Phase 3 - Performance Optimization ([2447f44](https://github.com/madfam-io/ai-portfolio-builder/commit/2447f4489bccdfec4f7199891ae4f35977a2a687))
 * phase 5 - complete architecture enhancement (100/100 score achieved) ([4b53770](https://github.com/madfam-io/ai-portfolio-builder/commit/4b537706635661cbc31d1c660a7189e04733bf28))
 * **portfolio-editor:** implement comprehensive portfolio builder system ([85e7f49](https://github.com/madfam-io/ai-portfolio-builder/commit/85e7f4988d63429dbcbe7ae0da3f166942bbb964))
-* **rebrand:** complete rebrand from MADFAM.AI to PRISMA by MADFAM ([298959d](https://github.com/madfam-io/ai-portfolio-builder/commit/298959db1af122c31b90a1e339416374b8ce5552))
+* **rebrand:** complete rebrand from MADFAM.AI to Portfolio Builder by MADFAM ([298959d](https://github.com/madfam-io/ai-portfolio-builder/commit/298959db1af122c31b90a1e339416374b8ce5552))
 * **refactoring:** comprehensive codebase cleanup and modular architecture ([b482c00](https://github.com/madfam-io/ai-portfolio-builder/commit/b482c0060ab56f0b1f28a6c7aaeef83caa3d3ace))
 * **security:** implement comprehensive security hardening across all layers ([0f69394](https://github.com/madfam-io/ai-portfolio-builder/commit/0f6939490ab18362f6bec62a74c047b26a933c21))
 * **testing:** major test coverage improvements and translation fixes ([153b8d6](https://github.com/madfam-io/ai-portfolio-builder/commit/153b8d641ce10c0cba6bc30b58545605b8288559))

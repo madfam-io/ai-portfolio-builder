@@ -1,6 +1,6 @@
 # 🎯 Strategic Recommendations for Codebase Excellence
 
-## PRISMA by MADFAM - AI Portfolio Builder
+## Portfolio Builder by MADFAM - AI Portfolio Builder
 
 **Date**: June 11, 2025  
 **Strategic Planning Period**: Q3 2025 - Q2 2026  

@@ -12,7 +12,7 @@
  */
 
 /**
- * Authentication and Authorization Types for PRISMA
+ * Authentication and Authorization Types for Portfolio Builder
  * Defines user roles, permissions, and access control
  */
 

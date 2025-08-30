@@ -14,13 +14,13 @@
 /**
  * @fileoverview Universal Experiments API Endpoints
  *
- * Admin API for managing experiments across the PRISMA platform:
+ * Admin API for managing experiments across the Portfolio Builder platform:
  * - CRUD operations for experiments
  * - Template management and creation
  * - Bulk operations and scheduling
  * - Statistical analysis and reporting
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

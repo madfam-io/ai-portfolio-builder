@@ -44,7 +44,7 @@ import type {
  * Handles all GitHub API interactions for the analytics feature.
  * Implements rate limiting, caching, and error handling.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 0.0.1-alpha
  */
 

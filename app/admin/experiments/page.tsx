@@ -14,7 +14,7 @@
 /**
  * @fileoverview Universal Experiments Admin Page
  *
- * Complete admin interface for managing experiments across the PRISMA platform.
+ * Complete admin interface for managing experiments across the Portfolio Builder platform.
  * Part of v0.4.0-beta universal experimentation framework.
  *
  * Features:
@@ -24,7 +24,7 @@
  * - Statistical analysis and reporting
  * - Bulk operations and management
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 
@@ -216,7 +216,7 @@ export default function ExperimentsAdminPage() {
                 Universal Experiments
               </h1>
               <p className="text-gray-600 mt-2">
-                Manage A/B tests across the entire PRISMA platform - v0.4.0-beta
+                Manage A/B tests across the entire Portfolio Builder platform - v0.4.0-beta
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -510,7 +510,7 @@ export default function ExperimentsAdminPage() {
                 <CardHeader>
                   <CardTitle>Integration Status</CardTitle>
                   <CardDescription>
-                    Status of experiment integrations across PRISMA platform
+                    Status of experiment integrations across Portfolio Builder platform
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

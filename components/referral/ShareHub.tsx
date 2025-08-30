@@ -170,7 +170,7 @@ export function ShareHub({
     );
   }
 
-  const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io'}/signup?ref=${targetReferral.code}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://portfolio-builder.madfam.io'}/signup?ref=${targetReferral.code}`;
   const sharePreview = generateShareContent('twitter', targetReferral);
 
   return (
@@ -328,7 +328,7 @@ export function ShareHub({
               </div>
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900 text-sm">
-                  PRISMA by MADFAM
+                  Portfolio Builder by MADFAM
                 </h4>
                 <p className="text-gray-600 text-sm mt-1">
                   {sharePreview.text}

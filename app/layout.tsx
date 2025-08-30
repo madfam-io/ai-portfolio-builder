@@ -43,9 +43,9 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io'
+    process.env.NEXT_PUBLIC_APP_URL || 'https://portfolio-builder.madfam.io'
   ),
-  title: 'PRISMA by MADFAM - AI Portfolio Builder',
+  title: 'Portfolio Builder by MADFAM - AI Portfolio Builder',
   description:
     'Transform your CV into a stunning portfolio website using AI. Create professional portfolios in under 30 minutes.',
   icons: {
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'PRISMA by MADFAM - AI Portfolio Builder',
+    title: 'Portfolio Builder by MADFAM - AI Portfolio Builder',
     description: 'Transform your CV into a stunning portfolio website using AI',
     images: ['/prisma-logo.png'],
   },

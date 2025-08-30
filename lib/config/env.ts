@@ -62,6 +62,11 @@ const DevelopmentEnvSchema = BaseEnvSchema.extend({
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   HUGGINGFACE_API_KEY: z.string().optional(),
   REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
+  
+  // Security (optional in development)
+  JWT_SECRET: z.string().min(32).optional(),
+  ENCRYPTION_KEY: z.string().min(32).optional(),
+  CSRF_SECRET: z.string().min(32).optional(),
 });
 
 /**
@@ -93,10 +98,11 @@ const ProductionEnvSchema = BaseEnvSchema.extend({
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
 
-  // Security
+  // Security (required in production)
   CORS_ALLOWED_ORIGINS: z.string().optional(),
-  JWT_SECRET: z.string().min(32).optional(),
-  ENCRYPTION_KEY: z.string().min(32).optional(),
+  JWT_SECRET: z.string().min(32),
+  ENCRYPTION_KEY: z.string().min(32),
+  CSRF_SECRET: z.string().min(32),
 });
 
 /**
@@ -229,7 +235,7 @@ export function getAppUrl(): string {
   }
 
   if (isProduction) {
-    return 'https://prisma.madfam.io';
+    return 'https://portfolio-builder.madfam.io';
   }
 
   return `http://localhost:${env.PORT}`;

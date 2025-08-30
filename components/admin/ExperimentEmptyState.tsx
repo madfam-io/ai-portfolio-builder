@@ -17,7 +17,7 @@
  * Displayed when no experiments exist or match the current filters,
  * providing clear guidance on next steps.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

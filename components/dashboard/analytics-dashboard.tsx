@@ -14,6 +14,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { logger } from '@/lib/utils/logger';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -84,7 +85,7 @@ export function AnalyticsDashboard() {
         setData(result);
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error('Failed to fetch analytics:', error);
+        logger.error('Failed to fetch analytics', error instanceof Error ? error : new Error(String(error)));
       } finally {
         setLoading(false);
       }

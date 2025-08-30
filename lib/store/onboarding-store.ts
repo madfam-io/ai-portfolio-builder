@@ -94,7 +94,7 @@ const ONBOARDING_FLOWS = {
     steps: [
       {
         id: 'welcome',
-        title: 'Welcome to PRISMA',
+        title: 'Welcome to Portfolio Builder',
         description: 'Get started with your AI-powered portfolio',
         completed: false,
         skipped: false,

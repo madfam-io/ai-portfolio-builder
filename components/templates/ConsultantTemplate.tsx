@@ -46,7 +46,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Green-based with professional business accents
  * Target Audience: Business consultants, coaches, advisors, service professionals
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 0.0.1-alpha
  */
 

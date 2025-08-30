@@ -116,7 +116,7 @@ function generateWebPageSchema(portfolio: Portfolio): any {
     description: portfolio.bio,
     url:
       portfolio.customDomain ||
-      `https://prisma.madfam.io/${portfolio.subdomain}`,
+      `https://portfolio-builder.madfam.io/${portfolio.subdomain}`,
     about: { '@id': `#person-${portfolio.id}` },
     dateModified: portfolio.updatedAt,
     datePublished: portfolio.publishedAt || portfolio.createdAt,
@@ -130,13 +130,13 @@ function generateWebPageSchema(portfolio: Portfolio): any {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://prisma.madfam.io',
+        item: 'https://portfolio-builder.madfam.io',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Portfolios',
-        item: 'https://prisma.madfam.io/portfolios',
+        item: 'https://portfolio-builder.madfam.io/portfolios',
       },
       {
         '@type': 'ListItem',

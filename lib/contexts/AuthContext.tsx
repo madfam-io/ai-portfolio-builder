@@ -41,7 +41,7 @@ import {
 } from '@/types/auth';
 
 /**
- * Enhanced Authentication Context for PRISMA
+ * Enhanced Authentication Context for Portfolio Builder
  * Handles both customer and admin authentication with role-based access control
  *
  * Features:

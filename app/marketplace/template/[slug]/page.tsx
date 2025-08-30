@@ -34,7 +34,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${template.name} - Premium Template | PRISMA`,
+    title: `${template.name} - Premium Template | Portfolio Builder`,
     description: template.description,
     openGraph: {
       title: template.name,

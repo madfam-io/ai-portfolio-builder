@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     let message = 'Thank you for your feedback!';
     if (npsCategory === 'promoter') {
       message =
-        "Thank you so much for your positive feedback! We're thrilled you love PRISMA.";
+        "Thank you so much for your positive feedback! We're thrilled you love Portfolio Builder.";
     } else if (npsCategory === 'detractor') {
       message =
         "Thank you for your honest feedback. We'll work hard to improve your experience.";

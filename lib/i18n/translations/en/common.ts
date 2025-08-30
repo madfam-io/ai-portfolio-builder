@@ -182,7 +182,7 @@ export default {
   noAccount: "Don't have an account?",
 
   // Footer
-  copyright: '© 2024 PRISMA by MADFAM. All rights reserved.',
+  copyright: '© 2024 Portfolio Builder by MADFAM. All rights reserved.',
   privacyPolicy: 'Privacy Policy',
   termsOfService: 'Terms of Service',
   cookiePolicy: 'Cookie Policy',

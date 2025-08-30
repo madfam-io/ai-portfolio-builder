@@ -16,7 +16,7 @@
  * @module i18n/translations/es
  *
  * This module exports all Spanish translations organized by feature/page.
- * Spanish is the default language for PRISMA, targeting Mexican and Latin American markets.
+ * Spanish is the default language for Portfolio Builder, targeting Mexican and Latin American markets.
  */
 
 export { default as common } from './common';

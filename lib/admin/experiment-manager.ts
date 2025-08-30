@@ -14,13 +14,13 @@
 /**
  * @fileoverview Universal Experiment Management Utilities
  *
- * Administrative tools for managing experiments across the PRISMA platform:
+ * Administrative tools for managing experiments across the Portfolio Builder platform:
  * - Experiment lifecycle management (create, start, pause, stop)
  * - Template system for common experiment patterns
  * - Bulk operations and experiment scheduling
  * - Integration with existing landing page experiments
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

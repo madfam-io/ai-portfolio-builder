@@ -31,12 +31,12 @@ export function getDynamicTranslations() {
 
   return {
     es: {
-      footerCopyright: `© ${currentYear} PRISMA by MADFAM. Todos los derechos reservados.`,
+      footerCopyright: `© ${currentYear} Portfolio Builder by MADFAM. Todos los derechos reservados.`,
       pricingOfferExpires: `La oferta expira el ${promoDeadline}`,
       termsLastUpdated: `Última actualización: ${getLastUpdatedDateSpanish()}`,
     },
     en: {
-      footerCopyright: `© ${currentYear} PRISMA by MADFAM. All rights reserved.`,
+      footerCopyright: `© ${currentYear} Portfolio Builder by MADFAM. All rights reserved.`,
       pricingOfferExpires: `Offer expires ${promoDeadline}`,
       termsLastUpdated: `Last updated: ${getLastUpdatedDate()}`,
     },

@@ -33,7 +33,7 @@ import { usePerformanceTracking } from '@/lib/utils/performance';
  * A lazy-loaded chart component for displaying pull request metrics.
  * Shows opened, merged, and closed PRs by week.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

@@ -19,7 +19,7 @@
  * - Create experiments from templates
  * - Template customization and validation
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

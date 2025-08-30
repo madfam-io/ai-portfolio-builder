@@ -176,7 +176,7 @@ function NoMatchSection({ t }: { t: Record<string, string | undefined> }) {
       </h3>
       <p className="text-gray-600 dark:text-gray-300 mb-6">
         {t.careersNoMatchDesc ||
-          `We're always looking for talented individuals to join our team. Send us your resume and tell us why you'd be a great fit for PRISMA.`}
+          `We're always looking for talented individuals to join our team. Send us your resume and tell us why you'd be a great fit for Portfolio Builder.`}
       </p>
       <Link
         href="/contact"
@@ -272,7 +272,7 @@ const POSITION_CONFIGS = [
       dept: 'Design',
       loc: 'Mexico City / Remote',
       type: 'Full-time',
-      desc: 'Shape the user experience of PRISMA and help millions of professionals create stunning portfolios. Design for web and mobile platforms.',
+      desc: 'Shape the user experience of Portfolio Builder and help millions of professionals create stunning portfolios. Design for web and mobile platforms.',
       reqs: [
         '3+ years product design experience',
         'Figma/Adobe Creative Suite proficiency',
@@ -326,7 +326,7 @@ const POSITION_CONFIGS = [
       dept: 'Customer Success',
       loc: 'Austin, TX / Remote',
       type: 'Full-time',
-      desc: 'Drive customer adoption and success, ensuring our users get maximum value from PRISMA. Work closely with product and engineering teams.',
+      desc: 'Drive customer adoption and success, ensuring our users get maximum value from Portfolio Builder. Work closely with product and engineering teams.',
       reqs: [
         '3+ years customer success experience',
         'SaaS platform experience',

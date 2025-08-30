@@ -17,7 +17,7 @@
  * Individual experiment card displaying key metrics, status, and progress
  * for a single experiment in the dashboard.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

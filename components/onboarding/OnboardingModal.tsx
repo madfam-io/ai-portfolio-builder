@@ -303,7 +303,7 @@ function WelcomeStep({ onComplete: _onComplete }: StepComponentProps) {
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <h3 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-          Welcome to PRISMA!
+          Welcome to Portfolio Builder!
         </h3>
         <p className="text-lg text-muted-foreground max-w-md mx-auto">
           Create stunning portfolios powered by AI in under 3 minutes.

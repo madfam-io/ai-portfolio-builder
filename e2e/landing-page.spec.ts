@@ -2,23 +2,23 @@ import { test, expect } from '@playwright/test';
 
 import { TestHelpers } from './utils/test-helpers';
 
-test.describe('PRISMA Landing Page', () => {
+test.describe('Portfolio Builder Landing Page', () => {
   let helpers: TestHelpers;
 
   test.beforeEach(({ page }) => {
     helpers = new TestHelpers(page);
   });
 
-  test('should display PRISMA landing page with correct branding', async ({
+  test('should display Portfolio Builder landing page with correct branding', async ({
     page,
   }) => {
     await helpers.goto('/');
 
-    // Check PRISMA branding
-    await expect(page.locator('text=PRISMA')).toBeVisible();
+    // Check Portfolio Builder branding
+    await expect(page.locator('text=Portfolio Builder')).toBeVisible();
     await expect(page.locator('text=by MADFAM')).toBeVisible();
 
-    // Check main hero content with new PRISMA messaging
+    // Check main hero content with Portfolio Builder messaging
     await expect(
       page.locator('text=Tu portafolio, elevado por IA')
     ).toBeVisible();
@@ -156,14 +156,14 @@ test.describe('PRISMA Landing Page', () => {
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 
-  test('should be responsive on mobile with PRISMA navigation', async ({
+  test('should be responsive on mobile with Portfolio Builder navigation', async ({
     page,
   }) => {
     await helpers.setMobileViewport();
     await helpers.goto('/');
 
-    // Check PRISMA logo is visible on mobile
-    await expect(page.locator('text=PRISMA')).toBeVisible();
+    // Check Portfolio Builder logo is visible on mobile
+    await expect(page.locator('text=Portfolio Builder')).toBeVisible();
 
     // Check mobile hamburger menu
     const mobileMenuButton = page
@@ -195,21 +195,21 @@ test.describe('PRISMA Landing Page', () => {
     await page.waitForTimeout(500); // Wait for menu animation
   });
 
-  test('should display PRISMA pricing tiers correctly', async ({ page }) => {
+  test('should display Portfolio Builder pricing tiers correctly', async ({ page }) => {
     await helpers.goto('/');
 
     // Scroll to pricing section
     await page.locator('#pricing').scrollIntoViewIfNeeded();
 
-    // Check PRISMA pricing tiers
+    // Check Portfolio Builder pricing tiers
     await expect(page.locator('text=Gratis')).toBeVisible();
     await expect(page.locator('text=PRO')).toBeVisible();
-    await expect(page.locator('text=PRISMA+')).toBeVisible();
+    await expect(page.locator('text=Portfolio Builder+')).toBeVisible();
     await expect(page.locator('text=MÁS POPULAR')).toBeVisible();
 
     // Check pricing features
     await expect(page.locator('text=1 portafolio')).toBeVisible();
-    await expect(page.locator('text=Subdominio PRISMA')).toBeVisible();
+    await expect(page.locator('text=Subdominio Portfolio Builder')).toBeVisible();
     await expect(page.locator('text=Dominio personalizado')).toBeVisible();
   });
 

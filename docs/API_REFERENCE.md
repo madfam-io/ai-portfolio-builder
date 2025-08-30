@@ -30,7 +30,7 @@ Complete API documentation for the PRISMA AI Portfolio Builder platform.
 ### Base URL
 
 - **Development**: `http://localhost:3000/api/v1`
-- **Production**: `https://prisma.madfam.io/api/v1`
+- **Production**: `https://portfolio-builder.madfam.io/api/v1`
 
 ### API Versioning
 
@@ -1086,7 +1086,7 @@ import { PrismaAPI } from '@prisma/sdk';
 
 const prisma = new PrismaAPI({
   apiKey: 'your-api-key',
-  baseUrl: 'https://prisma.madfam.io/api',
+  baseUrl: 'https://portfolio-builder.madfam.io/api',
 });
 
 // Enhance bio
@@ -1113,7 +1113,7 @@ const portfolio = await prisma.portfolios.create({
 #### Enhance Bio
 
 ```bash
-curl -X POST https://prisma.madfam.io/api/ai/enhance-bio \
+curl -X POST https://portfolio-builder.madfam.io/api/ai/enhance-bio \
   -H "Authorization: Bearer your-token" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1128,14 +1128,14 @@ curl -X POST https://prisma.madfam.io/api/ai/enhance-bio \
 #### Get Portfolio
 
 ```bash
-curl -X GET https://prisma.madfam.io/api/portfolios/123 \
+curl -X GET https://portfolio-builder.madfam.io/api/portfolios/123 \
   -H "Authorization: Bearer your-token"
 ```
 
 #### Create Portfolio
 
 ```bash
-curl -X POST https://prisma.madfam.io/api/portfolios \
+curl -X POST https://portfolio-builder.madfam.io/api/portfolios \
   -H "Authorization: Bearer your-token" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1171,7 +1171,7 @@ class PrismaAPI:
         return response.json()
 
 # Usage
-prisma = PrismaAPI('https://prisma.madfam.io/api', 'your-api-key')
+prisma = PrismaAPI('https://portfolio-builder.madfam.io/api', 'your-api-key')
 result = prisma.enhance_bio(
     bio='I am a data scientist',
     context={'industry': 'healthcare', 'experienceLevel': 'mid'}

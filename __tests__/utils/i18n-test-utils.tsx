@@ -95,7 +95,7 @@ export const mockTranslations = {
     // Landing translations
     heroTitle: 'Tu portafolio, elevado por IA.',
     features: 'Características',
-    featuresTitle: 'Qué hace PRISMA',
+    featuresTitle: 'Qué hace Portfolio Builder',
     standOut: 'Destacar',
     featuresSubtitle:
       'Hecho para profesionales que saben que su presencia digital importa.',
@@ -138,7 +138,7 @@ export const mockTranslations = {
     // Landing translations
     heroTitle: 'Your portfolio, elevated by AI.',
     features: 'Features',
-    featuresTitle: 'What PRISMA does',
+    featuresTitle: 'What Portfolio Builder does',
     standOut: 'Stand Out',
     featuresSubtitle:
       'Built for professionals who know their digital presence matters.',

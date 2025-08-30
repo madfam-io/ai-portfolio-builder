@@ -17,7 +17,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * @fileoverview API Optimization Utilities
  *
  * Comprehensive suite of utilities for optimizing API performance, caching,
- * and improving response times across the PRISMA platform.
+ * and improving response times across the Portfolio Builder platform.
  *
  * Features:
  * - Response caching with multiple strategies
@@ -27,7 +27,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * - Request/response logging and monitoring
  * - Error handling and retry mechanisms
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

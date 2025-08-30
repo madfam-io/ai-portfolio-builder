@@ -30,8 +30,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 export const metadata: Metadata = {
-  title: 'Admin Dashboard | PRISMA',
-  description: 'Admin dashboard for PRISMA portfolio builder',
+  title: 'Admin Dashboard | Portfolio Builder',
+  description: 'Admin dashboard for Portfolio Builder portfolio builder',
 };
 
 interface AdminLayoutProps {

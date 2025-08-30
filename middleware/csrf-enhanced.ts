@@ -21,12 +21,16 @@ import { logger } from '@/lib/utils/logger';
  * Implements encrypted double-submit cookie pattern for CSRF protection
  */
 
-const CSRF_COOKIE_NAME = 'prisma-csrf-token';
+const CSRF_COOKIE_NAME = 'portfolio-builder-csrf-token';
 const CSRF_HEADER_NAME = 'x-csrf-token';
 const CSRF_FORM_FIELD_NAME = '_csrf';
 const CSRF_TOKEN_LENGTH = 32;
-const CSRF_SECRET =
-  process.env.CSRF_SECRET || 'default-csrf-secret-change-in-production';
+const CSRF_SECRET = process.env.CSRF_SECRET || (() => {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('CSRF_SECRET environment variable is required in production');
+  }
+  return 'dev-csrf-secret-not-for-production';
+})();
 
 /**
  * Methods that require CSRF protection

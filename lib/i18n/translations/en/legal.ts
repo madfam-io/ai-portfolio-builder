@@ -69,7 +69,7 @@ export default {
   })(),
   termsAcceptanceTitle: 'Acceptance of Terms',
   termsAcceptanceText:
-    'By accessing and using PRISMA, you agree to be bound by these Terms of Service.',
+    'By accessing and using Portfolio Builder, you agree to be bound by these Terms of Service.',
   termsUseLicenseTitle: 'Use License',
   termsUseLicenseText:
     'Permission is granted to temporarily use our service for personal and commercial use.',
@@ -79,7 +79,7 @@ export default {
   // GDPR
   gdprPageTitle: 'GDPR Compliance',
   gdprSubtitle:
-    'Your data protection rights under the General Data Protection Regulation (GDPR) and how PRISMA respects your privacy.',
+    'Your data protection rights under the General Data Protection Regulation (GDPR) and how Portfolio Builder respects your privacy.',
   gdprCommitment: 'Our Commitment to Your Privacy',
   gdprCommitmentDesc:
     'MADFAM is committed to protecting your personal data and respecting your privacy rights. We comply with GDPR requirements and implement appropriate technical and organizational measures to safeguard your information.',

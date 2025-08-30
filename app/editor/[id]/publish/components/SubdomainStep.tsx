@@ -210,7 +210,7 @@ export function SubdomainStep({
             onSubdomainChange={handleSubdomainChange}
             onBlur={checkSubdomainAvailability}
           />
-          <span className="text-muted-foreground">.prisma.madfam.io</span>
+          <span className="text-muted-foreground">.portfolio-builder.madfam.io</span>
         </div>
         <p className="text-sm text-muted-foreground mt-2">
           {t.subdomainHint ||
@@ -237,7 +237,7 @@ export function SubdomainStep({
           {t.yourPortfolioUrl || 'Your portfolio URL will be:'}
         </p>
         <p className="text-lg font-mono">
-          https://{publishData.subdomain || 'yourname'}.prisma.madfam.io
+          https://{publishData.subdomain || 'yourname'}.portfolio-builder.madfam.io
         </p>
       </div>
 

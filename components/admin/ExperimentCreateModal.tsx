@@ -17,7 +17,7 @@
  * Multi-step wizard for creating new experiments with comprehensive
  * configuration options for the universal experimentation platform.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

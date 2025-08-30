@@ -21,7 +21,7 @@ services:
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
-      - NEXT_PUBLIC_APP_URL=https://staging.prisma.madfam.io
+      - NEXT_PUBLIC_APP_URL=https://staging.portfolio-builder.madfam.io
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=redis://staging-redis:6379
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
@@ -40,7 +40,7 @@ services:
     restart: unless-stopped
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.staging-app.rule=Host(`staging.prisma.madfam.io`)'
+      - 'traefik.http.routers.staging-app.rule=Host(`staging.portfolio-builder.madfam.io`)'
       - 'traefik.http.routers.staging-app.tls=true'
       - 'traefik.http.routers.staging-app.tls.certresolver=letsencrypt'
 
@@ -50,8 +50,8 @@ services:
     ports:
       - '5433:5432'
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-prisma_staging}
-      POSTGRES_USER: ${POSTGRES_USER:-prisma_staging}
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio_builder_staging}
+      POSTGRES_USER: ${POSTGRES_USER:-portfolio_builder_staging}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
     volumes:
@@ -65,7 +65,7 @@ services:
       test:
         [
           'CMD-SHELL',
-          'pg_isready -U ${POSTGRES_USER:-prisma_staging} -d ${POSTGRES_DB:-prisma_staging}',
+          'pg_isready -U ${POSTGRES_USER:-portfolio_builder_staging} -d ${POSTGRES_DB:-portfolio_builder_staging}',
         ]
       interval: 10s
       timeout: 5s
@@ -104,7 +104,7 @@ services:
     ports:
       - '5051:80'
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@staging.prisma.madfam.io}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@staging.portfolio-builder.madfam.io}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
       PGADMIN_CONFIG_SERVER_MODE: 'True'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
@@ -165,7 +165,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-staging123}
       - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_SERVER_DOMAIN=staging-monitoring.prisma.madfam.io
+      - GF_SERVER_DOMAIN=staging-monitoring.portfolio-builder.madfam.io
     volumes:
       - staging_grafana_data:/var/lib/grafana
       - ./config/grafana/staging.ini:/etc/grafana/grafana.ini:ro

@@ -12,13 +12,13 @@
  */
 
 /**
- * @fileoverview Structured logging utility for PRISMA
+ * @fileoverview Structured logging utility for Portfolio Builder
  *
  * Provides structured logging with context support, error serialization,
  * and production-ready features. In production, logs can be sent to
  * external services like Sentry, LogRocket, or DataDog.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

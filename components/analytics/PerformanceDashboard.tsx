@@ -21,7 +21,7 @@
  * - Conversion optimization opportunities
  * - Thought leadership data insights
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 1.0.0 - Business Excellence Foundation
  */
 

@@ -21,7 +21,7 @@
  * - Real-time experiment results
  * - Revenue impact measurement
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 1.0.0 - Business Excellence Foundation
  */
 

@@ -18,7 +18,7 @@
  * ensuring sub-3-minute creation times and optimal user experience.
  * Designed for business excellence with competitive market positioning.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 2.0.0
  */
 

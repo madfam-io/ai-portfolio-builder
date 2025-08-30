@@ -317,7 +317,7 @@ export function useReferral(): UseReferralState & UseReferralActions {
     }
 
     const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io';
+      process.env.NEXT_PUBLIC_APP_URL || 'https://portfolio-builder.madfam.io';
     const shareUrl = `${baseUrl}/signup?ref=${targetReferral.code}`;
 
     const templates: Record<
@@ -325,24 +325,24 @@ export function useReferral(): UseReferralState & UseReferralActions {
       { text: string; hashtags?: string[]; via?: string }
     > = {
       twitter: {
-        text: `🚀 Just discovered PRISMA by MADFAM - it transforms CVs into stunning portfolio websites in under 3 minutes! Try it out with my referral link:`,
+        text: `🚀 Just discovered Portfolio Builder by MADFAM - it transforms CVs into stunning portfolio websites in under 3 minutes! Try it out with my referral link:`,
         hashtags: ['portfolio', 'AI', 'career', 'MADFAM'],
         via: 'MADFAM_io',
       },
       linkedin: {
-        text: `I've been using PRISMA by MADFAM to create professional portfolio websites with AI assistance. It's incredibly fast and the results are impressive. Check it out:`,
+        text: `I've been using Portfolio Builder by MADFAM to create professional portfolio websites with AI assistance. It's incredibly fast and the results are impressive. Check it out:`,
       },
       facebook: {
-        text: `Check out PRISMA by MADFAM - an AI-powered tool that creates beautiful portfolio websites from your CV in minutes. Perfect for job seekers and professionals!`,
+        text: `Check out Portfolio Builder by MADFAM - an AI-powered tool that creates beautiful portfolio websites from your CV in minutes. Perfect for job seekers and professionals!`,
       },
       whatsapp: {
-        text: `Hey! I found this amazing AI tool called PRISMA that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
+        text: `Hey! I found this amazing AI tool called Portfolio Builder that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
       },
       telegram: {
-        text: `Hey! I found this amazing AI tool called PRISMA that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
+        text: `Hey! I found this amazing AI tool called Portfolio Builder that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
       },
       email: {
-        text: `I wanted to share PRISMA by MADFAM with you - it's an AI-powered platform that creates stunning portfolio websites from CVs in under 3 minutes. Perfect for showcasing your skills and experience professionally.`,
+        text: `I wanted to share Portfolio Builder by MADFAM with you - it's an AI-powered platform that creates stunning portfolio websites from CVs in under 3 minutes. Perfect for showcasing your skills and experience professionally.`,
       },
       copy_link: {
         text: shareUrl,
@@ -351,7 +351,7 @@ export function useReferral(): UseReferralState & UseReferralActions {
         text: shareUrl,
       },
       sms: {
-        text: `Hey! Check out PRISMA by MADFAM - creates portfolio websites from CVs in 3 minutes:`,
+        text: `Hey! Check out Portfolio Builder by MADFAM - creates portfolio websites from CVs in 3 minutes:`,
       },
     };
 
@@ -542,7 +542,9 @@ function shareToTwitter(content: ShareContent): Promise<boolean> {
 
 function shareToLinkedIn(content: ShareContent): Promise<boolean> {
   const url = encodeURIComponent(content.url);
-  const title = encodeURIComponent('PRISMA by MADFAM - AI Portfolio Builder');
+  const title = encodeURIComponent(
+    'Portfolio Builder by MADFAM - AI Portfolio Builder'
+  );
   const summary = encodeURIComponent(content.text);
 
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`;
@@ -567,7 +569,7 @@ function shareToWhatsApp(content: ShareContent): Promise<boolean> {
 }
 
 function shareToEmail(content: ShareContent): boolean {
-  const subject = encodeURIComponent('Check out PRISMA by MADFAM');
+  const subject = encodeURIComponent('Check out Portfolio Builder by MADFAM');
   const body = encodeURIComponent(`${content.text}\n\n${content.url}`);
 
   const emailUrl = `mailto:?subject=${subject}&body=${body}`;

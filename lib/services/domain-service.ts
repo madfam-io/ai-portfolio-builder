@@ -472,7 +472,7 @@ export class DomainService {
             {
               order: 2,
               title: 'Add CNAME Record',
-              description: 'Add a CNAME record to point your domain to PRISMA',
+              description: 'Add a CNAME record to point your domain to Portfolio Builder',
               recordType: 'CNAME',
               recordName: domain,
               recordValue: 'portfolios.prisma.madfam.io',

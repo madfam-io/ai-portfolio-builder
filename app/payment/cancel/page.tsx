@@ -35,7 +35,7 @@ export default function PaymentCancel() {
         'Contact us for special discounts or custom pricing',
       action: () =>
         (window.location.href =
-          'mailto:support@prisma.madfam.io?subject=Pricing Inquiry'),
+          'mailto:support@portfolio-builder.madfam.io?subject=Pricing Inquiry'),
     },
     {
       icon: '🤔',
@@ -172,7 +172,7 @@ export default function PaymentCancel() {
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      (window.location.href = 'mailto:support@prisma.madfam.io')
+                      (window.location.href = 'mailto:support@portfolio-builder.madfam.io')
                     }
                   >
                     <MessageCircle className="mr-2 h-4 w-4" />

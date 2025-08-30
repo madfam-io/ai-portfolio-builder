@@ -17,7 +17,7 @@ import { TemplateType, SectionType } from '@/types/portfolio';
  * @fileoverview Template Configuration System
  *
  * Defines template-specific layouts, section ordering, and styling preferences
- * for the PRISMA portfolio builder. Each template targets specific professional
+ * for the Portfolio Builder portfolio builder. Each template targets specific professional
  * industries and provides optimized layouts.
  */
 

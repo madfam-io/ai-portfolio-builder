@@ -32,7 +32,7 @@ import { usePerformanceTracking } from '@/lib/utils/performance';
  * A lazy-loaded chart component for displaying commit trends over time.
  * Optimized for performance with dynamic imports and memoization.
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

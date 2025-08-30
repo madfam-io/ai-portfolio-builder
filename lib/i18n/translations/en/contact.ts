@@ -18,7 +18,7 @@
 
 export default {
   // Page
-  contactPageTitle: 'Contact PRISMA',
+  contactPageTitle: 'Contact Portfolio Builder',
   contactSubtitle:
     "Have questions? Need support? Want to discuss business opportunities? We're here to help.",
 

@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-import { PRISMATestHelpers } from './utils/test-helpers';
+import { Portfolio BuilderTestHelpers } from './utils/test-helpers';
 
-test.describe('PRISMA Geolocation Features', () => {
-  let helpers: PRISMATestHelpers;
+test.describe('Portfolio Builder Geolocation Features', () => {
+  let helpers: Portfolio BuilderTestHelpers;
 
   test.beforeEach(({ page }) => {
-    helpers = new PRISMATestHelpers(page);
+    helpers = new Portfolio BuilderTestHelpers(page);
   });
 
   test('should detect Mexican location and show Spanish with Mexican flag', async ({
@@ -124,7 +124,7 @@ test.describe('PRISMA Geolocation Features', () => {
     await helpers.goto('/');
     await page.waitForTimeout(2000);
 
-    // Should fallback to Spanish (default for PRISMA/MADFAM)
+    // Should fallback to Spanish (default for Portfolio Builder/MADFAM)
     await expect(
       page.locator('text=Tu portafolio, elevado por IA')
     ).toBeVisible();
@@ -413,7 +413,7 @@ test.describe('PRISMA Geolocation Features', () => {
     await helpers.goto('/');
     await helpers.waitForGeolocationDetection();
 
-    // Should fallback to Spanish (PRISMA's primary market)
+    // Should fallback to Spanish (Portfolio Builder's primary market)
     await expect(
       page.locator('text=Tu portafolio, elevado por IA')
     ).toBeVisible();

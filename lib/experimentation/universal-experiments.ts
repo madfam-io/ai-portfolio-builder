@@ -20,7 +20,7 @@
  * - Real-time targeting, statistical analysis, and automated optimization
  * - Integration with existing PostHog analytics and business metrics
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 2.0.0 - Universal Platform
  */
 

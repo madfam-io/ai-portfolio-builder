@@ -46,7 +46,7 @@ import { PortfolioPreview } from './PortfolioPreview';
  * - Drag-and-drop project reordering
  * - Multi-language support
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 0.0.1-alpha - Enhanced with professional templates
  */
 

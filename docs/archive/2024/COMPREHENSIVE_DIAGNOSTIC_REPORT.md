@@ -1,6 +1,6 @@
 # 🔍 Comprehensive Codebase Diagnostic Report
 
-**Project**: PRISMA by MADFAM - AI Portfolio Builder  
+**Project**: Portfolio Builder by MADFAM - AI Portfolio Builder  
 **Analysis Date**: June 13, 2025  
 **Version**: 0.2.0-beta  
 **Overall Health**: 85/100 (B+) ⚠️

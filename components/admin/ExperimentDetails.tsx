@@ -17,7 +17,7 @@
  * Displays detailed analytics and configuration for a selected experiment,
  * including variant performance, statistical analysis, and settings.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 

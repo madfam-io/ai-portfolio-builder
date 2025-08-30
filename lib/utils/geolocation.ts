@@ -17,7 +17,7 @@ import { logger } from '@/lib/utils/logger';
  * @fileoverview Geolocation detection utility for automatic language setting
  *
  * This module detects user's geographic location to automatically set the most
- * appropriate default language for PRISMA SaaS platform.
+ * appropriate default language for Portfolio Builder SaaS platform.
  *
  * Features:
  * - Detects Spanish-speaking countries for Spanish default
@@ -31,7 +31,7 @@ import { logger } from '@/lib/utils/logger';
 
 /**
  * Spanish-speaking countries (ISO 3166-1 alpha-2 codes)
- * Primary target markets for PRISMA
+ * Primary target markets for Portfolio Builder
  */
 const SPANISH_SPEAKING_COUNTRIES = [
   'AR', // Argentina

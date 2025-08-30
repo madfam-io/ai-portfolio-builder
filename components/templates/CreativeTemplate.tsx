@@ -54,7 +54,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Purple, pink, and orange gradients with artistic accents
  * Target Audience: Artists, illustrators, graphic designers, creative directors, photographers
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 
@@ -489,7 +489,7 @@ export function CreativeTemplate({ portfolio }: CreativeTemplateProps) {
               one pixel at a time
             </p>
             <p className="text-sm text-gray-500">
-              Crafted with love using PRISMA Portfolio Builder
+              Crafted with love using Portfolio Builder Portfolio Builder
             </p>
           </div>
         </footer>

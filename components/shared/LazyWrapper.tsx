@@ -27,7 +27,7 @@ import React, { Suspense, ComponentType, ReactNode } from 'react';
  * - Customizable loading states and fallbacks
  * - TypeScript support with proper prop forwarding
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 

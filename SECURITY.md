@@ -2,7 +2,7 @@
 
 ## Reporting Security Vulnerabilities
 
-MADFAM takes the security of our software seriously. If you believe you have found a security vulnerability in PRISMA, please report it to us as described below.
+MADFAM takes the security of our software seriously. If you believe you have found a security vulnerability in Portfolio Builder, please report it to us as described below.
 
 ## Responsible Disclosure
 
@@ -64,7 +64,7 @@ We maintain a [Security Hall of Fame](./SECURITY-HALL-OF-FAME.md) to recognize s
 
 ## Current Security Measures
 
-PRISMA implements the following security measures:
+Portfolio Builder implements the following security measures:
 
 ### Authentication & Authorization
 - Supabase Auth with secure session management
@@ -91,7 +91,7 @@ PRISMA implements the following security measures:
 
 ## Security Best Practices for Contributors
 
-When contributing to PRISMA:
+When contributing to Portfolio Builder:
 
 1. **Never commit secrets**: Use environment variables
 2. **Validate input**: Always validate and sanitize user input
@@ -106,7 +106,7 @@ When contributing to PRISMA:
 **General Support**: support@madfam.io  
 **Response Time**: 48 hours
 
-Thank you for helping keep PRISMA and our users safe!
+Thank you for helping keep Portfolio Builder and our users safe!
 
 ---
 

@@ -8,7 +8,7 @@ This guide covers the complete deployment process for the PRISMA AI Portfolio Bu
 | -------------- | ---------------------- | -------------------------------- | --------------- | ---------- | ---------- |
 | **Local**      | Development & Testing  | http://localhost:3000            | PostgreSQL:5432 | Redis:6379 | Basic      |
 | **Staging**    | Pre-production Testing | https://staging.prisma.madfam.io | PostgreSQL:5433 | Redis:6380 | Full Stack |
-| **Production** | Live Application       | https://prisma.madfam.io         | PostgreSQL:5434 | Redis:6381 | Enterprise |
+| **Production** | Live Application       | https://portfolio-builder.madfam.io         | PostgreSQL:5434 | Redis:6381 | Enterprise |
 
 ## 📋 Prerequisites
 
@@ -182,7 +182,7 @@ pnpm deploy:production
 # Critical environment variables:
 NODE_ENV=production
 NEXT_PUBLIC_ENVIRONMENT=production
-NEXT_PUBLIC_APP_URL=https://prisma.madfam.io
+NEXT_PUBLIC_APP_URL=https://portfolio-builder.madfam.io
 
 # Stripe (Live Mode)
 STRIPE_SECRET_KEY=sk_live_...

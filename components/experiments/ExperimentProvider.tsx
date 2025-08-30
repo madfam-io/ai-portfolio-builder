@@ -18,7 +18,7 @@
  * experiments everywhere. Handles user identification, context detection,
  * and provides experiment state to all child components.
  *
- * @author PRISMA Business Team
+ * @author Portfolio Builder Team
  * @version 2.0.0 - Universal Platform
  */
 

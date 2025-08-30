@@ -101,7 +101,7 @@ const premiumTemplates = [
         default: 'Classic',
       },
     ],
-    author_name: 'PRISMA Design Team',
+    author_name: 'Portfolio Builder Design Team',
     status: 'active',
     featured: true,
     best_seller: true,

@@ -46,13 +46,13 @@ async function verifyDomain(
       // Check root domain CNAME
       const rootRecords = await dns.resolveCname(domain);
       const hasCorrectCNAME = rootRecords.some(record =>
-        record.includes(`${subdomain}.prisma.madfam.io`)
+        record.includes(`${subdomain}.portfolio-builder.madfam.io`)
       );
 
       // Check www subdomain
       const wwwRecords = await dns.resolveCname(`www.${domain}`);
       const wwwPointsToUs = wwwRecords.some(record =>
-        record.includes(`${subdomain}.prisma.madfam.io`)
+        record.includes(`${subdomain}.portfolio-builder.madfam.io`)
       );
 
       return {
@@ -194,7 +194,7 @@ export const POST = withErrorHandling(
               body: JSON.stringify({
                 type: 'CNAME',
                 name: domain,
-                content: `${portfolio.subdomain}.prisma.madfam.io`,
+                content: `${portfolio.subdomain}.portfolio-builder.madfam.io`,
                 ttl: 300,
                 proxied: true,
               }),
@@ -213,7 +213,7 @@ export const POST = withErrorHandling(
               body: JSON.stringify({
                 type: 'CNAME',
                 name: `www.${domain}`,
-                content: `${portfolio.subdomain}.prisma.madfam.io`,
+                content: `${portfolio.subdomain}.portfolio-builder.madfam.io`,
                 ttl: 300,
                 proxied: true,
               }),
@@ -255,13 +255,13 @@ export const POST = withErrorHandling(
           {
             type: 'CNAME',
             name: '@',
-            value: `${portfolio.subdomain}.prisma.madfam.io`,
+            value: `${portfolio.subdomain}.portfolio-builder.madfam.io`,
             ttl: '300',
           },
           {
             type: 'CNAME',
             name: 'www',
-            value: `${portfolio.subdomain}.prisma.madfam.io`,
+            value: `${portfolio.subdomain}.portfolio-builder.madfam.io`,
             ttl: '300',
           },
         ],

@@ -1,6 +1,6 @@
 # 🔧 Harmonization & Stabilization Action Plan
 
-**Project**: PRISMA by MADFAM - AI Portfolio Builder  
+**Project**: Portfolio Builder by MADFAM - AI Portfolio Builder  
 **Created**: June 13, 2025  
 **Target**: 100/100 Codebase Health Score  
 **Timeline**: 6 weeks

@@ -16,6 +16,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * Response compression and caching headers
@@ -186,8 +187,7 @@ export function withQueryOptimization<
         return response;
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Cache read error:', error);
+      logger.error('Cache read error', error instanceof Error ? error : new Error(String(error)));
     }
 
     // Execute handler and cache result
@@ -199,8 +199,7 @@ export function withQueryOptimization<
         setCache(cacheKey, responseData, cacheTTL);
         response.headers.set('X-Cache', 'MISS');
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Cache write error:', error);
+        logger.error('Cache write error', error instanceof Error ? error : new Error(String(error)));
       }
     }
 
@@ -374,14 +373,12 @@ export function trackPerformanceMetrics(
 
   // Log performance metrics (in production, send to analytics service)
   if (process.env.NODE_ENV === 'development') {
-    // eslint-disable-next-line no-console
-    console.log(`Performance: ${operation} took ${duration}ms`, additionalData);
+    logger.info(`Performance: ${operation} took ${duration}ms`, additionalData);
   }
 
   // Track slow operations
   if (duration > 1000) {
-    // eslint-disable-next-line no-console
-    console.warn(
+    logger.warn(
       `Slow operation detected: ${operation} took ${duration}ms`,
       additionalData
     );

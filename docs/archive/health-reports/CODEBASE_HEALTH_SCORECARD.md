@@ -1,6 +1,6 @@
 # 📊 Codebase Health Scorecard
 
-## PRISMA by MADFAM - AI Portfolio Builder
+## Portfolio Builder by MADFAM - AI Portfolio Builder
 
 **Generated**: June 11, 2025  
 **Version**: 0.2.0-beta  

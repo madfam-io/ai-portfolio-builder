@@ -161,7 +161,7 @@ export function PreviewStep({
                 <span className="text-sm font-mono text-gray-600 dark:text-gray-400">
                   https://
                   {portfolio.name.toLowerCase().replace(/\s+/g, '')}
-                  .prisma.madfam.io
+                  .portfolio-builder.madfam.io
                 </span>
               </div>
               <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">

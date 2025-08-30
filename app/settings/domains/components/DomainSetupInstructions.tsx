@@ -210,7 +210,7 @@ export function DomainSetupInstructions({
 
                   <div className="ml-10 space-y-3">
                     <p className="text-sm text-muted-foreground">
-                      {`Point your domain to PRISMA's servers`}
+                      {`Point your domain to Portfolio Builder's servers`}
                     </p>
 
                     <div className="grid gap-3">
@@ -258,7 +258,7 @@ export function DomainSetupInstructions({
                             Value/Target
                           </p>
                           <p className="font-mono font-medium">
-                            portfolios.prisma.madfam.io
+                            portfolios.portfolio-builder.madfam.io
                           </p>
                         </div>
                         <Button
@@ -266,7 +266,7 @@ export function DomainSetupInstructions({
                           size="icon"
                           onClick={() =>
                             copyToClipboard(
-                              'portfolios.prisma.madfam.io',
+                              'portfolios.portfolio-builder.madfam.io',
                               'CNAME Value'
                             )
                           }

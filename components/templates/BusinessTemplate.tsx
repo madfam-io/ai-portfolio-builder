@@ -58,7 +58,7 @@ import { Portfolio } from '@/types/portfolio';
  * Color Scheme: Navy blue and gray with gold accents
  * Target Audience: Business executives, consultants, entrepreneurs, corporate professionals
  *
- * @author PRISMA Development Team
+ * @author Portfolio Builder Development Team
  * @version 1.0.0
  */
 
@@ -568,7 +568,7 @@ export function BusinessTemplate({ portfolio }: BusinessTemplateProps) {
               Excellence
             </p>
             <p className="text-sm">
-              Professional portfolio powered by PRISMA Portfolio Builder
+              Professional portfolio powered by Portfolio Builder Portfolio Builder
             </p>
           </div>
         </footer>

@@ -1,8 +1,8 @@
-# 🤖 Claude AI Assistant Guide - PRISMA Portfolio Builder
+# 🤖 Claude AI Assistant Guide - Portfolio Builder
 
 ## Quick Overview
 
-You are working on **PRISMA by MADFAM**, an AI-powered SaaS platform that enables professionals to create stunning portfolio websites in under 30 minutes. This is a sophisticated, production-ready platform with enterprise-grade architecture.
+You are working on **Portfolio Builder by MADFAM**, an AI-powered SaaS platform that enables professionals to create stunning portfolio websites in under 30 minutes. This is a sophisticated, production-ready platform with enterprise-grade architecture.
 
 ### Current Status (June 22, 2025)
 - **Version**: 0.4.0-beta (DEPLOYMENT READY ✅)

@@ -53,7 +53,7 @@ export default {
   // Welcome message
   adminWelcomeBack: 'Welcome back, {name}!',
   adminCurrentlyViewing:
-    "You are currently viewing PRISMA from a user's perspective.",
+    "You are currently viewing Portfolio Builder from a user's perspective.",
 
   // Status values
   adminStatusActive: 'active',

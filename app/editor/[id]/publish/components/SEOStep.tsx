@@ -137,7 +137,7 @@ export function SEOStep({
               {publishData.seo.title || currentPortfolio?.name}
             </p>
             <p className="text-sm text-green-600">
-              https://{publishData.subdomain}.prisma.madfam.io
+              https://{publishData.subdomain}.portfolio-builder.madfam.io
             </p>
             <p className="text-sm text-muted-foreground">
               {publishData.seo.description ||

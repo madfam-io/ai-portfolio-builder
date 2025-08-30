@@ -341,8 +341,8 @@ performance.measure(
   uses: treosh/lighthouse-ci-action@v9
   with:
     urls: |
-      https://prisma.madfam.io
-      https://prisma.madfam.io/templates
+      https://portfolio-builder.madfam.io
+      https://portfolio-builder.madfam.io/templates
     budgetPath: ./lighthouse-budget.json
 ```
 

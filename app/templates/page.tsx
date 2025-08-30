@@ -68,7 +68,7 @@ const PREMIUM_TEMPLATES: PremiumTemplate[] = [
     rating: 4.9,
     isNew: true,
     isPremium: true,
-    author: 'PRISMA Elite',
+    author: 'Portfolio Builder Elite',
   },
   {
     id: 'startup-founder',
@@ -88,7 +88,7 @@ const PREMIUM_TEMPLATES: PremiumTemplate[] = [
     downloads: 890,
     rating: 4.8,
     isPremium: true,
-    author: 'PRISMA Elite',
+    author: 'Portfolio Builder Elite',
   },
   {
     id: 'creative-director',
@@ -108,7 +108,7 @@ const PREMIUM_TEMPLATES: PremiumTemplate[] = [
     downloads: 2100,
     rating: 4.9,
     isPremium: true,
-    author: 'PRISMA Elite',
+    author: 'Portfolio Builder Elite',
   },
   {
     id: 'tech-innovator',
@@ -128,7 +128,7 @@ const PREMIUM_TEMPLATES: PremiumTemplate[] = [
     downloads: 1560,
     rating: 4.7,
     isPremium: true,
-    author: 'PRISMA Elite',
+    author: 'Portfolio Builder Elite',
   },
   {
     id: 'agency-pro',
@@ -149,7 +149,7 @@ const PREMIUM_TEMPLATES: PremiumTemplate[] = [
     rating: 4.8,
     isNew: true,
     isPremium: true,
-    author: 'PRISMA Elite',
+    author: 'Portfolio Builder Elite',
   },
   {
     id: 'academic-scholar',
@@ -169,7 +169,7 @@ const PREMIUM_TEMPLATES: PremiumTemplate[] = [
     downloads: 620,
     rating: 4.6,
     isPremium: true,
-    author: 'PRISMA Elite',
+    author: 'Portfolio Builder Elite',
   },
 ];
 

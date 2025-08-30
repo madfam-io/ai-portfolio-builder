@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎭 PRISMA by MADFAM
+# 🎭 Portfolio Builder by MADFAM
 
 **AI-Powered Portfolio Builder for Modern Professionals**
 
@@ -1370,9 +1370,9 @@ See [LICENSE.md](./LICENSE.md) for full terms. Additional information available 
 
 #### **📞 Contact Channels**
 
-- **📧 Email**: hello@prisma.madfam.io
+- **📧 Email**: hello@portfolio-builder.madfam.io
 - **🐙 GitHub**: [ai-portfolio-builder](https://github.com/aldoruizluna/labspace/ai-portfolio-builder)
-- **🌐 Website**: [prisma.madfam.io](https://prisma.madfam.io)
+- **🌐 Website**: [prisma.madfam.io](https://portfolio-builder.madfam.io)
 - **📋 Issues**: [Project Issues](https://github.com/aldoruizluna/labspace/ai-portfolio-builder/issues)
 
 </td>
@@ -1404,10 +1404,10 @@ See [LICENSE.md](./LICENSE.md) for full terms. Additional information available 
 
 ## 🌟 **Built with ❤️ by the MADFAM Team**
 
-**PRISMA - Professional portfolios powered by AI**
+**Portfolio Builder - Professional portfolios powered by AI**
 
 [![MADFAM](https://img.shields.io/badge/MADFAM-Team-purple.svg)](https://madfam.io)
-[![PRISMA](https://img.shields.io/badge/PRISMA-Portfolio_Builder-blue.svg)](https://prisma.madfam.io)
+[![Portfolio Builder](https://img.shields.io/badge/Portfolio_Builder-AI_Powered-blue.svg)](https://portfolio-builder.madfam.io)
 
 ---
 

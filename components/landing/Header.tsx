@@ -58,14 +58,14 @@ export default function Header(): React.ReactElement {
           <Link href="/" className="flex items-center space-x-3">
             <Image
               src="/prisma-logo.png"
-              alt="PRISMA Logo"
+              alt="Portfolio Builder Logo"
               width={32}
               height={32}
               className="w-8 h-8"
             />
             <div className="flex flex-col">
               <span className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
-                PRISMA
+                Portfolio Builder
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 leading-tight">
                 by MADFAM

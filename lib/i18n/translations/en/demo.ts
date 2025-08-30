@@ -18,9 +18,9 @@
 
 export default {
   // Page titles
-  demoPageTitle: 'See PRISMA in Action',
+  demoPageTitle: 'See Portfolio Builder in Action',
   demoSubtitle:
-    'Watch how PRISMA transforms a simple resume into a stunning professional portfolio in under 3 minutes.',
+    'Watch how Portfolio Builder transforms a simple resume into a stunning professional portfolio in under 3 minutes.',
 
   // Demo options
   demoTryInteractive: 'Try Interactive Demo',
@@ -62,13 +62,13 @@ export default {
   // CTA
   demoReadyToCreate: 'Ready to Create Your Portfolio?',
   demoReadySubtitle:
-    'Join thousands of professionals who have transformed their careers with PRISMA.',
+    'Join thousands of professionals who have transformed their careers with Portfolio Builder.',
   demoStartFreeTrial: 'Start Free Trial',
   demoTryDemo: 'Try Interactive Demo',
 
   // Interactive Demo
   demoBackToDemo: 'Back to Demo',
-  demoPrismaInteractiveDemo: 'PRISMA Interactive Demo',
+  demoPrismaInteractiveDemo: 'Portfolio Builder Interactive Demo',
   demoTemplate: 'Template',
   demoEdit: 'Edit',
   demoPreview: 'Preview',
