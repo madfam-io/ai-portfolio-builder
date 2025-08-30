@@ -22,35 +22,38 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 export class Logger {
   private context: string;
   private level: LogLevel;
+  private silent: boolean;
 
   constructor(context: string, level: LogLevel = 'info') {
     this.context = context;
     this.level = level;
+    // Suppress console output in test environment
+    this.silent = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
   }
 
   debug(message: string, data?: any): void {
-    if (this.shouldLog('debug')) {
+    if (!this.silent && this.shouldLog('debug')) {
       // eslint-disable-next-line no-console
       console.debug(`[${this.context}] ${message}`, data);
     }
   }
 
   info(message: string, data?: any): void {
-    if (this.shouldLog('info')) {
+    if (!this.silent && this.shouldLog('info')) {
       // eslint-disable-next-line no-console
       console.info(`[${this.context}] ${message}`, data);
     }
   }
 
   warn(message: string, data?: any): void {
-    if (this.shouldLog('warn')) {
+    if (!this.silent && this.shouldLog('warn')) {
       // eslint-disable-next-line no-console
       console.warn(`[${this.context}] ${message}`, data);
     }
   }
 
   error(message: string, error?: Error | any): void {
-    if (this.shouldLog('error')) {
+    if (!this.silent && this.shouldLog('error')) {
       // eslint-disable-next-line no-console
       console.error(`[${this.context}] ${message}`, error);
     }
