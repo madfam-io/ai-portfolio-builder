@@ -48,10 +48,10 @@ export async function POST(request: Request) {
         .lt('updated_at', thirtyDaysAgo.toISOString())
         .then(result => ({
           task: 'expired_sessions',
-          deleted: result.data?.length || 0,
+          deleted: result.count || 0,
           error: result.error,
         }))
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'expired_sessions',
           deleted: 0,
           error,
@@ -70,10 +70,10 @@ export async function POST(request: Request) {
         .lt('updated_at', ninetyDaysAgo.toISOString())
         .then(result => ({
           task: 'orphaned_drafts',
-          deleted: result.data?.length || 0,
+          deleted: result.count || 0,
           error: result.error,
         }))
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'orphaned_drafts',
           deleted: 0,
           error,
@@ -91,10 +91,10 @@ export async function POST(request: Request) {
         .lt('created_at', sixMonthsAgo.toISOString())
         .then(result => ({
           task: 'old_analytics',
-          deleted: result.data?.length || 0,
+          deleted: result.count || 0,
           error: result.error,
         }))
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'old_analytics',
           deleted: 0,
           error,
@@ -113,10 +113,10 @@ export async function POST(request: Request) {
         .lt('created_at', sixtyDaysAgo.toISOString())
         .then(result => ({
           task: 'failed_payments',
-          deleted: result.data?.length || 0,
+          deleted: result.count || 0,
           error: result.error,
         }))
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'failed_payments',
           deleted: 0,
           error,

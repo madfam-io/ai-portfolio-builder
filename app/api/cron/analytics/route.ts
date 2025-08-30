@@ -56,18 +56,27 @@ export async function POST(request: Request) {
           });
 
           // Update portfolio statistics
-          const updates = Object.entries(viewCounts).map(
-            ([portfolioId, count]) =>
-              supabase
+          await Promise.all(
+            Object.entries(viewCounts).map(async ([portfolioId, count]) => {
+              // First, get the current total_views
+              const { data: currentData } = await supabase
+                .from('portfolios')
+                .select('total_views')
+                .eq('id', portfolioId)
+                .single();
+
+              const currentViews = currentData?.total_views || 0;
+
+              // Then update with the new total
+              return supabase
                 .from('portfolios')
                 .update({
-                  total_views: supabase.raw(`total_views + ${count}`),
+                  total_views: currentViews + count,
                   views_last_6h: count,
                 })
-                .eq('id', portfolioId)
+                .eq('id', portfolioId);
+            })
           );
-
-          await Promise.all(updates);
 
           return {
             task: 'portfolio_views',
@@ -75,7 +84,7 @@ export async function POST(request: Request) {
             totalViews: Object.values(viewCounts).reduce((a, b) => a + b, 0),
           };
         })
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'portfolio_views',
           processed: 0,
           error,
@@ -117,7 +126,7 @@ export async function POST(request: Request) {
             totalActions: result.data?.length || 0,
           };
         })
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'user_engagement',
           processed: 0,
           error,
@@ -169,7 +178,7 @@ export async function POST(request: Request) {
             totalRevenue: revenue.total,
           };
         })
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'revenue_analytics',
           processed: 0,
           error,
@@ -236,7 +245,7 @@ export async function POST(request: Request) {
             metrics,
           };
         })
-        .catch(error => ({
+        .catch((error: any) => ({
           task: 'conversion_funnel',
           processed: 0,
           error,
