@@ -12,7 +12,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 import { kv } from '@vercel/kv';
 
@@ -27,54 +27,48 @@ export async function POST(request: Request) {
 
     logger.info('Starting analytics aggregation cron job');
 
-    const supabase = await createClient();
-    if (!supabase) {
-      logger.error('Supabase client not available');
-      return NextResponse.json(
-        { error: 'Database unavailable' },
-        { status: 503 }
-      );
-    }
-
     const aggregationTasks = [];
     const now = new Date();
     const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
 
     // 1. Aggregate portfolio views
     aggregationTasks.push(
-      supabase
-        .from('portfolio_views')
-        .select('portfolio_id, count')
-        .gte('created_at', sixHoursAgo.toISOString())
+      prisma.portfolioView.findMany({
+        where: {
+          createdAt: {
+            gte: sixHoursAgo,
+          },
+        },
+        select: {
+          portfolioId: true,
+        },
+      })
         .then(async result => {
-          if (result.error) throw result.error;
-
           const viewCounts: Record<string, number> = {};
-          result.data?.forEach(view => {
-            viewCounts[view.portfolio_id] =
-              (viewCounts[view.portfolio_id] || 0) + 1;
+          result.forEach(view => {
+            viewCounts[view.portfolioId] =
+              (viewCounts[view.portfolioId] || 0) + 1;
           });
 
           // Update portfolio statistics
           await Promise.all(
             Object.entries(viewCounts).map(async ([portfolioId, count]) => {
               // First, get the current total_views
-              const { data: currentData } = await supabase
-                .from('portfolios')
-                .select('total_views')
-                .eq('id', portfolioId)
-                .single();
+              const currentData = await prisma.portfolio.findUnique({
+                where: { id: portfolioId },
+                select: { totalViews: true },
+              });
 
-              const currentViews = currentData?.total_views || 0;
+              const currentViews = currentData?.totalViews || 0;
 
               // Then update with the new total
-              return supabase
-                .from('portfolios')
-                .update({
-                  total_views: currentViews + count,
-                  views_last_6h: count,
-                })
-                .eq('id', portfolioId);
+              return prisma.portfolio.update({
+                where: { id: portfolioId },
+                data: {
+                  totalViews: currentViews + count,
+                  viewsLast6h: count,
+                },
+              });
             })
           );
 
@@ -93,22 +87,28 @@ export async function POST(request: Request) {
 
     // 2. Calculate user engagement metrics
     aggregationTasks.push(
-      supabase
-        .from('user_activities')
-        .select('user_id, action, created_at')
-        .gte('created_at', sixHoursAgo.toISOString())
+      prisma.userActivity.findMany({
+        where: {
+          createdAt: {
+            gte: sixHoursAgo,
+          },
+        },
+        select: {
+          userId: true,
+          action: true,
+          createdAt: true,
+        },
+      })
         .then(async result => {
-          if (result.error) throw result.error;
-
           const userMetrics: Record<string, any> = {};
-          result.data?.forEach(activity => {
-            if (!userMetrics[activity.user_id]) {
-              userMetrics[activity.user_id] = {
+          result.forEach(activity => {
+            if (!userMetrics[activity.userId]) {
+              userMetrics[activity.userId] = {
                 actions: [],
-                lastActive: activity.created_at,
+                lastActive: activity.createdAt,
               };
             }
-            userMetrics[activity.user_id].actions.push(activity.action);
+            userMetrics[activity.userId].actions.push(activity.action);
           });
 
           // Cache metrics in Redis/KV
@@ -123,7 +123,7 @@ export async function POST(request: Request) {
           return {
             task: 'user_engagement',
             processed: Object.keys(userMetrics).length,
-            totalActions: result.data?.length || 0,
+            totalActions: result.length,
           };
         })
         .catch((error: any) => ({
@@ -135,36 +135,45 @@ export async function POST(request: Request) {
 
     // 3. Generate revenue analytics
     aggregationTasks.push(
-      supabase
-        .from('payments')
-        .select('amount, currency, status, created_at')
-        .gte('created_at', sixHoursAgo.toISOString())
-        .eq('status', 'succeeded')
+      prisma.payment.findMany({
+        where: {
+          createdAt: {
+            gte: sixHoursAgo,
+          },
+          status: 'SUCCEEDED',
+        },
+        select: {
+          amount: true,
+          currency: true,
+          status: true,
+          createdAt: true,
+        },
+      })
         .then(async result => {
-          if (result.error) throw result.error;
-
           const revenue = {
             total: 0,
             byHour: {} as Record<string, number>,
             byCurrency: {} as Record<string, number>,
-            count: result.data?.length || 0,
+            count: result.length,
           };
 
-          result.data?.forEach(payment => {
+          result.forEach(payment => {
             revenue.total += payment.amount;
-            const hour = new Date(payment.created_at).getHours();
+            const hour = new Date(payment.createdAt).getHours();
             revenue.byHour[hour] = (revenue.byHour[hour] || 0) + payment.amount;
             revenue.byCurrency[payment.currency] =
               (revenue.byCurrency[payment.currency] || 0) + payment.amount;
           });
 
           // Store in analytics table
-          await supabase.from('revenue_analytics').insert({
-            period_start: sixHoursAgo,
-            period_end: now,
-            total_revenue: revenue.total,
-            transaction_count: revenue.count,
-            metrics: revenue,
+          await prisma.revenueAnalytics.create({
+            data: {
+              periodStart: sixHoursAgo,
+              periodEnd: now,
+              totalRevenue: revenue.total,
+              transactionCount: revenue.count,
+              metrics: revenue,
+            },
           });
 
           // Cache current revenue metrics
@@ -187,13 +196,19 @@ export async function POST(request: Request) {
 
     // 4. Calculate conversion funnel metrics
     aggregationTasks.push(
-      supabase
-        .from('funnel_events')
-        .select('event_type, user_id, created_at')
-        .gte('created_at', sixHoursAgo.toISOString())
+      prisma.funnelEvent.findMany({
+        where: {
+          createdAt: {
+            gte: sixHoursAgo,
+          },
+        },
+        select: {
+          eventType: true,
+          userId: true,
+          createdAt: true,
+        },
+      })
         .then(async result => {
-          if (result.error) throw result.error;
-
           const funnel = {
             visitors: new Set(),
             signups: new Set(),
@@ -202,22 +217,22 @@ export async function POST(request: Request) {
             paid: new Set(),
           };
 
-          result.data?.forEach(event => {
-            switch (event.event_type) {
-              case 'page_view':
-                funnel.visitors.add(event.user_id);
+          result.forEach(event => {
+            switch (event.eventType) {
+              case 'PAGE_VIEW':
+                funnel.visitors.add(event.userId);
                 break;
-              case 'signup':
-                funnel.signups.add(event.user_id);
+              case 'SIGNUP':
+                funnel.signups.add(event.userId);
                 break;
-              case 'portfolio_created':
-                funnel.created_portfolio.add(event.user_id);
+              case 'PORTFOLIO_CREATED':
+                funnel.created_portfolio.add(event.userId);
                 break;
-              case 'portfolio_published':
-                funnel.published.add(event.user_id);
+              case 'PORTFOLIO_PUBLISHED':
+                funnel.published.add(event.userId);
                 break;
-              case 'payment_completed':
-                funnel.paid.add(event.user_id);
+              case 'PAYMENT_COMPLETED':
+                funnel.paid.add(event.userId);
                 break;
             }
           });
@@ -241,7 +256,7 @@ export async function POST(request: Request) {
 
           return {
             task: 'conversion_funnel',
-            processed: result.data?.length || 0,
+            processed: result.length,
             metrics,
           };
         })

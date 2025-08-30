@@ -13,7 +13,8 @@
 
 import { type Metadata } from 'next';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { redirect } from 'next/navigation';
 import {
   Card,
@@ -41,26 +42,19 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminOverviewPage() {
-  const supabase = await createClient();
-
-  if (!supabase) {
-    redirect('/auth/signin');
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) {
     redirect('/auth/signin');
   }
 
   // Check if user has admin role
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const profile = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      role: true,
+    },
+  });
 
   if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
     redirect('/dashboard');
@@ -68,16 +62,19 @@ export default async function AdminOverviewPage() {
 
   // Get quick stats
   const [
-    { count: totalUsers },
-    { count: activeSubscriptions },
-    { count: totalPortfolios },
+    totalUsers,
+    activeSubscriptions,
+    totalPortfolios,
   ] = await Promise.all([
-    supabase.from('users').select('*', { count: 'exact', head: true }),
-    supabase
-      .from('subscriptions')
-      .select('*', { count: 'exact', head: true })
-      .in('status', ['active', 'trialing']),
-    supabase.from('portfolios').select('*', { count: 'exact', head: true }),
+    prisma.user.count(),
+    prisma.subscription.count({
+      where: {
+        status: {
+          in: ['ACTIVE', 'TRIALING'],
+        },
+      },
+    }),
+    prisma.portfolio.count(),
   ]);
 
   const quickActions = [

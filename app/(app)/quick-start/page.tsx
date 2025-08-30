@@ -20,8 +20,8 @@
 import { type Metadata } from 'next';
 import { QuickStartGallery } from '@/components/demo/QuickStartGallery';
 import { QuickStartHeader } from '@/components/demo/QuickStartHeader';
-import { createClient } from '@/lib/supabase/server';
-// import { redirect } from 'next/navigation'; // Currently unused
+import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 
 export const metadata: Metadata = {
   title: 'Quick Start - Choose Your Template | Portfolio Builder',
@@ -31,28 +31,24 @@ export const metadata: Metadata = {
 
 export default async function QuickStartPage() {
   // Check if user is authenticated
-  const supabase = await createClient();
-  if (!supabase) {
-    return null;
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   // Get user profile for recommendations
   let userProfile;
   if (user) {
-    const { data: profile } = await supabase
-      .from('users')
-      .select('industry, experience_level, goals')
-      .eq('id', user.id)
-      .single();
+    const profile = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        industry: true,
+        experienceLevel: true,
+        goals: true,
+      },
+    });
 
     userProfile = profile
       ? {
           industry: profile.industry,
-          experience: profile.experience_level,
+          experience: profile.experienceLevel,
           goals: profile.goals,
         }
       : undefined;

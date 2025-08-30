@@ -14,7 +14,8 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import {
   BarChart3,
   Users,
@@ -40,26 +41,19 @@ interface AdminLayoutProps {
 
 export default async function AdminLayout({ children }: AdminLayoutProps) {
   // Check authentication and admin role
-  const supabase = await createClient();
-
-  if (!supabase) {
-    redirect('/auth/signin');
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) {
     redirect('/auth/signin');
   }
 
   // Check if user has admin role
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const profile = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      role: true,
+    },
+  });
 
   if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
     redirect('/dashboard');

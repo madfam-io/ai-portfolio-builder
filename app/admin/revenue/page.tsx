@@ -13,7 +13,8 @@
 
 import { type Metadata } from 'next';
 import { RevenueAnalytics } from '@/components/dashboard/revenue-analytics';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -23,28 +24,21 @@ export const metadata: Metadata = {
 
 export default async function AdminRevenuePage() {
   // Check authentication and admin role
-  const supabase = await createClient();
-
-  if (!supabase) {
-    redirect('/auth/signin');
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) {
     redirect('/auth/signin');
   }
 
   // Check if user has admin role
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const profile = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      role: true,
+    },
+  });
 
-  if (profile?.role !== 'admin') {
+  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
     redirect('/dashboard');
   }
 
