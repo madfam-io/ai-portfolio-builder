@@ -53,28 +53,24 @@ export async function GET(): Promise<Response> {
     }
 
     // Get user's model preferences from database
-    const { data: preferences, error } = await supabase
-      .from('user_model_preferences')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116 = no rows returned
-      throw error;
-    }
+    const preferences = await prisma.userModelPreferences.findUnique({
+      where: { userId: user.id },
+    });
 
     // Return user preferences or defaults
-    const modelSelection =
-      preferences?.preferences !== undefined &&
-      preferences?.preferences !== null
-        ? preferences.preferences
-        : {
-            bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-            project: 'microsoft/Phi-3.5-mini-instruct',
-            template: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-            scoring: 'microsoft/DialoGPT-medium',
-          };
+    const modelSelection = preferences
+      ? {
+          bio: preferences.bio,
+          project: preferences.project,
+          template: preferences.template,
+          scoring: preferences.scoring,
+        }
+      : {
+          bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+          project: 'microsoft/Phi-3.5-mini-instruct',
+          template: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+          scoring: 'microsoft/DialoGPT-medium',
+        };
 
     return NextResponse.json({
       success: true,
@@ -123,37 +119,31 @@ export async function PUT(request: NextRequest): Promise<Response> {
 
     const { taskType, modelId } = validationResult.data;
 
-    // Get current preferences
-    const { data: currentPreferences } = await supabase
-      .from('user_model_preferences')
-      .select('preferences')
-      .eq('user_id', user.id)
-      .single();
-
-    // Update the specific task type
-    const updatedPreferences = {
-      ...(currentPreferences?.preferences !== undefined &&
-      currentPreferences?.preferences !== null
-        ? currentPreferences.preferences
-        : {}),
+    // Prepare update data based on task type
+    const updateData: Record<string, any> = {
       [taskType]: modelId,
+      updatedAt: new Date(),
     };
 
     // Upsert the preferences
-    const { error } = await supabase.from('user_model_preferences').upsert(
-      {
-        user_id: user.id,
-        preferences: updatedPreferences,
-        updated_at: new Date().toISOString(),
+    const updatedPreferences = await prisma.userModelPreferences.upsert({
+      where: { userId: user.id },
+      update: updateData,
+      create: {
+        userId: user.id,
+        bio:
+          taskType === 'bio'
+            ? modelId
+            : 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+        project:
+          taskType === 'project' ? modelId : 'microsoft/Phi-3.5-mini-instruct',
+        template:
+          taskType === 'template'
+            ? modelId
+            : 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+        scoring: taskType === 'scoring' ? modelId : 'microsoft/DialoGPT-medium',
       },
-      {
-        onConflict: 'user_id',
-      }
-    );
-
-    if (error) {
-      throw error;
-    }
+    });
 
     // Log the model selection change for analytics
     await logModelSelection(user.id, taskType, modelId);
@@ -163,7 +153,12 @@ export async function PUT(request: NextRequest): Promise<Response> {
       data: {
         taskType,
         modelId,
-        preferences: updatedPreferences,
+        preferences: {
+          bio: updatedPreferences.bio,
+          project: updatedPreferences.project,
+          template: updatedPreferences.template,
+          scoring: updatedPreferences.scoring,
+        },
       },
     });
   } catch (error) {

@@ -55,6 +55,7 @@ model User {
   referredBy         Referral? @relation("ReferredUsers")
   githubIntegrations GitHubIntegration[]
   customDomains      CustomDomain[]
+  modelPreferences   UserModelPreferences?
 }
 
 // Account model for OAuth providers
@@ -586,4 +587,25 @@ model ExperimentTemplate {
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// User Model Preferences for AI
+model UserModelPreferences {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  
+  // Model preferences by task type
+  bio         String   @default("meta-llama/Meta-Llama-3.1-8B-Instruct")
+  project     String   @default("microsoft/Phi-3.5-mini-instruct")
+  template    String   @default("meta-llama/Meta-Llama-3.1-8B-Instruct")
+  scoring     String   @default("microsoft/DialoGPT-medium")
+  
+  // Additional preferences as JSON
+  preferences Json     @default("{}")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

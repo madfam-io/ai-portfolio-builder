@@ -12,7 +12,7 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@supabase/supabase-js';
+import { getCurrentUser } from '@/lib/auth/session';
 import { withErrorHandling } from '@/lib/api/middleware/error-handler';
 import { logger } from '@/lib/utils/logger';
 
@@ -104,7 +104,7 @@ export const GET = withErrorHandling(
             return records.some((record: string) =>
               record.includes(expectedTarget)
             );
-          } catch (_e) {
+          } catch {
             // Try www subdomain
             try {
               const wwwRecords = await dnsModule.resolveCname(
@@ -113,7 +113,7 @@ export const GET = withErrorHandling(
               return wwwRecords.some((record: string) =>
                 record.includes(expectedTarget)
               );
-            } catch (_e) {
+            } catch {
               return false;
             }
           }

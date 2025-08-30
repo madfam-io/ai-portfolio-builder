@@ -13,7 +13,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { getCurrentUser } from '@supabase/supabase-js';
+import { getCurrentUser } from '@/lib/auth/session';
 import { withErrorHandling } from '@/lib/api/middleware/error-handler';
 import { logger } from '@/lib/utils/logger';
 

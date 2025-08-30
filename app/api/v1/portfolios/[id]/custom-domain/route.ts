@@ -12,7 +12,7 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@supabase/supabase-js';
+import { getCurrentUser } from '@/lib/auth/session';
 import { withErrorHandling } from '@/lib/api/middleware/error-handler';
 import { logger } from '@/lib/utils/logger';
 
@@ -61,7 +61,7 @@ async function verifyDomain(
         pointsToUs: hasCorrectCNAME || wwwPointsToUs,
         sslStatus: 'pending',
       };
-    } catch (_error) {
+    } catch {
       // DNS lookup failed - domain might not have CNAME records yet
       return {
         isValid: false,
