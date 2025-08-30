@@ -1,13 +1,4 @@
 {
-  "functions": {
-    "app/**/*.ts": {
-      "runtime": "@vercel/node@2"
-    },
-    "app/api/**/*.ts": {
-      "runtime": "@vercel/node@2",
-      "maxDuration": 30
-    }
-  },
   "buildCommand": "pnpm build",
   "devCommand": "pnpm dev",
   "installCommand": "pnpm install",
