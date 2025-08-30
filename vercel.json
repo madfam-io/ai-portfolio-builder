@@ -70,15 +70,5 @@
       "source": "/api/v1/(.*)",
       "destination": "/api/v1/$1"
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron/cleanup",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/analytics",
-      "schedule": "0 */6 * * *"
-    }
   ]
 }
