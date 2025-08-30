@@ -239,10 +239,10 @@ async function logGEOOptimization(
   metadata: Record<string, unknown>
 ): Promise<void> {
   try {
-    await prisma.geoOptimizationLog.create({
+    await prisma.aIUsageLog.create({
       data: {
         userId,
-        contentType,
+        operationType: `geo_optimization_${contentType}`,
         metadata: metadata as any,
       },
     });

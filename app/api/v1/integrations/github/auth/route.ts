@@ -57,11 +57,10 @@ export async function GET(): Promise<Response> {
 
     // Store state in database for validation on callback
     try {
-      await prisma.oAuthState.create({
+      await prisma.session.create({
         data: {
-          state,
+          sessionToken: state,
           userId: user.id,
-          provider: 'github',
           expiresAt: new Date(Date.now() + 10 * 60 * 1000),
         },
       });

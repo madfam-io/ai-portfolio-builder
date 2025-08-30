@@ -30,23 +30,18 @@ interface StateData {
 
 // Helper function to validate OAuth state
 async function validateOAuthState(state: string, userId: string) {
-  const oauthState = await prisma.oAuthState.findFirst({
+  const oauthState = await prisma.session.findFirst({
     where: {
-      state,
+      sessionToken: state,
       userId,
-      provider: 'github',
-      usedAt: null,
+      expiresAt: {
+        gt: new Date(),
+      },
     },
   });
 
   if (!oauthState) {
     logger.error('Invalid OAuth state', { state });
-    return null;
-  }
-
-  // Check if state has expired
-  if (new Date(oauthState.expiresAt) < new Date()) {
-    logger.error('OAuth state expired', { state });
     return null;
   }
 
@@ -152,7 +147,6 @@ async function storeGitHubIntegration(
       update: {
         githubUserId: githubUser.id.toString(),
         githubUsername: githubUser.login,
-        githubEmail: githubUser.email || null,
         avatarUrl: githubUser.avatar_url || null,
         encryptedAccessToken: encryptedToken.encrypted,
         accessTokenIv: encryptedToken.iv,
@@ -172,7 +166,6 @@ async function storeGitHubIntegration(
         userId: user.id,
         githubUserId: githubUser.id.toString(),
         githubUsername: githubUser.login,
-        githubEmail: githubUser.email || null,
         avatarUrl: githubUser.avatar_url || null,
         encryptedAccessToken: encryptedToken.encrypted,
         accessTokenIv: encryptedToken.iv,
@@ -189,6 +182,7 @@ async function storeGitHubIntegration(
         encryptionVersion: 1,
       },
     });
+    return null; // Success
   } catch (integrationError) {
     return integrationError;
   }
@@ -235,10 +229,9 @@ export async function GET(request: NextRequest): Promise<Response> {
       );
     }
 
-    // Mark state as used to prevent reuse
-    await prisma.oAuthState.update({
+    // Mark state as used to prevent reuse (delete it)
+    await prisma.session.delete({
       where: { id: oauthState.id },
-      data: { usedAt: new Date() },
     });
 
     // Exchange code for access token

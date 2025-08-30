@@ -60,13 +60,7 @@ export async function POST(): Promise<Response> {
       // Non-critical error, continue
     }
 
-    // Clean up any OAuth states
-    await prisma.oAuthState.deleteMany({
-      where: {
-        userId: user.id,
-        provider: 'github',
-      },
-    });
+    // Clean up any OAuth sessions (not needed since we use regular sessions)
 
     // Log analytics event
     try {

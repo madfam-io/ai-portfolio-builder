@@ -60,13 +60,15 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // Record the event using Prisma
-    await prisma.landingPageEvent.create({
+    await prisma.analyticsEvent.create({
       data: {
-        sessionId: visitorId,
-        experimentId: validatedData.experimentId,
-        variantId: validatedData.variantId,
-        eventType: validatedData.eventType,
-        eventData: validatedData.eventData || {},
+        eventType: `experiment_${validatedData.eventType}`,
+        eventData: {
+          sessionId: visitorId,
+          experimentId: validatedData.experimentId,
+          variantId: validatedData.variantId,
+          ...(validatedData.eventData || {}),
+        },
       },
     });
 
@@ -83,11 +85,13 @@ export async function POST(request: Request): Promise<Response> {
       });
 
       // Also update the visitor count if this is a new visitor
-      const existingVisitor = await prisma.landingPageEvent.findFirst({
+      const existingVisitor = await prisma.analyticsEvent.findFirst({
         where: {
-          sessionId: visitorId,
-          variantId: validatedData.variantId,
-          eventType: 'pageview',
+          eventType: 'experiment_pageview',
+          eventData: {
+            path: ['sessionId'],
+            equals: visitorId,
+          },
         },
       });
 

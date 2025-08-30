@@ -24,20 +24,18 @@ import { withAPMTracking } from '@/lib/monitoring/apm';
 /**
  * GET /api/v1/health - Comprehensive health check
  */
-export const GET = withErrorTracking(
-  withAPMTracking(async () => {
+export const GET = withAPMTracking(
+  withErrorTracking(async () => {
     return handleHealthCheck();
-  }),
-  'health-api'
+  }, 'health-api')
 );
 
 /**
  * HEAD /api/v1/health - Quick health check for load balancers
  */
-export const HEAD = withErrorTracking(
-  withAPMTracking(() => {
+export const HEAD = withAPMTracking(
+  withErrorTracking(() => {
     // Quick check without detailed response
     return new NextResponse(null, { status: 200 });
-  }),
-  'health-api'
+  }, 'health-api')
 );
