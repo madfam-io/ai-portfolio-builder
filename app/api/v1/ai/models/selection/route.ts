@@ -182,21 +182,16 @@ async function logModelSelection(
   modelId: string
 ): Promise<void> {
   try {
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      logger.error('Failed to create Supabase client for logging');
-      return;
-    }
-
-    await supabase.from('ai_usage_logs').insert({
-      user_id: userId,
-      operation_type: 'model_selection_change',
-      metadata: {
+    await prisma.aIUsageLog.create({
+      data: {
+        userId,
+        operationType: 'model_selection_change',
         taskType,
         modelId,
-        timestamp: new Date().toISOString(),
+        metadata: {
+          timestamp: new Date().toISOString(),
+        },
       },
-      created_at: new Date().toISOString(),
     });
   } catch (error) {
     logger.error(

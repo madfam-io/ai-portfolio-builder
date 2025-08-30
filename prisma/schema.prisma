@@ -56,6 +56,7 @@ model User {
   githubIntegrations GitHubIntegration[]
   customDomains      CustomDomain[]
   modelPreferences   UserModelPreferences?
+  aiUsageLogs        AIUsageLog[]
 }
 
 // Account model for OAuth providers
@@ -535,14 +536,26 @@ model UserActivity {
 
 // AI Usage Log
 model AIUsageLog {
-  id           String   @id @default(uuid())
-  userId       String
-  model        String
-  tokens       Int
-  cost         Float?
-  action       String
+  id            String   @id @default(uuid())
+  userId        String
+  model         String?
+  tokens        Int?
+  cost          Float?
+  action        String?
   
-  createdAt    DateTime @default(now())
+  // New fields for model selection tracking
+  operationType String?
+  taskType      String?
+  modelId       String?
+  metadata      Json     @default("{}")
+  
+  createdAt     DateTime @default(now())
+  
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([createdAt])
 }
 
 // Referral Reward
@@ -609,3 +622,4 @@ model UserModelPreferences {
   // Relations
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
