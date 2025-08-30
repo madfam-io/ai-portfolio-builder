@@ -15,7 +15,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -174,7 +174,7 @@ function transformAnalysisResults(
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },
@@ -255,7 +255,7 @@ export async function POST(request: NextRequest): Promise<Response> {
  */
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },

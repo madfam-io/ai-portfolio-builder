@@ -14,7 +14,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 const checkSubdomainSchema = z.object({
@@ -129,34 +129,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Check if subdomain exists in database
-    const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database service unavailable' },
-        { status: 503 }
-      );
-    }
-
-    const { data: existing, error } = await supabase
-      .from('portfolios')
-      .select('id')
-      .eq('subdomain', subdomain)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      logger.error('Error checking subdomain availability:', error as Error);
-      return NextResponse.json(
-        { error: 'Failed to check subdomain availability' },
-        { status: 500 }
-      );
-    }
+    const existing = await prisma.portfolio.findUnique({
+      where: { subdomain },
+      select: { id: true }
+    });
 
     const available = !existing;
 
     // Generate suggestions if not available
     let suggestions: string[] = [];
     if (!available) {
-      suggestions = await generateSuggestions(subdomain, supabase);
+      suggestions = await generateSuggestions(subdomain);
     }
 
     return NextResponse.json({
@@ -177,8 +160,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  * Generate alternative subdomain suggestions
  */
 async function generateSuggestions(
-  subdomain: string,
-  supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never
+  subdomain: string
 ): Promise<string[]> {
   const suggestions: string[] = [];
   const maxSuggestions = 5;
@@ -200,25 +182,13 @@ async function generateSuggestions(
   for (const variation of variations) {
     if (suggestions.length >= maxSuggestions) break;
 
-    try {
-      if (!supabase) {
-        continue;
-      }
+    const existing = await prisma.portfolio.findUnique({
+      where: { subdomain: variation },
+      select: { id: true }
+    });
 
-      const { data: existing } = await supabase
-        .from('portfolios')
-        .select('id')
-        .eq('subdomain', variation)
-        .single();
-
-      if (!existing) {
-        suggestions.push(variation);
-      }
-    } catch (error) {
-      // If error code is PGRST116, it means no record found, so it's available
-      if ((error as { code?: string })?.code === 'PGRST116') {
-        suggestions.push(variation);
-      }
+    if (!existing) {
+      suggestions.push(variation);
     }
   }
 

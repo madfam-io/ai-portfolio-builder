@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 import {
   type Portfolio,
@@ -29,19 +29,11 @@ import type { QueryOptions } from '@/lib/services/base';
  * Implements BaseRepository interface for consistent data access patterns
  */
 export class PortfolioRepository {
-  private supabase: any;
   private useMockData: boolean;
 
   constructor() {
     this.useMockData =
-      process.env.NODE_ENV === 'development' && !process.env.SUPABASE_URL;
-  }
-
-  private async getClient(): Promise<any> {
-    if (!this.supabase) {
-      this.supabase = await createClient();
-    }
-    return this.supabase;
+      process.env.NODE_ENV === 'development' && !process.env.DATABASE_URL;
   }
 
   /**
@@ -67,17 +59,10 @@ export class PortfolioRepository {
         return getMockPortfolios().filter(p => p.userId === userId);
       }
 
-      const client = await this.getClient();
-      const { data, error } = await client
-        .from('portfolios')
-        .select('*')
-        .eq('user_id', userId)
-        .order('updated_at', { ascending: false });
-
-      if (error) {
-        logger.error('Error fetching portfolios:', error as Error);
-        throw error;
-      }
+      const data = await prisma.portfolio.findMany({
+        where: { userId },
+        orderBy: { updatedAt: 'desc' }
+      });
 
       return data.map(PortfolioMapper.fromDatabase);
     } catch (error) {
@@ -95,18 +80,9 @@ export class PortfolioRepository {
         return getMockPortfolios().find(p => p.id === id) || null;
       }
 
-      const client = await this.getClient();
-      const { data, error } = await client
-        .from('portfolios')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (error) {
-        if (error.code === 'PGRST116') return null; // Not found
-        logger.error('Error fetching portfolio:', error as Error);
-        throw error;
-      }
+      const data = await prisma.portfolio.findUnique({
+        where: { id }
+      });
 
       return data ? PortfolioMapper.fromDatabase(data) : null;
     } catch (error) {
@@ -157,17 +133,9 @@ export class PortfolioRepository {
         updatedAt: new Date(),
       });
 
-      const client = await this.getClient();
-      const { data: created, error } = await client
-        .from('portfolios')
-        .insert(dbData)
-        .select()
-        .single();
-
-      if (error) {
-        logger.error('Error creating portfolio:', error as Error);
-        throw error;
-      }
+      const created = await prisma.portfolio.create({
+        data: dbData
+      });
 
       return PortfolioMapper.fromDatabase(created);
     } catch (error) {
@@ -195,19 +163,10 @@ export class PortfolioRepository {
         updatedAt: new Date(),
       });
 
-      const client = await this.getClient();
-      const { data: updated, error } = await client
-        .from('portfolios')
-        .update(dbData)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) {
-        if (error.code === 'PGRST116') return null; // Not found
-        logger.error('Error updating portfolio:', error as Error);
-        throw error;
-      }
+      const updated = await prisma.portfolio.update({
+        where: { id },
+        data: dbData
+      });
 
       return updated ? PortfolioMapper.fromDatabase(updated) : null;
     } catch (error) {
@@ -225,13 +184,9 @@ export class PortfolioRepository {
         return true;
       }
 
-      const client = await this.getClient();
-      const { error } = await client.from('portfolios').delete().eq('id', id);
-
-      if (error) {
-        logger.error('Error deleting portfolio:', error as Error);
-        throw error;
-      }
+      await prisma.portfolio.delete({
+        where: { id }
+      });
 
       return true;
     } catch (error) {
@@ -253,19 +208,12 @@ export class PortfolioRepository {
         );
       }
 
-      const client = await this.getClient();
-      const { data, error } = await client
-        .from('portfolios')
-        .select('*')
-        .eq('subdomain', subdomain)
-        .eq('status', 'published')
-        .single();
-
-      if (error) {
-        if (error.code === 'PGRST116') return null; // Not found
-        logger.error('Error fetching portfolio by subdomain:', error as Error);
-        throw error;
-      }
+      const data = await prisma.portfolio.findFirst({
+        where: { 
+          subdomain,
+          status: 'published'
+        }
+      });
 
       return data ? PortfolioMapper.fromDatabase(data) : null;
     } catch (error) {
@@ -290,17 +238,10 @@ export class PortfolioRepository {
         return !getMockPortfolios().some(p => p.subdomain === subdomain);
       }
 
-      const client = await this.getClient();
-      const { data, error } = await client
-        .from('portfolios')
-        .select('id')
-        .eq('subdomain', subdomain)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        logger.error('Error checking subdomain:', error as Error);
-        throw error;
-      }
+      const data = await prisma.portfolio.findFirst({
+        where: { subdomain },
+        select: { id: true }
+      });
 
       return !data;
     } catch (error) {
@@ -320,20 +261,15 @@ export class PortfolioRepository {
         );
       }
 
-      const client = await this.getClient();
-      const { data, error } = await client
-        .from('portfolios')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('published', true)
-        .order('updated_at', { ascending: false });
+      const data = await prisma.portfolio.findMany({
+        where: { 
+          userId,
+          status: 'published'
+        },
+        orderBy: { updatedAt: 'desc' }
+      });
 
-      if (error) {
-        logger.error('Error fetching published portfolios:', error as Error);
-        throw error;
-      }
-
-      return data ? data.map(PortfolioMapper.fromDatabase) : [];
+      return data.map(PortfolioMapper.fromDatabase);
     } catch (error) {
       logger.error('Repository error in findPublished:', error as Error);
       throw error;
@@ -347,15 +283,14 @@ export class PortfolioRepository {
     try {
       if (this.useMockData) return;
 
-      const client = await this.getClient();
-      const { error } = await client.rpc('increment_portfolio_views', {
-        portfolio_id: id,
+      await prisma.portfolio.update({
+        where: { id },
+        data: {
+          views: {
+            increment: 1
+          }
+        }
       });
-
-      if (error) {
-        logger.error('Error incrementing views:', error as Error);
-        throw error;
-      }
     } catch (error) {
       logger.error('Repository error in incrementViews:', error as Error);
       throw error;

@@ -19,6 +19,12 @@ model User {
   name              String?
   image             String?
   
+  // User profile fields
+  role              UserRole  @default(USER)
+  industry          String?
+  experienceLevel   String?
+  goals             String[]  @default([])
+  
   // Subscription info
   subscriptionTier    SubscriptionTier @default(FREE)
   subscriptionStatus  SubscriptionStatus @default(ACTIVE)
@@ -47,6 +53,8 @@ model User {
   payments           Payment[]
   referrals          Referral[]
   referredBy         Referral? @relation("ReferredUsers")
+  githubIntegrations GitHubIntegration[]
+  customDomains      CustomDomain[]
 }
 
 // Account model for OAuth providers
@@ -396,4 +404,186 @@ enum FunnelEventType {
   PORTFOLIO_CREATED
   PORTFOLIO_PUBLISHED
   PAYMENT_COMPLETED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum DomainStatus {
+  PENDING
+  VERIFIED
+  FAILED
+}
+
+// GitHub Integration
+model GitHubIntegration {
+  id              String   @id @default(uuid())
+  userId          String
+  
+  accessToken     String
+  refreshToken    String?
+  expiresAt       DateTime?
+  
+  githubUserId    String
+  githubUsername  String
+  
+  lastSyncedAt    DateTime?
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId])
+}
+
+// Custom Domain
+model CustomDomain {
+  id                    String   @id @default(uuid())
+  userId                String
+  domain                String   @unique
+  
+  verificationToken     String
+  verificationStatus    DomainStatus @default(PENDING)
+  dnsConfigured         Boolean  @default(false)
+  verifiedAt            DateTime?
+  dnsLastCheckedAt      DateTime?
+  verificationAttempts  Int      @default(0)
+  lastVerificationAt    DateTime?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verificationLogs      DomainVerificationLog[]
+}
+
+// Domain Verification Log
+model DomainVerificationLog {
+  id               String   @id @default(uuid())
+  domainId         String
+  
+  verificationType String
+  status           String
+  dnsRecords       Json?
+  expectedValue    String?
+  actualValue      String?
+  errorCode        String?
+  errorMessage     String?
+  
+  createdAt        DateTime @default(now())
+  
+  domain           CustomDomain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+}
+
+// Landing Page Experiments
+model LandingPageExperiment {
+  id                  String   @id @default(uuid())
+  name                String
+  description         String?
+  hypothesis          String?
+  status              String   @default("draft")
+  traffic_percentage  Int      @default(100)
+  target_audience     Json     @default("{}")
+  primary_metric      String
+  secondary_metrics   String[] @default([])
+  start_date          String?
+  end_date            String?
+  created_by          String
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  variants            LandingPageVariant[]
+}
+
+// Landing Page Variants
+model LandingPageVariant {
+  id                    String  @id @default(uuid())
+  experimentId          String  @map("experiment_id")
+  name                  String
+  description           String?
+  isControl             Boolean @map("is_control") @default(false)
+  trafficPercentage     Int     @map("traffic_percentage")
+  components            Json    @default("[]")
+  themeOverrides        Json    @map("theme_overrides") @default("{}")
+  visitorCount          Int     @map("visitor_count") @default(0)
+  conversionCount       Int     @map("conversion_count") @default(0)
+  conversionRate        Float   @map("conversion_rate") @default(0)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  experiment            LandingPageExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+}
+
+// User Activity
+model UserActivity {
+  id           String   @id @default(uuid())
+  userId       String
+  action       String
+  resource     String?
+  metadata     Json     @default("{}")
+  
+  createdAt    DateTime @default(now())
+}
+
+// AI Usage Log
+model AIUsageLog {
+  id           String   @id @default(uuid())
+  userId       String
+  model        String
+  tokens       Int
+  cost         Float?
+  action       String
+  
+  createdAt    DateTime @default(now())
+}
+
+// Referral Reward
+model ReferralReward {
+  id           String   @id @default(uuid())
+  userId       String
+  amount       Int
+  type         String
+  status       String   @default("pending")
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Subscription
+model Subscription {
+  id           String   @id @default(uuid())
+  userId       String
+  tier         String
+  status       String
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Landing Component Library
+model LandingComponentLibrary {
+  id          String   @id @default(uuid())
+  name        String
+  components  Json     @default("[]")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Experiment Template
+model ExperimentTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  template    Json     @default("{}")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

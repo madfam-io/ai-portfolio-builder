@@ -13,7 +13,7 @@
 
 import { type Octokit } from '@octokit/rest';
 import { logger } from '@/lib/utils/logger';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { type RateLimitInfo, type GitHubIntegration } from '@/types/analytics';
 
 /**
@@ -48,17 +48,13 @@ export class RateLimitManager {
 
       // Update rate limit in database
       if (this.integration) {
-        const supabase = await createClient();
-        if (!supabase) {
-          throw new Error('Database connection not available');
-        }
-        await supabase
-          .from('github_integrations')
-          .update({
-            rate_limit_remaining: this.rateLimitInfo.remaining,
-            rate_limit_reset_at: this.rateLimitInfo.reset.toISOString(),
-          })
-          .eq('id', this.integration.id);
+        await prisma.githubIntegration.update({
+          where: { id: this.integration.id },
+          data: {
+            rateLimitRemaining: this.rateLimitInfo.remaining,
+            rateLimitResetAt: this.rateLimitInfo.reset,
+          },
+        });
       }
 
       return this.rateLimitInfo;

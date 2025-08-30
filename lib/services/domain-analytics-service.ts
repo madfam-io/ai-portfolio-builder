@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { createClient } from '@/lib/supabase/client';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 interface DetailedDomainAnalytics {
@@ -38,18 +38,16 @@ export class DomainAnalyticsService {
     userAgent?: string
   ): Promise<void> {
     try {
-      const supabase = createClient();
-      if (!supabase) {
-        throw new Error('Supabase client not available');
-      }
-      await supabase.from('domain_analytics').insert({
-        domain_id: domainId,
-        event_type: 'page_view',
-        path,
-        referrer,
-        user_agent: userAgent,
-        visitor_id: this.generateVisitorId(),
-        session_id: this.generateSessionId(),
+      await prisma.domainAnalytics.create({
+        data: {
+          domainId,
+          eventType: 'page_view',
+          path,
+          referrer,
+          userAgent,
+          visitorId: this.generateVisitorId(),
+          sessionId: this.generateSessionId(),
+        }
       });
     } catch (error) {
       logger.error(
@@ -66,24 +64,19 @@ export class DomainAnalyticsService {
     domainId: string,
     dateRange: { from: Date; to: Date }
   ): Promise<DetailedDomainAnalytics> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-    const { data: events, error } = await supabase
-      .from('domain_analytics')
-      .select('*')
-      .eq('domain_id', domainId)
-      .gte('created_at', dateRange.from.toISOString())
-      .lte('created_at', dateRange.to.toISOString());
+    const events = await prisma.domainAnalytics.findMany({
+      where: {
+        domainId,
+        createdAt: {
+          gte: dateRange.from,
+          lte: dateRange.to
+        }
+      }
+    });
 
-    if (error) {
-      throw error;
-    }
-
-    const pageViews = events?.filter(e => e.event_type === 'page_view') || [];
-    const uniqueVisitors = new Set(pageViews.map(e => e.visitor_id)).size;
-    const uniqueSessions = new Set(pageViews.map(e => e.session_id)).size;
+    const pageViews = events?.filter(e => e.eventType === 'page_view') || [];
+    const uniqueVisitors = new Set(pageViews.map(e => e.visitorId)).size;
+    const uniqueSessions = new Set(pageViews.map(e => e.sessionId)).size;
 
     // Calculate page popularity
     const pageCounts = pageViews.reduce(
@@ -150,27 +143,22 @@ export class DomainAnalyticsService {
       visitors: number;
     }>;
   }> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-    const { data: events, error } = await supabase
-      .from('domain_analytics')
-      .select('*')
-      .in('domain_id', domainIds)
-      .eq('event_type', 'page_view')
-      .gte('created_at', dateRange.from.toISOString())
-      .lte('created_at', dateRange.to.toISOString());
+    const events = await prisma.domainAnalytics.findMany({
+      where: {
+        domainId: { in: domainIds },
+        eventType: 'page_view',
+        createdAt: {
+          gte: dateRange.from,
+          lte: dateRange.to
+        }
+      }
+    });
 
-    if (error) {
-      throw error;
-    }
-
-    const allVisitors = new Set(events?.map(e => e.visitor_id) || []);
+    const allVisitors = new Set(events?.map(e => e.visitorId) || []);
 
     const domainPerformance = domainIds.map(domainId => {
-      const domainEvents = events?.filter(e => e.domain_id === domainId) || [];
-      const domainVisitors = new Set(domainEvents.map(e => e.visitor_id));
+      const domainEvents = events?.filter(e => e.domainId === domainId) || [];
+      const domainVisitors = new Set(domainEvents.map(e => e.visitorId));
 
       return {
         domainId,
@@ -195,14 +183,12 @@ export class DomainAnalyticsService {
     details?: any
   ): Promise<void> {
     try {
-      const supabase = createClient();
-      if (!supabase) {
-        throw new Error('Supabase client not available');
-      }
-      await supabase.from('domain_analytics').insert({
-        domain_id: domainId,
-        event_type: `ssl_${eventType}`,
-        metadata: details,
+      await prisma.domainAnalytics.create({
+        data: {
+          domainId,
+          eventType: `ssl_${eventType}`,
+          metadata: details,
+        }
       });
     } catch (error) {
       logger.error(
@@ -242,8 +228,8 @@ export class DomainAnalyticsService {
     const dailyCounts: Record<string, number> = {};
 
     events.forEach(event => {
-      if (event.created_at) {
-        const date = new Date(event.created_at).toISOString().split('T')[0];
+      if (event.createdAt) {
+        const date = new Date(event.createdAt).toISOString().split('T')[0];
         if (date) {
           dailyCounts[date] = (dailyCounts[date] || 0) + 1;
         }
@@ -271,8 +257,8 @@ export class DomainAnalyticsService {
     const sessions = new Map<string, { start: Date; end: Date }>();
 
     events.forEach(event => {
-      const sessionId = event.session_id;
-      const eventTime = new Date(event.created_at);
+      const sessionId = event.sessionId;
+      const eventTime = new Date(event.createdAt);
 
       if (!sessions.has(sessionId)) {
         sessions.set(sessionId, { start: eventTime, end: eventTime });
@@ -298,10 +284,10 @@ export class DomainAnalyticsService {
     const sessionPageCounts = new Map<string, number>();
 
     events
-      .filter(e => e.event_type === 'page_view')
+      .filter(e => e.eventType === 'page_view')
       .forEach(event => {
-        const count = sessionPageCounts.get(event.session_id) || 0;
-        sessionPageCounts.set(event.session_id, count + 1);
+        const count = sessionPageCounts.get(event.sessionId) || 0;
+        sessionPageCounts.set(event.sessionId, count + 1);
       });
 
     const bouncedSessions = Array.from(sessionPageCounts.values()).filter(
@@ -321,9 +307,9 @@ export class DomainAnalyticsService {
     };
 
     events.forEach(event => {
-      if (!event.user_agent) return;
+      if (!event.userAgent) return;
 
-      const ua = event.user_agent.toLowerCase();
+      const ua = event.userAgent.toLowerCase();
       if (/mobile|android|iphone/i.test(ua) && !/ipad/i.test(ua)) {
         deviceCounts.mobile = (deviceCounts.mobile || 0) + 1;
       } else if (/ipad|tablet/i.test(ua)) {

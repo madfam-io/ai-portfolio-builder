@@ -13,7 +13,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { encrypt, decrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
 
@@ -31,7 +31,7 @@ interface StateData {
 async function validateOAuthState(
   state: string,
   userId: string,
-  supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never
+  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T> ? T : never
 ) {
   if (!supabase) {
     return null;
@@ -130,7 +130,7 @@ async function fetchGitHubUser(accessToken: string) {
 
 // Helper function to store GitHub integration
 async function storeGitHubIntegration(
-  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
     ? T
     : never,
   user: { id: string },
@@ -208,7 +208,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
 
     if (!supabase) {
       return NextResponse.json(

@@ -21,7 +21,7 @@ import {
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 import {
   transformDbPortfolioToApi,
@@ -57,7 +57,7 @@ export const GET = versionedApiHandler(
       const { user } = request;
 
       // Create Supabase client
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }
@@ -115,7 +115,7 @@ export const PUT = versionedApiHandler(
       const { user } = request;
 
       // Create Supabase client
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }
@@ -245,7 +245,7 @@ export const DELETE = versionedApiHandler(
       const { user } = request;
 
       // Create Supabase client
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }

@@ -12,7 +12,7 @@
  */
 
 import NextAuth from 'next-auth';
-import type { NextAuthOptions } from 'next-auth';
+import { type NextAuthOptions } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
-          user.password
+          user.password || ''
         );
 
         if (!isPasswordValid) {
@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account }: any) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -95,7 +95,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
@@ -104,7 +104,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async signIn({ user, account }) {
+    async signIn({ user, account }: any) {
       if (account?.provider === 'google' || account?.provider === 'github') {
         const email = user.email;
         if (!email) return false;
@@ -128,7 +128,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   events: {
-    async signIn({ user }) {
+    async signIn({ user }: any) {
       await prisma.user.update({
         where: { id: user.id },
         data: { updatedAt: new Date() },

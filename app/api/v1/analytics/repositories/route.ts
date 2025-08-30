@@ -14,7 +14,8 @@
 import { NextResponse } from 'next/server';
 
 import { AnalyticsService } from '@/lib/services/analyticsService';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -98,16 +99,15 @@ export async function POST(request: Request): Promise<Response> {
     const { force = false } = body;
 
     // Check if we should force sync or if enough time has passed
-    const { data: integration } = await supabase
-      .from('github_integrations')
-      .select('last_synced_at')
-      .eq('user_id', user.id)
-      .single();
+    const integration = await prisma.githubIntegration.findFirst({
+      where: { userId: user.id },
+      select: { lastSyncedAt: true }
+    });
 
     const lastSynced =
-      integration?.last_synced_at !== undefined &&
-      integration?.last_synced_at !== null
-        ? new Date(integration.last_synced_at)
+      integration?.lastSyncedAt !== undefined &&
+      integration?.lastSyncedAt !== null
+        ? new Date(integration.lastSyncedAt)
         : new Date(0);
     const hoursSinceSync =
       (Date.now() - lastSynced.getTime()) / (1000 * 60 * 60);

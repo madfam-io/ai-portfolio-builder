@@ -21,7 +21,7 @@ import {
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 import type { CreateVariantInput } from '@/types/portfolio-variants';
 
@@ -51,7 +51,7 @@ function transformVariant(variant: Record<string, unknown>) {
 
 // Helper function to verify portfolio ownership
 async function verifyPortfolioOwnership(
-  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
     ? T
     : never,
   portfolioId: string,
@@ -76,7 +76,7 @@ async function verifyPortfolioOwnership(
 
 // Helper function to create audience profile
 async function createAudienceProfile(
-  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
     ? T
     : never,
   userId: string,
@@ -135,7 +135,7 @@ export const GET = versionedApiHandler(
       if (!portfolioId || typeof portfolioId !== 'string') {
         return apiError('Invalid portfolio ID', { status: 400 });
       }
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
 
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
@@ -196,7 +196,7 @@ export const POST = versionedApiHandler(
         return apiError('Invalid portfolio ID', { status: 400 });
       }
       const body: CreateVariantInput = await request.json();
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
 
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });

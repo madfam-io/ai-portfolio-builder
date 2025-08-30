@@ -54,7 +54,7 @@ const recommendTemplateSchema = z.object({
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest): Promise<Response> {
  */
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },

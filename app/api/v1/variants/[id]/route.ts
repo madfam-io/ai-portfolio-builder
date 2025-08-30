@@ -21,7 +21,7 @@ import {
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 // Helper function to transform variant data
@@ -44,7 +44,7 @@ function transformVariant(variant: Record<string, unknown>) {
 
 // Helper function to verify variant ownership
 async function verifyVariantOwnership(
-  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
     ? T
     : never,
   variantId: string,
@@ -99,7 +99,7 @@ export const GET = versionedApiHandler(
       if (!variantId || typeof variantId !== 'string') {
         return apiError('Invalid variant ID', { status: 400 });
       }
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
 
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
@@ -147,7 +147,7 @@ export const PATCH = versionedApiHandler(
         return apiError('Invalid variant ID', { status: 400 });
       }
       const updates = await request.json();
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
 
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
@@ -243,7 +243,7 @@ export const DELETE = versionedApiHandler(
       if (!variantId || typeof variantId !== 'string') {
         return apiError('Invalid variant ID', { status: 400 });
       }
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
 
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });

@@ -15,7 +15,8 @@ import { type NextRequest, type NextResponse } from 'next/server';
 import { timingSafeEqual } from 'crypto';
 
 import { apiError } from '@/lib/api/versioning';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -87,37 +88,24 @@ export async function authenticateUser(
   const startTime = Date.now();
 
   try {
-    const supabase = await createClient();
+    const user = await getCurrentUser();
 
-    if (!supabase) {
-      logger.error('Supabase client not available for authentication');
-      await addConstantTimeDelay();
-      return null;
-    }
-
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
-      logger.debug('Authentication failed', { error: error?.message });
+    if (!user) {
+      logger.debug('Authentication failed - no user session');
       // Add delay to prevent timing attacks on failed authentication
       await addConstantTimeDelay();
       return null;
     }
 
     // Fetch additional user data if needed
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    const profile = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { role: true }
+    });
 
-    if (profileError) {
+    if (!profile) {
       logger.warn('Profile fetch failed, using default role', {
         userId: user.id,
-        error: profileError.message,
       });
     }
 

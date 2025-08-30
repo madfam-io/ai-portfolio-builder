@@ -15,7 +15,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -59,7 +59,7 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
 
     if (!supabase) {
       return NextResponse.json(

@@ -12,7 +12,7 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { logger } from '@/lib/utils/logger';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,7 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
 
     if (!supabase) {
       return NextResponse.json(

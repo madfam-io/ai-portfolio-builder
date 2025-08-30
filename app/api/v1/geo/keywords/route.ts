@@ -16,7 +16,7 @@ import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import type { KeywordResearch as LocalKeywordResearch } from '@/lib/ai/geo/types';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -37,7 +37,7 @@ const keywordResearchSchema = z.object({
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest): Promise<Response> {
  */
 export async function GET(request: NextRequest): Promise<Response> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },

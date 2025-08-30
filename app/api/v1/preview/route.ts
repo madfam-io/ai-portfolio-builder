@@ -18,7 +18,7 @@ import {
   apiSuccess,
   apiError,
 } from '@/lib/api/response-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { renderConsultantTemplate } from '@/lib/templates/consultant';
 import { renderDesignerTemplate } from '@/lib/templates/designer';
 import { renderDeveloperTemplate } from '@/lib/templates/developer';
@@ -55,7 +55,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     const { portfolioId, template } = validationResult.data;
 
     // Get portfolio data from database
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       throw new Error('Database connection not available');
     }

@@ -33,7 +33,7 @@ import {
   type ExperimentStatus,
   type ExperimentMetric,
 } from '@/lib/experimentation/universal-experiments';
-import { createClient } from '@/lib/supabase/client';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 export interface ExperimentTemplate {
@@ -78,7 +78,6 @@ export interface BulkExperimentOperation {
  * Universal Experiment Manager for administrative operations
  */
 export class ExperimentManager {
-  private supabase = createClient();
 
   /**
    * Pre-built experiment templates for common use cases
@@ -621,24 +620,14 @@ export class ExperimentManager {
    */
   async migrateLandingPageExperiments(): Promise<void> {
     try {
-      if (!this.supabase) {
-        logger.error('Supabase client not initialized');
-        return;
-      }
-      const { data: existingExperiments, error } = await this.supabase
-        .from('landing_page_experiments')
-        .select(
-          `
-          *,
-          variants:landing_page_variants(*)
-        `
-        )
-        .eq('status', 'active');
-
-      if (error) {
-        logger.error('Failed to fetch existing experiments:', error as Error);
-        return;
-      }
+      const existingExperiments = await prisma.landingPageExperiment.findMany({
+        where: {
+          status: 'active'
+        },
+        include: {
+          variants: true
+        }
+      });
 
       for (const oldExperiment of existingExperiments || []) {
         const newExperiment: UniversalExperimentConfig = {

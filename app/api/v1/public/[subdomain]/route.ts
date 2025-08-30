@@ -17,7 +17,7 @@ import {
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
 import { type RouteContext } from '@/lib/api/versioning';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 
@@ -44,7 +44,7 @@ export const GET = versionedApiHandler(
       }
 
       // Create Supabase client
-      const supabase = await createClient();
+      const supabase = await getCurrentUser();
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }

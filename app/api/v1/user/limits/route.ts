@@ -21,7 +21,7 @@
 import { NextResponse } from 'next/server';
 
 import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
 
@@ -33,7 +33,7 @@ import { logger } from '@/lib/utils/logger';
 async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
   try {
     const { user } = request;
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       throw new AppError(
         'DATABASE_NOT_AVAILABLE',

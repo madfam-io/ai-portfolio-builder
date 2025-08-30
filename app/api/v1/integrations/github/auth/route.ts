@@ -15,7 +15,7 @@ import crypto from 'crypto';
 
 import { NextResponse } from 'next/server';
 
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { encrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
 
@@ -29,7 +29,7 @@ import { logger } from '@/lib/utils/logger';
  */
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
 
     if (!supabase) {
       return NextResponse.json(

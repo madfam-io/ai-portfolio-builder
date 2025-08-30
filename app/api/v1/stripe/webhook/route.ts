@@ -25,7 +25,7 @@ import type Stripe from 'stripe';
 import { stripeService } from '@/lib/services/stripe/stripe';
 import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/types/errors';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { RevenueMetricsService } from '@/lib/services/analytics/RevenueMetricsService';
 
 // Enhanced Stripe types for better type safety
@@ -165,7 +165,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  const supabase = await createClient();
+  const supabase = await getCurrentUser();
   if (!supabase) {
     logger.error('Database not available for checkout completion', {
       userId,
@@ -225,7 +225,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = await createClient();
+  const supabase = await getCurrentUser();
   if (!supabase) {
     logger.error('Database not available for subscription creation', {
       userId,
@@ -327,7 +327,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = await createClient();
+  const supabase = await getCurrentUser();
   if (!supabase) {
     logger.error('Database not available for subscription update', {
       userId,
@@ -388,7 +388,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = await createClient();
+  const supabase = await getCurrentUser();
   if (!supabase) {
     logger.error('Database not available for subscription deletion', {
       userId,
@@ -529,7 +529,7 @@ async function handleCreditPackPurchase(session: Stripe.Checkout.Session) {
     return;
   }
 
-  const supabase = await createClient();
+  const supabase = await getCurrentUser();
   if (!supabase) {
     logger.error('Database not available for credit pack purchase', {
       userId,

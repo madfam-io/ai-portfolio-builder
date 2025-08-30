@@ -187,7 +187,7 @@ async function logModelSelection(
   modelId: string
 ): Promise<void> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       logger.error('Failed to create Supabase client for logging');
       return;

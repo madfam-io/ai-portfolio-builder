@@ -25,7 +25,7 @@ import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
 import { getAppUrl } from '@/lib/config/env';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 
 /**
  * POST /api/v1/stripe/portal
@@ -49,7 +49,7 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
     const { user } = request;
 
     // Get user's Stripe customer ID from database
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       throw new AppError(
         'Database service unavailable',

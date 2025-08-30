@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { parseJsonBody, errorLogger } from '@/lib/services/error';
 import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { getCurrentUser } from '@/lib/auth/session';
 
 /**
  * Bio Enhancement API Route
@@ -55,19 +56,16 @@ const enhanceBioSchema = z.object({
 async function handlePOST(
   request: AuthenticatedRequest
 ): Promise<NextResponse> {
-  // 1. Get authenticated user from middleware
-  const { user } = request;
-
-  // 2. Get database connection
-  const supabase = await createClient();
-  if (!supabase) {
+  // 1. Get user from session
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Database service unavailable',
-        code: 'DATABASE_ERROR',
+        error: 'User not authenticated',
+        code: 'AUTH_ERROR',
       },
-      { status: 503 }
+      { status: 401 }
     );
   }
 
@@ -185,7 +183,7 @@ export const POST = withAuth(handlePOST);
 async function handleGET(request: AuthenticatedRequest): Promise<NextResponse> {
   try {
     const { user } = request;
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
 
     if (!supabase) {
       return NextResponse.json(
@@ -258,7 +256,7 @@ async function logAIUsage(
   metadata: Record<string, unknown>
 ): Promise<void> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       errorLogger.logWarning('Failed to create Supabase client for logging');
       return;

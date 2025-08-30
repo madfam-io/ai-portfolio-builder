@@ -83,61 +83,44 @@ export async function GET(request: Request): Promise<Response> {
       return forbiddenResponse();
     }
 
-    const supabase = await createClient();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    let query = supabase
-      .from('landing_page_experiments')
-      .select(
-        `
-        *,
-        variants:landing_page_variants(
-          id,
-          name,
-          is_control,
-          traffic_percentage,
-          conversion_rate
-        )
-      `
-      )
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
-
+    const whereCondition: any = {};
     if (status) {
-      query = query.eq('status', status);
+      whereCondition.status = status;
     }
 
-    const { data: experiments, error } = await query;
-
-    if (error) {
-      logger.error('Failed to fetch experiments', error as Error);
-      return NextResponse.json(
-        { error: 'Failed to fetch experiments' },
-        { status: 500 }
-      );
-    }
+    const experiments = await prisma.landingPageExperiment.findMany({
+      where: whereCondition,
+      include: {
+        variants: {
+          select: {
+            id: true,
+            name: true,
+            isControl: true,
+            trafficPercentage: true,
+            conversionRate: true,
+            visitorCount: true,
+            conversionCount: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: offset,
+      take: limit
+    });
 
     // Calculate additional metrics
-    const experimentsWithMetrics = experiments?.map(experiment => {
+    const experimentsWithMetrics = experiments.map(experiment => {
       const totalVisitors = experiment.variants.reduce(
-        (sum: number, v: Record<string, unknown>) =>
-          sum + ((v.visitor_count as number) ?? 0),
+        (sum: number, v) => sum + (v.visitorCount ?? 0),
         0
       );
       const totalConversions = experiment.variants.reduce(
-        (sum: number, v: Record<string, unknown>) =>
-          sum + ((v.conversion_count as number) ?? 0),
+        (sum: number, v) => sum + (v.conversionCount ?? 0),
         0
       );
 
@@ -151,11 +134,11 @@ export async function GET(request: Request): Promise<Response> {
     });
 
     return NextResponse.json({
-      experiments: experimentsWithMetrics ?? [],
+      experiments: experimentsWithMetrics,
       pagination: {
         limit,
         offset,
-        total: experiments?.length ?? 0,
+        total: experiments.length,
       },
     });
   } catch (error) {
@@ -182,7 +165,7 @@ export async function POST(request: Request): Promise<Response> {
       return forbiddenResponse();
     }
 
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
 
     if (!supabase) {
       return NextResponse.json(
@@ -209,9 +192,8 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // Create experiment
-    const { data: experiment, error: experimentError } = await supabase
-      .from('landing_page_experiments')
-      .insert({
+    const experiment = await prisma.landingPageExperiment.create({
+      data: {
         name: validatedData.name,
         description: validatedData.description,
         hypothesis: validatedData.hypothesis,
@@ -223,46 +205,27 @@ export async function POST(request: Request): Promise<Response> {
         start_date: validatedData.startDate,
         end_date: validatedData.endDate,
         created_by: user.id,
-      })
-      .select()
-      .single();
-
-    if (
-      experimentError !== null ||
-      experiment === null ||
-      experiment === undefined
-    ) {
-      logger.error(
-        'Failed to create experiment',
-        experimentError ?? new Error('No experiment returned')
-      );
-      return NextResponse.json(
-        { error: 'Failed to create experiment' },
-        { status: 500 }
-      );
-    }
+      }
+    });
 
     // Create variants
-    const variantsToInsert = validatedData.variants.map(variant => ({
-      experiment_id: experiment.id,
-      name: variant.name,
-      description: variant.description,
-      is_control: variant.isControl,
-      traffic_percentage: variant.trafficPercentage,
-      components: variant.components,
-      theme_overrides: variant.themeOverrides,
-    }));
-
-    const { error: variantsError } = await supabase
-      .from('landing_page_variants')
-      .insert(variantsToInsert);
-
-    if (variantsError) {
+    try {
+      await prisma.landingPageVariant.createMany({
+        data: validatedData.variants.map(variant => ({
+          experimentId: experiment.id,
+          name: variant.name,
+          description: variant.description,
+          isControl: variant.isControl,
+          trafficPercentage: variant.trafficPercentage,
+          components: variant.components,
+          themeOverrides: variant.themeOverrides,
+        }))
+      });
+    } catch (variantsError) {
       // Rollback experiment creation
-      await supabase
-        .from('landing_page_experiments')
-        .delete()
-        .eq('id', experiment.id);
+      await prisma.landingPageExperiment.delete({
+        where: { id: experiment.id }
+      });
 
       logger.error('Failed to create variants', variantsError as Error);
       return NextResponse.json(
@@ -272,22 +235,14 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // Fetch complete experiment with variants
-    const { data: completeExperiment, error: fetchError } = await supabase
-      .from('landing_page_experiments')
-      .select(
-        `
-        *,
-        variants:landing_page_variants(*)
-      `
-      )
-      .eq('id', experiment.id)
-      .single();
+    const completeExperiment = await prisma.landingPageExperiment.findUnique({
+      where: { id: experiment.id },
+      include: {
+        variants: true
+      }
+    });
 
-    if (
-      fetchError !== null ||
-      completeExperiment === null ||
-      completeExperiment === undefined
-    ) {
+    if (!completeExperiment) {
       return NextResponse.json(
         { error: 'Failed to fetch created experiment' },
         { status: 500 }

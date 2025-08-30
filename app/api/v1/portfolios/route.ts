@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { apiSuccess, versionedApiHandler } from '@/lib/api/response-helpers';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import type { CreatePortfolioDTO } from '@/types/portfolio';
 import {
@@ -46,15 +46,6 @@ import {
 export const GET = versionedApiHandler(
   withAuth(
     withErrorHandler(async (request: AuthenticatedRequest) => {
-      // Create Supabase client
-      const supabase = await createClient();
-
-      if (!supabase) {
-        throw new ExternalServiceError(
-          'Supabase',
-          new Error('Database service not available')
-        );
-      }
 
       // User is already authenticated via middleware
       const { user } = request;
@@ -77,56 +68,52 @@ export const GET = versionedApiHandler(
         search,
       } = queryValidation.data;
 
-      // Build query
-      let query = supabase
-        .from('portfolios')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false });
-
-      // Apply filters
+      // Build query conditions
+      const whereConditions: any = { userId: user.id };
+      
       if (status !== undefined && status !== null) {
-        query = query.eq('status', status);
+        whereConditions.status = status;
       }
       if (template !== undefined && template !== null) {
-        query = query.eq('template', template);
+        whereConditions.template = template;
       }
+      
+      // Build search conditions
+      const searchConditions = [];
       if (search !== undefined && search !== null) {
-        query = query.or(
-          `name.ilike.%${search}%,data->>title.ilike.%${search}%,data->>bio.ilike.%${search}%`
+        searchConditions.push(
+          { name: { contains: search, mode: 'insensitive' as const } },
+          { data: { path: ['title'], string_contains: search } },
+          { data: { path: ['bio'], string_contains: search } }
         );
       }
-
-      // Apply pagination
-      const from = (page - 1) * limit;
-      const to = from + limit - 1;
-      query = query.range(from, to);
-
-      // Execute query
-      const { data: portfolios, error: fetchError } = await query;
-
-      if (fetchError) {
-        errorLogger.logError(fetchError, {
-          action: 'fetch_portfolios',
-          userId: user.id,
-          metadata: { queryParams },
-        });
-        throw new ExternalServiceError('Supabase', fetchError);
-      }
-
-      // Get total count for pagination
-      const { count: totalCount } = await supabase
-        .from('portfolios')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+      
+      // Execute query with pagination
+      const [portfolios, totalCount] = await Promise.all([
+        prisma.portfolio.findMany({
+          where: searchConditions.length > 0 ? {
+            ...whereConditions,
+            OR: searchConditions
+          } : whereConditions,
+          orderBy: { updatedAt: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.portfolio.count({
+          where: searchConditions.length > 0 ? {
+            ...whereConditions,
+            OR: searchConditions
+          } : whereConditions
+        })
+      ]);
 
       return apiSuccess({
         portfolios: portfolios ?? [],
         pagination: {
           page,
           limit,
-          total: totalCount || 0,
-          totalPages: Math.ceil((totalCount || 0) / limit),
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
         },
       });
     })
@@ -140,37 +127,24 @@ export const GET = versionedApiHandler(
 export const POST = versionedApiHandler(
   withAuth(
     withErrorHandler(async (request: AuthenticatedRequest) => {
-      // Create Supabase client
-      const supabase = await createClient();
-      if (!supabase) {
-        throw new ExternalServiceError(
-          'Supabase',
-          new Error('Database not configured')
-        );
-      }
 
       // User is already authenticated via middleware
       const { user } = request;
 
-      // Check portfolio creation limits
-      const { data: limitsData, error: limitsError } = await supabase.rpc(
-        'check_user_plan_limits',
-        { user_uuid: user.id }
-      );
-
-      if (limitsError) {
-        errorLogger.logError(limitsError, {
-          action: 'check_portfolio_limits',
-          userId: user.id,
-        });
-        throw new ExternalServiceError('Database', limitsError);
-      }
-
-      if (limitsData?.error) {
-        throw new ValidationError(limitsData.error);
-      }
-
-      if (!limitsData?.can_create_portfolio) {
+      // Check portfolio creation limits by counting existing portfolios
+      const existingPortfoliosCount = await prisma.portfolio.count({
+        where: { userId: user.id }
+      });
+      
+      // Get user's plan limits
+      const userProfile = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { plan: true }
+      });
+      
+      const maxPortfolios = userProfile?.plan === 'professional' ? 10 : userProfile?.plan === 'business' ? 50 : 3; // free plan: 3
+      
+      if (existingPortfoliosCount >= maxPortfolios) {
         throw new ValidationError(
           'Portfolio creation limit exceeded. Please upgrade your plan to create more portfolios.',
           { code: 'PORTFOLIO_LIMIT_EXCEEDED' }
@@ -204,12 +178,16 @@ export const POST = versionedApiHandler(
         .replace(/^-|-$/g, '');
 
       // Ensure subdomain uniqueness
-      const { data: existingPortfolios } = await supabase
-        .from('portfolios')
-        .select('subdomain')
-        .like('subdomain', `${subdomain}%`);
+      const existingPortfolios = await prisma.portfolio.findMany({
+        where: {
+          subdomain: {
+            startsWith: subdomain
+          }
+        },
+        select: { subdomain: true }
+      });
 
-      if (existingPortfolios && existingPortfolios.length > 0) {
+      if (existingPortfolios.length > 0) {
         const existingSubdomains = existingPortfolios.map(p => p.subdomain);
         let counter = 1;
         let uniqueSubdomain = subdomain;
@@ -220,14 +198,14 @@ export const POST = versionedApiHandler(
         }
         subdomain = uniqueSubdomain;
       }
-      // Prepare portfolio data for insertion matching Supabase schema
+      // Prepare portfolio data for insertion matching Prisma schema
       const portfolioData = {
         id: uuidv4(),
-        user_id: user.id,
+        userId: user.id,
         name: sanitizedData.name,
         slug: subdomain, // Using subdomain as slug for now
         template: sanitizedData.template,
-        status: 'draft',
+        status: 'draft' as const,
         // Store all portfolio content in the data JSONB field
         data: {
           title: sanitizedData.title,
@@ -248,7 +226,7 @@ export const POST = versionedApiHandler(
           fontFamily: 'Inter',
           headerStyle: 'minimal',
         },
-        ai_settings: {
+        aiSettings: {
           enhanceBio: true,
           enhanceProjectDescriptions: true,
           generateSkillsFromExperience: false,
@@ -256,22 +234,29 @@ export const POST = versionedApiHandler(
           targetLength: 'concise',
         },
         subdomain,
-        custom_domain: null,
+        customDomain: null,
         views: 0,
-        last_viewed_at: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        published_at: null,
+        lastViewedAt: null,
+        publishedAt: null,
       };
 
       // Insert portfolio into database
-      const { data: portfolio, error: insertError } = await supabase
-        .from('portfolios')
-        .insert(portfolioData)
-        .select()
-        .single();
+      try {
+        const portfolio = await prisma.portfolio.create({
+          data: portfolioData
+        });
+        
+        // Transform database response to API format
+        const responsePortfolio = transformDbPortfolioToApi(portfolio);
 
-      if (insertError) {
+        return apiSuccess(
+          {
+            portfolio: responsePortfolio,
+            message: 'Portfolio created successfully',
+          },
+          { status: 201 }
+        );
+      } catch (insertError: any) {
         errorLogger.logError(insertError, {
           action: 'create_portfolio',
           userId: user.id,
@@ -279,25 +264,15 @@ export const POST = versionedApiHandler(
         });
 
         // Handle specific errors
-        if (insertError.code === '23505') {
+        if (insertError.code === 'P2002') {
           // Unique constraint violation
           throw new ConflictError(
             'A portfolio with this subdomain already exists'
           );
         }
-        throw new ExternalServiceError('Supabase', insertError);
+        throw new ExternalServiceError('Database', insertError);
       }
 
-      // Transform database response to API format
-      const responsePortfolio = transformDbPortfolioToApi(portfolio);
-
-      return apiSuccess(
-        {
-          portfolio: responsePortfolio,
-          message: 'Portfolio created successfully',
-        },
-        { status: 201 }
-      );
     })
   )
 );

@@ -12,7 +12,7 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { LinkedInParser } from '@/lib/services/integrations/linkedin/parser';
 import { type LinkedInFullProfile } from '@/lib/services/integrations/linkedin/types';
@@ -108,7 +108,7 @@ function buildPortfolioUpdates(
 
 // Helper function to update existing portfolio
 async function updateExistingPortfolio(params: {
-  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
     ? T
     : never;
   portfolioId: string;
@@ -206,7 +206,7 @@ async function updateExistingPortfolio(params: {
 
 // Helper function to create new portfolio
 async function createNewPortfolio(params: {
-  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
     ? T
     : never;
   userId: string;
@@ -285,7 +285,7 @@ async function createNewPortfolio(params: {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
 
     if (!supabase) {
       return NextResponse.json(

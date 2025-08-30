@@ -12,7 +12,7 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -22,22 +22,11 @@ export async function withAuth(
   request: NextRequest,
   handler: (request: NextRequest, user: unknown) => Promise<NextResponse>
 ) {
-  const supabase = await createClient();
-
-  if (!supabase) {
-    logger.warn('Supabase not configured, allowing request to proceed');
-    // Allow the request to proceed without authentication in development
-    return handler(request, null);
-  }
-
   try {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (error || !user) {
-      logger.warn('Unauthorized access attempt:', { error: error?.message });
+    if (!user) {
+      logger.warn('Unauthorized access attempt');
 
       // Redirect to login with return URL
       const url = request.nextUrl.clone();
@@ -68,18 +57,9 @@ export async function withAuth(
  * Check if a user is authenticated (for client components)
  */
 export async function checkAuth() {
-  const supabase = await createClient();
-
-  if (!supabase) {
-    return { user: null, error: new Error('Authentication not configured') };
-  }
-
   try {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-    return { user, error };
+    const user = await getCurrentUser();
+    return { user, error: null };
   } catch (error) {
     logger.error(
       'Check auth error:',

@@ -16,7 +16,7 @@ import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { type GEOEnhancementRequest } from '@/lib/ai/types';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -44,7 +44,7 @@ const optimizeContentSchema = z.object({
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest): Promise<Response> {
  */
 export async function PUT(request: NextRequest): Promise<Response> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection failed' },
@@ -260,7 +260,7 @@ async function logGEOOptimization(
   metadata: Record<string, unknown>
 ): Promise<void> {
   try {
-    const supabase = await createClient();
+    const supabase = await getCurrentUser();
     if (!supabase) {
       logger.error('Failed to create Supabase client for logging');
       return;

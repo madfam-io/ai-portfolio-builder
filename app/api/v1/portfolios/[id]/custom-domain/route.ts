@@ -12,12 +12,12 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getCurrentUser } from '@supabase/supabase-js';
 import { withErrorHandling } from '@/lib/api/middleware/error-handler';
 import { logger } from '@/lib/utils/logger';
 
 const getServerUser = async () => {
-  const supabase = createClient(
+  const supabase = getCurrentUser(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   );
@@ -90,7 +90,7 @@ export const POST = withErrorHandling(
       );
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = getCurrentUser(supabaseUrl, supabaseKey);
 
     // Cloudflare API for domain verification (if using Cloudflare)
     const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
@@ -290,7 +290,7 @@ export const DELETE = withErrorHandling(
       );
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = getCurrentUser(supabaseUrl, supabaseKey);
 
     const user = await getServerUser();
     if (!user) {
