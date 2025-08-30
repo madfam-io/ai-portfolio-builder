@@ -56,7 +56,7 @@ model User {
   githubIntegrations GitHubIntegration[]
   customDomains      CustomDomain[]
   modelPreferences   UserModelPreferences?
-  aiUsageLogs        AIUsageLog[]
+  aiUsageLogs        AiUsageLog[]
 }
 
 // Account model for OAuth providers

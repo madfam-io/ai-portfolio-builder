@@ -321,7 +321,7 @@ async function logAIUsage(
   metadata: Record<string, unknown>
 ): Promise<void> {
   try {
-    await prisma.aiUsageLog.create({
+    await prisma.aIUsageLog.create({
       data: {
         userId,
         operationType,
