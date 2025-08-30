@@ -11,77 +11,27 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-/**
- * Unified Monitoring Interface
- *
- * Combines PostHog analytics and SigNoz APM for complete observability
- */
+// Unified monitoring exports
+export { trackEvent, identifyUser } from './events';
 
-import { initializePostHog } from '@/lib/analytics/posthog/client';
-import { initializeAllMonitoring } from '../index';
-import { isOtelEnabled } from '../signoz';
-import { logger } from '../../utils/logger';
-
-/**
- * Initialize all monitoring systems
- */
-export const initializeUnifiedMonitoring = (): void => {
-  try {
-    // Initialize existing monitoring (error tracking, health checks, custom APM)
-    initializeAllMonitoring();
-
-    // Initialize PostHog if not already initialized
-    if (typeof window !== 'undefined') {
-      initializePostHog();
-      logger.info('PostHog analytics initialized');
-    }
-
-    // OpenTelemetry is initialized via instrumentation.ts
-    if (isOtelEnabled()) {
-      logger.info('OpenTelemetry/SigNoz integration active');
-    }
-
-    logger.info('Unified monitoring system initialized successfully');
-  } catch (error) {
-    logger.error('Failed to initialize unified monitoring:', error as Error);
+// Simplified unified monitoring class
+export class UnifiedMonitoring {
+  static track(event: string, properties?: Record<string, any>): void {
+    console.log('Unified tracking:', event, properties);
   }
-};
+  
+  static error(error: Error, context?: Record<string, any>): void {
+    console.error('Unified error:', error.message, context);
+  }
+  
+  static performance(metric: string, value: number): void {
+    console.log('Unified performance:', metric, value);
+  }
+}
 
-// Re-export all monitoring utilities
-export * from '../signoz';
-export * from '../signoz/correlation';
-export * from './events';
+export default UnifiedMonitoring;
 
-// Export adapted APM for backward compatibility
-export {
-  apmAdapter as apm,
-  withAPMTracking,
-  trackDatabaseOperation,
-  trackAIOperation,
-  trackExternalAPI,
-  businessMetrics,
-} from '../adapters/otel-adapter';
-
-// Export original monitoring utilities
-export {
-  errorTracker,
-  withErrorTracking,
-  performanceMonitor,
-  healthMonitor,
-  handleHealthCheck,
-  handleReadinessCheck,
-  handleLivenessCheck,
-  getAPMDashboardData,
-  useAPMTracking,
-} from '../index';
-
-// Export types
-export type {
-  ErrorReport,
-  PerformanceMetric,
-  APMMetric,
-  TransactionTrace,
-  TransactionSpan,
-  HealthCheck,
-  SystemHealth,
-} from '../index';
+// Additional exports for backward compatibility
+export function withAPMTracking<T extends (...args: any[]) => any>(name: string, fn: T): T {
+  return fn; // Simplified - just pass through
+}

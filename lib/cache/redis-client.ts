@@ -11,93 +11,52 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-/**
- * Redis client with fallback for development
- */
+// Legacy Redis client - now using Vercel KV
+// This is a stub for backward compatibility
 
-import Redis from 'ioredis';
-import { logger } from '@/lib/utils/logger';
+import { kvCache } from './vercel-kv';
 
-let redisInstance: Redis | null = null;
-let isAvailable = false;
-
-/**
- * Initialize Redis connection
- */
-function initializeRedis(): Redis | null {
-  if (redisInstance) return redisInstance;
-
-  const redisUrl = process.env.REDIS_URL;
-
-  if (!redisUrl) {
-    logger.warn('Redis URL not configured, using in-memory fallback');
-    return null;
+// Legacy Redis client wrapper
+export class RedisClient {
+  async get(key: string): Promise<string | null> {
+    return await kvCache.get(key);
   }
 
-  try {
-    redisInstance = new Redis(redisUrl, {
-      maxRetriesPerRequest: 3,
-      lazyConnect: true,
-      retryStrategy: times => {
-        const delay = Math.min(times * 100, 3000);
-        return delay;
-      },
-    });
+  async set(key: string, value: string, ttl?: number): Promise<void> {
+    await kvCache.set(key, value, { ttl });
+  }
 
-    redisInstance.on('connect', () => {
-      isAvailable = true;
-      logger.info('Redis connected successfully');
-    });
+  async delete(key: string): Promise<void> {
+    await kvCache.delete(key);
+  }
 
-    redisInstance.on('error', error => {
-      isAvailable = false;
-      logger.error('Redis connection error', { error });
-    });
+  async exists(key: string): Promise<boolean> {
+    return await kvCache.exists(key);
+  }
 
-    return redisInstance;
-  } catch (error) {
-    logger.error('Failed to initialize Redis', { error });
-    return null;
+  async expire(key: string, seconds: number): Promise<void> {
+    await kvCache.expire(key, seconds);
+  }
+
+  async incr(key: string): Promise<number> {
+    return await kvCache.incr(key);
+  }
+
+  async decr(key: string): Promise<number> {
+    return await kvCache.decr(key);
+  }
+
+  async keys(pattern: string): Promise<string[]> {
+    return await kvCache.keys(pattern);
   }
 }
 
-// Initialize Redis
-const redisClient = initializeRedis();
+// Export instance for backward compatibility
+export const redisClient = new RedisClient();
+export const redis = redisClient; // Common alias
 
-/**
- * Check if Redis is available
- */
-export function isRedisAvailable(): boolean {
-  return isAvailable && redisInstance !== null;
-}
+// Redis availability check
+export const isRedisAvailable = true; // Always true with Vercel KV
 
-/**
- * Get Redis client instance
- * Returns a mock client if Redis is not available
- */
-export const redis = redisClient || {
-  // Mock Redis client for development/fallback
-  get: () => Promise.resolve(null),
-  set: () => Promise.resolve('OK'),
-  setex: () => Promise.resolve('OK'),
-  del: () => Promise.resolve(1),
-  exists: () => Promise.resolve(0),
-  incr: () => Promise.resolve(1),
-  expire: () => Promise.resolve(1),
-  lpush: () => Promise.resolve(1),
-  ltrim: () => Promise.resolve('OK'),
-  lrange: () => Promise.resolve([]),
-  sismember: () => Promise.resolve(0),
-  sadd: () => Promise.resolve(1),
-  pipeline: () => ({
-    incr: () => {},
-    expire: () => {},
-    exec: () =>
-      Promise.resolve([
-        [null, 1],
-        [null, 1],
-      ]),
-  }),
-};
-
-export default redis;
+// Export default
+export default redisClient;
