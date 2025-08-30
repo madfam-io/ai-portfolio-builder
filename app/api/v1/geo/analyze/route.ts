@@ -174,19 +174,8 @@ function transformAnalysisResults(
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user === null) {
+    const user = await getCurrentUser();
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -255,19 +244,8 @@ export async function POST(request: NextRequest): Promise<Response> {
  */
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user === null) {
+    const user = await getCurrentUser();
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }

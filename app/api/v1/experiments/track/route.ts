@@ -15,7 +15,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -59,44 +59,47 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
-    // Record the event
-    const { error } = await supabase.rpc('record_landing_page_event', {
-      p_session_id: visitorId,
-      p_experiment_id: validatedData.experimentId,
-      p_variant_id: validatedData.variantId,
-      p_event_type: validatedData.eventType,
-      p_event_data: validatedData.eventData || {},
+    // Record the event using Prisma
+    await prisma.landingPageEvent.create({
+      data: {
+        sessionId: visitorId,
+        experimentId: validatedData.experimentId,
+        variantId: validatedData.variantId,
+        eventType: validatedData.eventType,
+        eventData: validatedData.eventData || {},
+      },
     });
-
-    if (error) {
-      throw error;
-    }
 
     // Special handling for conversion events
     if (validatedData.eventType === 'conversion') {
-      // Update variant conversion count
-      const { data: currentVariant } = await supabase
-        .from('landing_page_variants')
-        .select('conversions')
-        .eq('id', validatedData.variantId)
-        .single();
+      // Update variant conversion count atomically
+      await prisma.landingPageVariant.update({
+        where: { id: validatedData.variantId },
+        data: {
+          conversionCount: {
+            increment: 1,
+          },
+        },
+      });
 
-      if (currentVariant) {
-        await supabase
-          .from('landing_page_variants')
-          .update({
-            conversions: ((currentVariant.conversions as number) ?? 0) + 1,
-          })
-          .eq('id', validatedData.variantId);
+      // Also update the visitor count if this is a new visitor
+      const existingVisitor = await prisma.landingPageEvent.findFirst({
+        where: {
+          sessionId: visitorId,
+          variantId: validatedData.variantId,
+          eventType: 'pageview',
+        },
+      });
+
+      if (!existingVisitor) {
+        await prisma.landingPageVariant.update({
+          where: { id: validatedData.variantId },
+          data: {
+            visitorCount: {
+              increment: 1,
+            },
+          },
+        });
       }
     }
 

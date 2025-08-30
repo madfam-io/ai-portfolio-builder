@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { type GEOEnhancementRequest } from '@/lib/ai/types';
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -44,19 +45,8 @@ const optimizeContentSchema = z.object({
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user === null) {
+    const user = await getCurrentUser();
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -146,19 +136,8 @@ export async function POST(request: NextRequest): Promise<Response> {
  */
 export async function PUT(request: NextRequest): Promise<Response> {
   try {
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user === null) {
+    const user = await getCurrentUser();
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -260,17 +239,12 @@ async function logGEOOptimization(
   metadata: Record<string, unknown>
 ): Promise<void> {
   try {
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      logger.error('Failed to create Supabase client for logging');
-      return;
-    }
-
-    await supabase.from('geo_optimization_logs').insert({
-      user_id: userId,
-      content_type: contentType,
-      metadata,
-      created_at: new Date().toISOString(),
+    await prisma.geoOptimizationLog.create({
+      data: {
+        userId,
+        contentType,
+        metadata: metadata as any,
+      },
     });
   } catch (error) {
     logger.error('Failed to log GEO optimization:', error as Error);
