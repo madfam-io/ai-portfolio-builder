@@ -11,10 +11,10 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Octokit } from '@octokit/rest';
+import { type Octokit } from '@octokit/rest';
 import { logger } from '@/lib/utils/logger';
-import { GitHubPullRequest } from '../types';
-import { PullRequest } from '@/types/analytics';
+import { type GitHubPullRequest } from '../types';
+import { type PullRequest } from '@/types/analytics';
 
 /**
  * GitHub pull request operations

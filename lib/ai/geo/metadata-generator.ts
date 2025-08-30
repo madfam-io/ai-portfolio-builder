@@ -11,8 +11,8 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { SEOMetadata, GEOSettings } from './types';
-import { Portfolio, Skill, Education } from '@/types/portfolio';
+import { type SEOMetadata, type GEOSettings } from './types';
+import { type Portfolio, type Skill, type Education } from '@/types/portfolio';
 
 /**
  * SEO Metadata and Structured Data Generator

@@ -15,7 +15,7 @@
 
 import { useEffect } from 'react';
 
-import { createClient } from '@/lib/supabase/client';
+import { useSession } from 'next-auth/react';
 import { logger } from '@/lib/utils/logger';
 
 import { useAuthStore } from './auth-store';
@@ -33,6 +33,25 @@ interface StoreProviderProps {
 export function StoreProvider({ children }: StoreProviderProps) {
   const { setUser, setSession, setLoading } = useAuthStore();
   const { setTheme } = useUIStore();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    // Update auth state based on NextAuth session
+    if (status === 'loading') {
+      setLoading(true);
+    } else {
+      setLoading(false);
+      if (session) {
+        setSession(session as any);
+        setUser(session.user as any);
+        logger.info('User signed in', { userId: session.user?.id });
+      } else {
+        setSession(null);
+        setUser(null);
+        logger.info('User signed out');
+      }
+    }
+  }, [session, status, setSession, setUser, setLoading]);
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -40,53 +59,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
     // Initialize auth state
     const initAuth = async () => {
       try {
-        const supabase = createClient();
-        if (!supabase) {
-          // No Supabase client available, skip auth initialization
-          setLoading(false);
-          return;
-        }
-
-        // Get initial session
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (session) {
-          setSession(session);
-          setUser(session.user);
-        }
-
         setLoading(false);
-
-        // Listen for auth changes
-        const {
-          data: { subscription },
-        } = supabase.auth.onAuthStateChange((event, session) => {
-          setSession(session);
-          setUser(session?.user || null);
-
-          // Handle specific auth events
-          switch (event) {
-            case 'SIGNED_IN':
-              logger.info('User signed in', { userId: session?.user?.id });
-              break;
-            case 'SIGNED_OUT':
-              logger.info('User signed out');
-              // Reset stores handled in auth store
-              break;
-            case 'TOKEN_REFRESHED':
-              logger.debug('Token refreshed', { userId: session?.user?.id });
-              break;
-            case 'USER_UPDATED':
-              logger.info('User updated', { userId: session?.user?.id });
-              break;
-          }
-        });
-
-        unsubscribe = () => {
-          subscription.unsubscribe();
-        };
       } catch (error) {
         logger.error(
           'Auth initialization error',
@@ -103,7 +76,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
         unsubscribe();
       }
     };
-  }, [setUser, setSession, setLoading]);
+  }, []);
 
   useEffect(() => {
     // Initialize theme

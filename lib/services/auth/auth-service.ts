@@ -11,14 +11,19 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { createClient } from '@/lib/supabase/client';
+import {
+  signIn as nextAuthSignIn,
+  signOut as nextAuthSignOut,
+  getServerSession,
+} from 'next-auth';
+import { getSession } from 'next-auth/react';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
-
-import type { User, Session, AuthError } from '@supabase/supabase-js';
+import { hash, compare } from 'bcryptjs';
 
 export interface AuthResponse<T = any> {
   data: T | null;
-  error: AuthError | null;
+  error: Error | null;
 }
 
 export interface SignUpMetadata {
@@ -27,13 +32,23 @@ export interface SignUpMetadata {
   role?: string;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+}
+
+export interface Session {
+  user: User;
+  expires: string;
+}
+
 /**
  * Authentication Service
- * Handles all authentication operations using Supabase
+ * Handles all authentication operations using NextAuth and Prisma
  */
 export class AuthService {
-  private supabase = createClient();
-
   /**
    * Sign in with email and password
    */
@@ -42,30 +57,47 @@ export class AuthService {
     password: string
   ): Promise<AuthResponse<{ user: User; session: Session }>> {
     try {
-      if (!this.supabase) {
-        throw new Error('Authentication service not configured');
-      }
-
-      const { data, error } = await this.supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Find user in database
+      const user = await prisma.user.findUnique({
+        where: { email },
       });
 
-      if (error) {
-        logger.error('Sign in error:', error as Error);
-        return { data: null, error };
+      if (!user || !user.password) {
+        return {
+          data: null,
+          error: new Error('Invalid credentials'),
+        };
       }
 
-      logger.info('User signed in successfully', { userId: data.user?.id });
-      return { data, error: null };
+      // Verify password
+      const isValidPassword = await compare(password, user.password);
+      if (!isValidPassword) {
+        return {
+          data: null,
+          error: new Error('Invalid credentials'),
+        };
+      }
+
+      // Create session data
+      const userData: User = {
+        id: user.id,
+        email: user.email,
+        name: user.name || undefined,
+        image: user.image || undefined,
+      };
+
+      const sessionData: Session = {
+        user: userData,
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+      };
+
+      logger.info('User signed in successfully', { userId: user.id });
+      return { data: { user: userData, session: sessionData }, error: null };
     } catch (error) {
       logger.error('Sign in exception:', error as Error);
       return {
         data: null,
-        error: {
-          message: error instanceof Error ? error.message : 'Sign in failed',
-          status: 500,
-        } as AuthError,
+        error: error instanceof Error ? error : new Error('Sign in failed'),
       };
     }
   }
@@ -79,36 +111,48 @@ export class AuthService {
     metadata?: SignUpMetadata
   ): Promise<AuthResponse<{ user: User; session: Session | null }>> {
     try {
-      if (!this.supabase) {
-        throw new Error('Authentication service not configured');
+      // Check if user already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        return {
+          data: null,
+          error: new Error('User already exists'),
+        };
       }
 
-      const { data, error } = await this.supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: metadata,
+      // Hash password
+      const hashedPassword = await hash(password, 12);
+
+      // Create user
+      const user = await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          name: metadata?.fullName,
+          emailVerified: null, // Will be verified later
         },
       });
 
-      if (error) {
-        logger.error('Sign up error:', error as Error);
-        return { data: null, error };
-      }
+      const userData: User = {
+        id: user.id,
+        email: user.email,
+        name: user.name || undefined,
+        image: user.image || undefined,
+      };
 
-      logger.info('User signed up successfully', { userId: data.user?.id });
+      logger.info('User signed up successfully', { userId: user.id });
       return {
-        data: data as { user: User; session: Session | null },
+        data: { user: userData, session: null },
         error: null,
       };
     } catch (error) {
       logger.error('Sign up exception:', error as Error);
       return {
         data: null,
-        error: {
-          message: error instanceof Error ? error.message : 'Sign up failed',
-          status: 500,
-        } as AuthError,
+        error: error instanceof Error ? error : new Error('Sign up failed'),
       };
     }
   }
@@ -118,27 +162,14 @@ export class AuthService {
    */
   async signOut(): Promise<AuthResponse<void>> {
     try {
-      if (!this.supabase) {
-        throw new Error('Authentication service not configured');
-      }
-
-      const { error } = await this.supabase.auth.signOut();
-
-      if (error) {
-        logger.error('Sign out error:', error as Error);
-        return { data: null, error };
-      }
-
+      await nextAuthSignOut();
       logger.info('User signed out successfully');
       return { data: undefined, error: null };
     } catch (error) {
       logger.error('Sign out exception:', error as Error);
       return {
         data: null,
-        error: {
-          message: error instanceof Error ? error.message : 'Sign out failed',
-          status: 500,
-        } as AuthError,
+        error: error instanceof Error ? error : new Error('Sign out failed'),
       };
     }
   }
@@ -148,30 +179,44 @@ export class AuthService {
    */
   async resetPassword(email: string): Promise<AuthResponse<void>> {
     try {
-      if (!this.supabase) {
-        throw new Error('Authentication service not configured');
-      }
-
-      const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+      // Check if user exists
+      const user = await prisma.user.findUnique({
+        where: { email },
       });
 
-      if (error) {
-        logger.error('Password reset error:', error as Error);
-        return { data: null, error };
+      if (!user) {
+        return {
+          data: null,
+          error: new Error('User not found'),
+        };
       }
 
-      logger.info('Password reset email sent', { email });
+      // Generate reset token
+      const resetToken =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+      const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+      // Store reset token (you'll need to add these fields to your user model)
+      await prisma.user.update({
+        where: { email },
+        data: {
+          resetToken,
+          resetTokenExpiry,
+        },
+      });
+
+      // Here you would send an email with the reset token
+      // For now, just log it
+      logger.info('Password reset token generated', { email, resetToken });
+
       return { data: undefined, error: null };
     } catch (error) {
       logger.error('Password reset exception:', error as Error);
       return {
         data: null,
-        error: {
-          message:
-            error instanceof Error ? error.message : 'Password reset failed',
-          status: 500,
-        } as AuthError,
+        error:
+          error instanceof Error ? error : new Error('Password reset failed'),
       };
     }
   }
@@ -179,32 +224,39 @@ export class AuthService {
   /**
    * Update user password
    */
-  async updatePassword(newPassword: string): Promise<AuthResponse<User>> {
+  async updatePassword(
+    userId: string,
+    newPassword: string
+  ): Promise<AuthResponse<User>> {
     try {
-      if (!this.supabase) {
-        throw new Error('Authentication service not configured');
-      }
+      // Hash new password
+      const hashedPassword = await hash(newPassword, 12);
 
-      const { data, error } = await this.supabase.auth.updateUser({
-        password: newPassword,
+      // Update user password
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          password: hashedPassword,
+          resetToken: null,
+          resetTokenExpiry: null,
+        },
       });
 
-      if (error) {
-        logger.error('Password update error:', error as Error);
-        return { data: null, error };
-      }
+      const userData: User = {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name || undefined,
+        image: updatedUser.image || undefined,
+      };
 
       logger.info('Password updated successfully');
-      return { data: data.user, error: null };
+      return { data: userData, error: null };
     } catch (error) {
       logger.error('Password update exception:', error as Error);
       return {
         data: null,
-        error: {
-          message:
-            error instanceof Error ? error.message : 'Password update failed',
-          status: 500,
-        } as AuthError,
+        error:
+          error instanceof Error ? error : new Error('Password update failed'),
       };
     }
   }
@@ -214,27 +266,13 @@ export class AuthService {
    */
   async getSession(): Promise<AuthResponse<Session>> {
     try {
-      if (!this.supabase) {
-        return { data: null, error: null };
-      }
-
-      const { data, error } = await this.supabase.auth.getSession();
-
-      if (error) {
-        logger.error('Get session error:', error as Error);
-        return { data: null, error };
-      }
-
-      return { data: data.session, error: null };
+      const session = await getSession();
+      return { data: session as Session | null, error: null };
     } catch (error) {
       logger.error('Get session exception:', error as Error);
       return {
         data: null,
-        error: {
-          message:
-            error instanceof Error ? error.message : 'Get session failed',
-          status: 500,
-        } as AuthError,
+        error: error instanceof Error ? error : new Error('Get session failed'),
       };
     }
   }
@@ -244,26 +282,13 @@ export class AuthService {
    */
   async getUser(): Promise<AuthResponse<User>> {
     try {
-      if (!this.supabase) {
-        return { data: null, error: null };
-      }
-
-      const { data, error } = await this.supabase.auth.getUser();
-
-      if (error) {
-        logger.error('Get user error:', error as Error);
-        return { data: null, error };
-      }
-
-      return { data: data.user, error: null };
+      const session = await getSession();
+      return { data: session?.user as User | null, error: null };
     } catch (error) {
       logger.error('Get user exception:', error as Error);
       return {
         data: null,
-        error: {
-          message: error instanceof Error ? error.message : 'Get user failed',
-          status: 500,
-        } as AuthError,
+        error: error instanceof Error ? error : new Error('Get user failed'),
       };
     }
   }
@@ -275,33 +300,19 @@ export class AuthService {
     provider: 'google' | 'github' | 'linkedin_oidc'
   ): Promise<AuthResponse<{ url: string }>> {
     try {
-      if (!this.supabase) {
-        throw new Error('Authentication service not configured');
-      }
-
-      const { data, error } = await this.supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) {
-        logger.error('OAuth sign in error:', error as Error);
-        return { data: null, error };
-      }
+      // NextAuth OAuth is handled through the API routes
+      // This method would redirect to the OAuth provider
+      const callbackUrl = `${window.location.origin}/auth/callback`;
+      const authUrl = `/api/auth/signin/${provider}?callbackUrl=${encodeURIComponent(callbackUrl)}`;
 
       logger.info('OAuth sign in initiated', { provider });
-      return { data, error: null };
+      return { data: { url: authUrl }, error: null };
     } catch (error) {
       logger.error('OAuth sign in exception:', error as Error);
       return {
         data: null,
-        error: {
-          message:
-            error instanceof Error ? error.message : 'OAuth sign in failed',
-          status: 500,
-        } as AuthError,
+        error:
+          error instanceof Error ? error : new Error('OAuth sign in failed'),
       };
     }
   }
@@ -312,15 +323,12 @@ export class AuthService {
   onAuthStateChange(
     callback: (event: string, session: Session | null) => void
   ) {
-    if (!this.supabase) {
-      logger.warn(
-        'Cannot listen to auth state changes - service not configured'
-      );
-      return () => {};
-    }
-
-    const { data } = this.supabase.auth.onAuthStateChange(callback);
-    return () => data.subscription.unsubscribe();
+    // NextAuth handles session changes through React context
+    // This is a placeholder for compatibility
+    logger.info('Auth state change listener registered');
+    return () => {
+      logger.info('Auth state change listener unsubscribed');
+    };
   }
 }
 

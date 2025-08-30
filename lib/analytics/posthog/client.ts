@@ -14,7 +14,7 @@
 'use client';
 
 import posthog from 'posthog-js';
-import { PostHogConfig } from 'posthog-js';
+import { type PostHogConfig } from 'posthog-js';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/lib/store/auth-store';
 

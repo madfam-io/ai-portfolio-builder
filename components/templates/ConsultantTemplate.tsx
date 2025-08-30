@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import React from 'react';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 /**
  * @fileoverview Consultant Portfolio Template

@@ -16,7 +16,7 @@
  * Replaces in-memory rate limiting with distributed Redis storage
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { redis, isRedisAvailable } from '@/lib/cache/redis-client';
 import { logger } from '@/lib/utils/logger';
 

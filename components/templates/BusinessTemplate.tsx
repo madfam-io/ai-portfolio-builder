@@ -38,7 +38,7 @@ import {
   Shield,
 } from 'lucide-react';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 /**
  * @fileoverview Business Portfolio Template
@@ -66,7 +66,6 @@ interface BusinessTemplateProps {
   portfolio: Portfolio;
 }
 
-// eslint-disable-next-line complexity
 export function BusinessTemplate({ portfolio }: BusinessTemplateProps) {
   const socialLinks = [
     { platform: 'linkedin', url: portfolio.social?.linkedin, icon: Linkedin },
@@ -568,7 +567,8 @@ export function BusinessTemplate({ portfolio }: BusinessTemplateProps) {
               Excellence
             </p>
             <p className="text-sm">
-              Professional portfolio powered by Portfolio Builder Portfolio Builder
+              Professional portfolio powered by Portfolio Builder Portfolio
+              Builder
             </p>
           </div>
         </footer>

@@ -13,7 +13,7 @@
 
 'use client';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface ConsultantTemplateProps {
   portfolio: Portfolio;

@@ -13,7 +13,7 @@
 
 import { logger } from '@/lib/utils/logger';
 
-import { BioContext, UserProfile, AIService } from './types';
+import { type BioContext, type UserProfile, type AIService } from './types';
 
 /**
  * Lazy loading wrapper for AI services

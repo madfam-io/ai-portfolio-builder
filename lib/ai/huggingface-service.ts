@@ -11,7 +11,6 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-/* eslint-disable max-lines */
 import crypto from 'crypto';
 
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
@@ -22,17 +21,17 @@ import { ContentScorer } from './huggingface/ContentScorer';
 import { ModelManager } from './huggingface/ModelManager';
 import { PromptBuilder } from './huggingface/PromptBuilder';
 import {
-  AIService,
-  EnhancedContent,
-  BioContext,
-  ProjectEnhancement,
-  TemplateRecommendation,
-  UserProfile,
-  QualityScore,
+  type AIService,
+  type EnhancedContent,
+  type BioContext,
+  type ProjectEnhancement,
+  type TemplateRecommendation,
+  type UserProfile,
+  type QualityScore,
   AIServiceError,
   ModelUnavailableError,
   QuotaExceededError,
-  ModelResponse,
+  type ModelResponse,
 } from './types';
 
 /**
@@ -1110,5 +1109,5 @@ function extractMetrics(text: string): string[] {
 }
 
 // Temporary type for HfInference until @huggingface/inference is installed
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 type _HfInference = unknown;

@@ -18,7 +18,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { AppError, isAppError, getErrorMessage } from '@/types/errors';
-import { errorLogger, ErrorContext } from './error-logger';
+import { errorLogger, type ErrorContext } from './error-logger';
 
 export interface ApiErrorResponse {
   error: {

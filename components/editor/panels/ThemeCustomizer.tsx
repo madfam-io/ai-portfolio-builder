@@ -23,7 +23,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { TemplateCustomization } from '@/types/portfolio';
+import { type TemplateCustomization } from '@/types/portfolio';
 import { cn } from '@/lib/utils';
 
 interface ThemeCustomizerProps {
@@ -121,7 +121,6 @@ const PRESET_COLORS = [
   '#a855f7', // Violet
 ];
 
-// eslint-disable-next-line complexity
 export function ThemeCustomizer({
   customization,
   onUpdate,

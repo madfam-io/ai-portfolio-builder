@@ -11,19 +11,19 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { infrastructure } from '@/lib/adapters/infrastructure-adapter';
 
 export async function GET(request: NextRequest) {
   try {
     const startTime = Date.now();
-    
+
     // Run health checks
     const health = await infrastructure.healthCheck();
     const environmentInfo = infrastructure.getEnvironmentInfo();
-    
+
     const responseTime = Date.now() - startTime;
-    
+
     const response = {
       status: health.overall ? 'healthy' : 'degraded',
       timestamp: new Date().toISOString(),
@@ -53,17 +53,16 @@ export async function GET(request: NextRequest) {
 
     // Return appropriate HTTP status
     const statusCode = health.overall ? 200 : 503;
-    
-    return NextResponse.json(response, { 
+
+    return NextResponse.json(response, {
       status: statusCode,
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
-    
   } catch (error) {
     console.error('Health check error:', error);
-    
+
     return NextResponse.json(
       {
         status: 'error',
@@ -81,8 +80,8 @@ export async function HEAD(request: NextRequest) {
   try {
     const health = await infrastructure.healthCheck();
     const statusCode = health.overall ? 200 : 503;
-    
-    return new NextResponse(null, { 
+
+    return new NextResponse(null, {
       status: statusCode,
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',

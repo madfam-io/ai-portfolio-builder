@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { TemplateType, SectionType } from '@/types/portfolio';
+import { type TemplateType, type SectionType } from '@/types/portfolio';
 
 /**
  * @fileoverview Template Configuration System

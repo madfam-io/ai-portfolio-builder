@@ -16,7 +16,7 @@
  * Provides centralized error handling with optional Sentry integration
  */
 
-import { NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
 
 export interface ErrorReport {
   message: string;

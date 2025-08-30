@@ -47,7 +47,8 @@ export default function PortfolioNotFound() {
         <div className="mt-12 p-6 rounded-lg bg-muted/50 max-w-md mx-auto">
           <p className="text-sm font-medium mb-2">Create Your Own Portfolio</p>
           <p className="text-sm text-muted-foreground mb-4">
-            Join Portfolio Builder and build your professional portfolio in minutes.
+            Join Portfolio Builder and build your professional portfolio in
+            minutes.
           </p>
           <Button size="sm" asChild className="w-full">
             <Link href="/signup">Get Started Free</Link>

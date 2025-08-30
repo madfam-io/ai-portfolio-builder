@@ -25,7 +25,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Experience, EmploymentType } from '@/types/portfolio';
+import { type Experience, type EmploymentType } from '@/types/portfolio';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 
 interface ExperienceSectionProps {
@@ -47,7 +47,6 @@ interface ExperienceFormData {
   technologies?: string[];
 }
 
-// eslint-disable-next-line complexity
 export function ExperienceSection({
   experiences = [],
   onUpdate,

@@ -16,7 +16,7 @@
 import React from 'react';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { cn } from '@/lib/utils';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 import { DeveloperTemplate } from '@/components/templates/DeveloperTemplate';
 import { DesignerTemplate } from '@/components/templates/DesignerTemplate';
 import { ConsultantTemplate } from '@/components/templates/ConsultantTemplate';

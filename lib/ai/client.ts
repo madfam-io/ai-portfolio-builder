@@ -14,13 +14,18 @@
 import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
 
 import {
-  BioContext,
-  ProjectEnhancement,
-  TemplateRecommendation,
-  UserProfile,
-  EnhancedContent,
+  type BioContext,
+  type ProjectEnhancement,
+  type TemplateRecommendation,
+  type UserProfile,
+  type EnhancedContent,
 } from './types';
-import { Portfolio, Skill, Project, Experience } from '@/types/portfolio';
+import {
+  type Portfolio,
+  type Skill,
+  type Project,
+  type Experience,
+} from '@/types/portfolio';
 
 /**
  * AI Service Client

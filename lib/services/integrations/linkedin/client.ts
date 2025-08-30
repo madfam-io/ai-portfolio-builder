@@ -21,11 +21,11 @@ import { env } from '@/lib/config';
 import {
   LINKEDIN_OAUTH_CONFIG,
   LINKEDIN_API_ENDPOINTS,
-  LinkedInTokenResponse,
-  LinkedInProfile,
-  LinkedInEmail,
-  LinkedInFullProfile,
-  LinkedInConnectionStatus,
+  type LinkedInTokenResponse,
+  type LinkedInProfile,
+  type LinkedInEmail,
+  type LinkedInFullProfile,
+  type LinkedInConnectionStatus,
 } from './types';
 
 export class LinkedInClient {

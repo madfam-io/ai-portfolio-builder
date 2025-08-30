@@ -16,9 +16,9 @@ import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { logger } from '@/lib/utils/logger';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
-import { PortfolioState, PortfolioActions } from './types';
+import { type PortfolioState, type PortfolioActions } from './types';
 
 /**
  * Portfolio Store

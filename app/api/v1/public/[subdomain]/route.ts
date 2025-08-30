@@ -16,7 +16,7 @@ import {
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
-import { RouteContext } from '@/lib/api/versioning';
+import { type RouteContext } from '@/lib/api/versioning';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';

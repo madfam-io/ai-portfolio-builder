@@ -17,7 +17,7 @@
  * Handles fetching a user's referral rewards with filtering and status tracking.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';

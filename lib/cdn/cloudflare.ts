@@ -58,9 +58,11 @@ class CloudflareCDN {
     });
 
     const data = await response.json();
-    
+
     if (!data.success) {
-      throw new Error(`Cloudflare API error: ${data.errors?.[0]?.message || 'Unknown error'}`);
+      throw new Error(
+        `Cloudflare API error: ${data.errors?.[0]?.message || 'Unknown error'}`
+      );
     }
 
     return data.result;
@@ -72,15 +74,15 @@ class CloudflareCDN {
   async purgeCache(options: PurgeOptions): Promise<void> {
     try {
       const body: any = {};
-      
+
       if (options.files) {
         body.files = options.files;
       }
-      
+
       if (options.tags) {
         body.tags = options.tags;
       }
-      
+
       if (options.hosts) {
         body.hosts = options.hosts;
       }
@@ -90,7 +92,11 @@ class CloudflareCDN {
         body.purge_everything = true;
       }
 
-      await this.makeRequest(`/zones/${this.config.zoneId}/purge_cache`, 'POST', body);
+      await this.makeRequest(
+        `/zones/${this.config.zoneId}/purge_cache`,
+        'POST',
+        body
+      );
       console.log('Cache purged successfully');
     } catch (error) {
       console.error('Cache purge error:', error);
@@ -150,10 +156,14 @@ class CloudflareCDN {
         },
       };
 
-      await this.makeRequest(`/zones/${this.config.zoneId}/rulesets/phases/http_request_cache_settings/entrypoint`, 'POST', {
-        rules: [body],
-      });
-      
+      await this.makeRequest(
+        `/zones/${this.config.zoneId}/rulesets/phases/http_request_cache_settings/entrypoint`,
+        'POST',
+        {
+          rules: [body],
+        }
+      );
+
       console.log('Cache rule created successfully');
     } catch (error) {
       console.error('Error creating cache rule:', error);
@@ -188,9 +198,7 @@ class CloudflareCDN {
 
   // Purge API cache
   async purgeAPICache(): Promise<void> {
-    const files = [
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/v1/*`,
-    ];
+    const files = [`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/*`];
     return this.purgeCacheByFiles(files);
   }
 
@@ -201,20 +209,22 @@ class CloudflareCDN {
     const rules: CacheRule[] = [
       // Cache static assets aggressively
       {
-        expression: '(http.request.uri.path matches "^/static/.*" or http.request.uri.path matches "^/_next/static/.*")',
+        expression:
+          '(http.request.uri.path matches "^/static/.*" or http.request.uri.path matches "^/_next/static/.*")',
         action: 'cache',
         cacheLevel: 'aggressive',
         ttl: 31536000, // 1 year
       },
-      
+
       // Cache images and media
       {
-        expression: '(http.request.uri.path matches ".*\\.(jpg|jpeg|png|gif|webp|svg|ico|woff|woff2)$")',
+        expression:
+          '(http.request.uri.path matches ".*\\.(jpg|jpeg|png|gif|webp|svg|ico|woff|woff2)$")',
         action: 'cache',
         cacheLevel: 'aggressive',
         ttl: 2592000, // 30 days
       },
-      
+
       // Cache CSS and JS with medium TTL
       {
         expression: '(http.request.uri.path matches ".*\\.(css|js)$")',
@@ -222,18 +232,20 @@ class CloudflareCDN {
         cacheLevel: 'aggressive',
         ttl: 604800, // 7 days
       },
-      
+
       // Cache API responses with short TTL
       {
-        expression: '(http.request.uri.path matches "^/api/v1/.*" and http.request.method eq "GET")',
+        expression:
+          '(http.request.uri.path matches "^/api/v1/.*" and http.request.method eq "GET")',
         action: 'cache',
         cacheLevel: 'basic',
         ttl: 300, // 5 minutes
       },
-      
+
       // Cache published portfolios
       {
-        expression: '(http.request.uri.path matches "^/[a-zA-Z0-9-]+$" and not http.request.uri.path in {"/", "/login", "/signup", "/dashboard"})',
+        expression:
+          '(http.request.uri.path matches "^/[a-zA-Z0-9-]+$" and not http.request.uri.path in {"/", "/login", "/signup", "/dashboard"})',
         action: 'cache',
         cacheLevel: 'basic',
         ttl: 1800, // 30 minutes
@@ -258,14 +270,14 @@ class CloudflareCDN {
       // This would typically involve setting up preload headers
       // Cloudflare Workers or Page Rules would handle this
       console.log('Preloading critical resources:', urls);
-      
+
       // For now, we'll just warm the cache by making requests
-      const promises = urls.map(url => 
-        fetch(url, { method: 'HEAD' }).catch(error => 
+      const promises = urls.map(url =>
+        fetch(url, { method: 'HEAD' }).catch(error =>
           console.warn(`Failed to preload ${url}:`, error)
         )
       );
-      
+
       await Promise.allSettled(promises);
     } catch (error) {
       console.error('Error preloading resources:', error);
@@ -292,7 +304,7 @@ class CloudflareCDN {
       const start = Date.now();
       await this.getZoneInfo();
       const latency = Date.now() - start;
-      
+
       return { healthy: true, latency };
     } catch (error) {
       console.error('CDN health check failed:', error);

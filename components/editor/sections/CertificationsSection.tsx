@@ -41,7 +41,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Certification } from '@/types/portfolio';
+import { type Certification } from '@/types/portfolio';
 import { cn } from '@/lib/utils';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 
@@ -60,7 +60,6 @@ interface CertificationFormData {
   imageUrl?: string;
 }
 
-// eslint-disable-next-line complexity
 export function CertificationsSection({
   certifications = [],
   onUpdate,

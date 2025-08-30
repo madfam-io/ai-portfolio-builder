@@ -17,7 +17,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import { aiClient } from '@/lib/ai/client';
 
-import { AIState, AIActions, AIEnhancement } from './types';
+import { type AIState, type AIActions, type AIEnhancement } from './types';
 
 /**
  * AI Store

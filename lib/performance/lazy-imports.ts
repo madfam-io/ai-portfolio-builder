@@ -16,7 +16,7 @@
  * Provides dynamic imports with loading states and error handling
  */
 
-import { lazy, ComponentType, ReactNode } from 'react';
+import { lazy, type ComponentType, type ReactNode } from 'react';
 import { logger } from '../utils/logger';
 
 /**

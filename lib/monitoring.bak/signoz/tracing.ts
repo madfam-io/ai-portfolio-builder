@@ -11,7 +11,6 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-/* eslint-disable require-await */
 /**
  * OpenTelemetry Tracing Utilities
  *
@@ -23,7 +22,7 @@ import {
   context,
   SpanKind,
   SpanStatusCode,
-  Attributes,
+  type Attributes,
 } from '@opentelemetry/api';
 import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
 import { tracer } from './index';

@@ -50,7 +50,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface CustomDomainSettingsProps {
   portfolio: Portfolio;
@@ -64,7 +64,6 @@ interface DomainStatus {
   ssl?: boolean;
 }
 
-// eslint-disable-next-line complexity
 export function CustomDomainSettings({
   portfolio,
   onUpdate,

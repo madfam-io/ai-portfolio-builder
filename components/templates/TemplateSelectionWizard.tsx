@@ -37,7 +37,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { cn } from '@/lib/utils';
-import { TemplateType } from '@/types/portfolio';
+import { type TemplateType } from '@/types/portfolio';
 
 interface TemplateSelectionWizardProps {
   onSelect: (template: TemplateType) => void;
@@ -123,7 +123,6 @@ interface WizardState {
   recommendation?: TemplateType;
 }
 
-// eslint-disable-next-line complexity
 export function TemplateSelectionWizard({
   onSelect,
   onCancel,

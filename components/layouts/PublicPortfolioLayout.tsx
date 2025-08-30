@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 interface PublicPortfolioLayoutProps {
   children: ReactNode;

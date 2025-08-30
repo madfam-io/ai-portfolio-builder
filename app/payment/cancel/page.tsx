@@ -21,7 +21,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-// eslint-disable-next-line complexity
 export default function PaymentCancel() {
   const router = useRouter();
   const { t } = useLanguage();
@@ -172,7 +171,8 @@ export default function PaymentCancel() {
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      (window.location.href = 'mailto:support@portfolio-builder.madfam.io')
+                      (window.location.href =
+                        'mailto:support@portfolio-builder.madfam.io')
                     }
                   >
                     <MessageCircle className="mr-2 h-4 w-4" />

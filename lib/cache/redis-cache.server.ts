@@ -22,7 +22,8 @@ export const redisCache = kvCache;
 // Legacy function names for backward compatibility
 export const cache = {
   get: kvCache.get.bind(kvCache),
-  set: (key: string, value: any, ttl?: number) => kvCache.set(key, value, { ttl }),
+  set: (key: string, value: any, ttl?: number) =>
+    kvCache.set(key, value, { ttl }),
   delete: kvCache.delete.bind(kvCache),
   del: kvCache.delete.bind(kvCache), // Redis-style alias
   exists: kvCache.exists.bind(kvCache),

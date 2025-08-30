@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import { RevenueAnalytics } from '@/components/dashboard/revenue-analytics';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';

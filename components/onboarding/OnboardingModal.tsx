@@ -38,8 +38,8 @@ import {
 } from 'lucide-react';
 import {
   useOnboardingStore,
-  OnboardingFlow,
-  OnboardingStep,
+  type OnboardingFlow,
+  type OnboardingStep,
 } from '@/lib/store/onboarding-store';
 import { useRouter } from 'next/navigation';
 import { track } from '@/lib/monitoring/unified/events';

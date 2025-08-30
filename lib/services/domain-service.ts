@@ -17,7 +17,7 @@
  * Handles custom domain configuration, verification, and management
  */
 
-import { createClient } from '@/lib/supabase/client';
+import { prisma } from '@/lib/db/prisma';
 import { track } from '@/lib/monitoring/unified/events';
 import { logger } from '@/lib/utils/logger';
 import type {
@@ -74,16 +74,13 @@ export class DomainService {
     }
 
     // Check if domain is already taken
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
-    const { data } = await supabase.rpc('check_domain_availability', {
-      p_domain: domain,
+    const existingDomain = await prisma.customDomain.findFirst({
+      where: {
+        domain: domain,
+      },
     });
 
-    if (!data) {
+    if (existingDomain) {
       // Generate suggestions if domain is taken
       const suggestions = this.generateDomainSuggestions(domain);
       return {
@@ -110,29 +107,20 @@ export class DomainService {
       throw new Error(`Domain is not available: ${availability.reason}`);
     }
 
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Generate verification token
     const verificationToken = this.generateVerificationToken();
 
     // Create domain record
-    const { data, error } = await supabase
-      .from('custom_domains')
-      .insert({
-        user_id: userId,
-        portfolio_id: portfolioId,
+    const data = await prisma.customDomain.create({
+      data: {
+        userId: userId,
+        portfolioId: portfolioId,
         domain,
-        verification_token: verificationToken,
-        dns_txt_record: `prisma-verify=${verificationToken}`,
-        dns_cname_record: 'portfolios.prisma.madfam.io',
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
+        verificationToken: verificationToken,
+        dnsTxtRecord: `prisma-verify=${verificationToken}`,
+        dnsCnameRecord: 'portfolios.prisma.madfam.io',
+      },
+    });
 
     // Track domain addition
     await track.domain.add({
@@ -148,20 +136,16 @@ export class DomainService {
    * Get all domains for a user
    */
   static async getUserDomains(userId: string): Promise<CustomDomain[]> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
+    const data = await prisma.customDomain.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
-    const { data, error } = await supabase
-      .from('custom_domains')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-
-    return (data || []).map(this.transformDomain);
+    return data.map(this.transformDomain);
   }
 
   /**
@@ -170,20 +154,16 @@ export class DomainService {
   static async getPortfolioDomains(
     portfolioId: string
   ): Promise<CustomDomain[]> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
+    const data = await prisma.customDomain.findMany({
+      where: {
+        portfolioId: portfolioId,
+      },
+      orderBy: {
+        isPrimary: 'desc',
+      },
+    });
 
-    const { data, error } = await supabase
-      .from('custom_domains')
-      .select('*')
-      .eq('portfolio_id', portfolioId)
-      .order('is_primary', { ascending: false });
-
-    if (error) throw error;
-
-    return (data || []).map(this.transformDomain);
+    return data.map(this.transformDomain);
   }
 
   /**
@@ -192,19 +172,14 @@ export class DomainService {
   static async verifyDomain(
     domainId: string
   ): Promise<DomainVerificationResult> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Get domain details
-    const { data: domain, error } = await supabase
-      .from('custom_domains')
-      .select('*')
-      .eq('id', domainId)
-      .single();
+    const domain = await prisma.customDomain.findUnique({
+      where: {
+        id: domainId,
+      },
+    });
 
-    if (error || !domain) {
+    if (!domain) {
       throw new Error('Domain not found');
     }
 
@@ -216,12 +191,12 @@ export class DomainService {
       {
         type: 'TXT',
         name: domain.domain,
-        value: domain.dns_txt_record,
+        value: domain.dnsTxtRecord,
       },
       {
         type: 'CNAME',
         name: domain.domain,
-        value: domain.dns_cname_record,
+        value: domain.dnsCnameRecord,
       },
     ];
 
@@ -229,25 +204,29 @@ export class DomainService {
 
     // Update verification status
     const newStatus = verified ? 'verified' : 'failed';
-    await supabase
-      .from('custom_domains')
-      .update({
-        verification_status: newStatus,
-        dns_configured: verified,
-        verified_at: verified ? new Date().toISOString() : null,
-        dns_last_checked_at: new Date().toISOString(),
-      })
-      .eq('id', domainId);
-
-    // Log verification attempt
-    await supabase.from('domain_verification_logs').insert({
-      domain_id: domainId,
-      verification_type: 'dns_txt',
-      status: verified ? 'success' : 'failed',
-      dns_records: dnsRecords,
-      expected_value: domain.dns_txt_record,
-      actual_value: dnsRecords.find(r => r.type === 'TXT')?.value,
+    await prisma.customDomain.update({
+      where: {
+        id: domainId,
+      },
+      data: {
+        verificationStatus: newStatus,
+        dnsConfigured: verified,
+        verifiedAt: verified ? new Date() : null,
+        dnsLastCheckedAt: new Date(),
+      },
     });
+
+    // Log verification attempt (assuming you have this model)
+    // await prisma.domainVerificationLog.create({
+    //   data: {
+    //     domainId: domainId,
+    //     verificationType: 'dns_txt',
+    //     status: verified ? 'success' : 'failed',
+    //     dnsRecords: dnsRecords,
+    //     expectedValue: domain.dnsTxtRecord,
+    //     actualValue: dnsRecords.find(r => r.type === 'TXT')?.value,
+    //   },
+    // });
 
     // Track verification
     await track.domain.verify({
@@ -271,23 +250,18 @@ export class DomainService {
    * Activate a verified domain
    */
   static async activateDomain(domainId: string): Promise<CustomDomain> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Check if domain is verified
-    const { data: domain, error: fetchError } = await supabase
-      .from('custom_domains')
-      .select('*')
-      .eq('id', domainId)
-      .single();
+    const domain = await prisma.customDomain.findUnique({
+      where: {
+        id: domainId,
+      },
+    });
 
-    if (fetchError || !domain) {
+    if (!domain) {
       throw new Error('Domain not found');
     }
 
-    if (domain.verification_status !== 'verified') {
+    if (domain.verificationStatus !== 'verified') {
       throw new Error('Domain must be verified before activation');
     }
 
@@ -295,19 +269,17 @@ export class DomainService {
     const sslInfo = await this.requestSSLCertificate(domain.domain);
 
     // Update domain status
-    const { data, error } = await supabase
-      .from('custom_domains')
-      .update({
+    const data = await prisma.customDomain.update({
+      where: {
+        id: domainId,
+      },
+      data: {
         status: 'active',
-        activated_at: new Date().toISOString(),
-        ssl_status: sslInfo.status,
-        ssl_certificate_id: sslInfo.certificateId,
-      })
-      .eq('id', domainId)
-      .select()
-      .single();
-
-    if (error) throw error;
+        activatedAt: new Date(),
+        sslStatus: sslInfo.status,
+        sslCertificateId: sslInfo.certificateId,
+      },
+    });
 
     // Track activation
     await track.domain.activate({
@@ -325,26 +297,27 @@ export class DomainService {
     domainId: string,
     portfolioId: string
   ): Promise<void> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // First, unset any existing primary domain for this portfolio
-    await supabase
-      .from('custom_domains')
-      .update({ is_primary: false })
-      .eq('portfolio_id', portfolioId)
-      .eq('is_primary', true);
+    await prisma.customDomain.updateMany({
+      where: {
+        portfolioId: portfolioId,
+        isPrimary: true,
+      },
+      data: {
+        isPrimary: false,
+      },
+    });
 
     // Set the new primary domain
-    const { error } = await supabase
-      .from('custom_domains')
-      .update({ is_primary: true })
-      .eq('id', domainId)
-      .eq('portfolio_id', portfolioId);
-
-    if (error) throw error;
+    await prisma.customDomain.update({
+      where: {
+        id: domainId,
+        portfolioId: portfolioId,
+      },
+      data: {
+        isPrimary: true,
+      },
+    });
 
     // Track primary domain change
     await track.domain.setPrimary({
@@ -357,25 +330,22 @@ export class DomainService {
    * Remove a custom domain
    */
   static async removeDomain(domainId: string): Promise<void> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Get domain details for tracking
-    const { data: domain } = await supabase
-      .from('custom_domains')
-      .select('domain')
-      .eq('id', domainId)
-      .single();
+    const domain = await prisma.customDomain.findUnique({
+      where: {
+        id: domainId,
+      },
+      select: {
+        domain: true,
+      },
+    });
 
     // Delete the domain
-    const { error } = await supabase
-      .from('custom_domains')
-      .delete()
-      .eq('id', domainId);
-
-    if (error) throw error;
+    await prisma.customDomain.delete({
+      where: {
+        id: domainId,
+      },
+    });
 
     // Track removal
     await track.domain.remove({
@@ -472,7 +442,8 @@ export class DomainService {
             {
               order: 2,
               title: 'Add CNAME Record',
-              description: 'Add a CNAME record to point your domain to Portfolio Builder',
+              description:
+                'Add a CNAME record to point your domain to Portfolio Builder',
               recordType: 'CNAME',
               recordName: domain,
               recordValue: 'portfolios.prisma.madfam.io',
@@ -491,23 +462,14 @@ export class DomainService {
     toPath: string,
     redirectType: 301 | 302 = 301
   ): Promise<DomainRedirect> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
-    const { data, error } = await supabase
-      .from('domain_redirects')
-      .insert({
-        domain_id: domainId,
-        from_path: fromPath,
-        to_path: toPath,
-        redirect_type: redirectType,
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
+    const data = await prisma.domainRedirect.create({
+      data: {
+        domainId: domainId,
+        fromPath: fromPath,
+        toPath: toPath,
+        redirectType: redirectType,
+      },
+    });
 
     return this.transformRedirect(data);
   }
@@ -516,28 +478,27 @@ export class DomainService {
    * Get SSL certificate information
    */
   static async getSSLInfo(domainId: string): Promise<SSLCertificateInfo> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
+    const domain = await prisma.customDomain.findUnique({
+      where: {
+        id: domainId,
+      },
+      select: {
+        sslStatus: true,
+        sslCertificateId: true,
+        sslExpiresAt: true,
+        domain: true,
+      },
+    });
 
-    const { data: domain, error } = await supabase
-      .from('custom_domains')
-      .select('ssl_status, ssl_certificate_id, ssl_expires_at, domain')
-      .eq('id', domainId)
-      .single();
-
-    if (error || !domain) {
+    if (!domain) {
       throw new Error('Domain not found');
     }
 
     // In production, this would fetch actual certificate details
     // from the SSL provider (e.g., Let's Encrypt via Caddy)
     return {
-      status: domain.ssl_status,
-      validTo: domain.ssl_expires_at
-        ? new Date(domain.ssl_expires_at)
-        : undefined,
+      status: domain.sslStatus,
+      validTo: domain.sslExpiresAt || undefined,
       commonName: domain.domain,
     };
   }
@@ -615,51 +576,45 @@ export class DomainService {
   private static transformDomain(data: any): CustomDomain {
     return {
       id: data.id,
-      userId: data.user_id,
-      portfolioId: data.portfolio_id,
+      userId: data.userId,
+      portfolioId: data.portfolioId,
       domain: data.domain,
       subdomain: data.subdomain,
-      dnsConfigured: data.dns_configured,
-      dnsTxtRecord: data.dns_txt_record,
-      dnsCnameRecord: data.dns_cname_record,
-      dnsLastCheckedAt: data.dns_last_checked_at
-        ? new Date(data.dns_last_checked_at)
-        : undefined,
-      sslStatus: data.ssl_status,
-      sslCertificateId: data.ssl_certificate_id,
-      sslExpiresAt: data.ssl_expires_at
-        ? new Date(data.ssl_expires_at)
-        : undefined,
-      verificationStatus: data.verification_status,
-      verificationMethod: data.verification_method,
-      verificationToken: data.verification_token,
-      verificationAttempts: data.verification_attempts,
-      lastVerificationAt: data.last_verification_at
-        ? new Date(data.last_verification_at)
-        : undefined,
-      isPrimary: data.is_primary,
-      forceSsl: data.force_ssl,
+      dnsConfigured: data.dnsConfigured,
+      dnsTxtRecord: data.dnsTxtRecord,
+      dnsCnameRecord: data.dnsCnameRecord,
+      dnsLastCheckedAt: data.dnsLastCheckedAt,
+      sslStatus: data.sslStatus,
+      sslCertificateId: data.sslCertificateId,
+      sslExpiresAt: data.sslExpiresAt,
+      verificationStatus: data.verificationStatus,
+      verificationMethod: data.verificationMethod,
+      verificationToken: data.verificationToken,
+      verificationAttempts: data.verificationAttempts,
+      lastVerificationAt: data.lastVerificationAt,
+      isPrimary: data.isPrimary,
+      forceSsl: data.forceSsl,
       status: data.status,
-      errorMessage: data.error_message,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
-      verifiedAt: data.verified_at ? new Date(data.verified_at) : undefined,
-      activatedAt: data.activated_at ? new Date(data.activated_at) : undefined,
+      errorMessage: data.errorMessage,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      verifiedAt: data.verifiedAt,
+      activatedAt: data.activatedAt,
     };
   }
 
   private static transformRedirect(data: any): DomainRedirect {
     return {
       id: data.id,
-      domainId: data.domain_id,
-      fromPath: data.from_path,
-      toPath: data.to_path,
-      redirectType: data.redirect_type,
-      isActive: data.is_active,
-      hitCount: data.hit_count,
-      lastHitAt: data.last_hit_at ? new Date(data.last_hit_at) : undefined,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
+      domainId: data.domainId,
+      fromPath: data.fromPath,
+      toPath: data.toPath,
+      redirectType: data.redirectType,
+      isActive: data.isActive,
+      hitCount: data.hitCount,
+      lastHitAt: data.lastHitAt,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     };
   }
 }

@@ -12,9 +12,9 @@
  */
 
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 import { DeveloperTemplate } from '@/components/templates/DeveloperTemplate';
 import { DesignerTemplate } from '@/components/templates/DesignerTemplate';
 import { ConsultantTemplate } from '@/components/templates/ConsultantTemplate';

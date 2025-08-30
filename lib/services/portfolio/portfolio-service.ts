@@ -12,13 +12,13 @@
  */
 
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
-import { BaseService, BaseRepository } from '@/lib/services/base';
+import { BaseService, type BaseRepository } from '@/lib/services/base';
 import { logger } from '@/lib/utils/logger';
 import {
-  Portfolio,
-  CreatePortfolioDTO,
-  UpdatePortfolioDTO,
-  TemplateCustomization,
+  type Portfolio,
+  type CreatePortfolioDTO,
+  type UpdatePortfolioDTO,
+  type TemplateCustomization,
 } from '@/types/portfolio';
 
 import { PortfolioRepository } from './portfolio.repository';

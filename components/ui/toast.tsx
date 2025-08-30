@@ -40,8 +40,7 @@ export const ToastAction = React.forwardRef<
 });
 ToastAction.displayName = 'ToastAction';
 
-export interface ToastActionElement
-  extends React.ReactElement<typeof ToastAction> {}
+export type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
 export interface ToastData {
   id: string;

@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Portfolio, SEOMetadata } from '@/types/portfolio';
+import { type Portfolio, type SEOMetadata } from '@/types/portfolio';
 
 /**
  * SEO Metadata Generation Utilities

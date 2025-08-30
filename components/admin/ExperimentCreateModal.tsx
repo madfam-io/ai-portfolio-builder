@@ -37,8 +37,8 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  ExperimentContext,
-  ExperimentType,
+  type ExperimentContext,
+  type ExperimentType,
 } from '@/lib/experimentation/universal-experiments';
 
 interface ExperimentCreatorProps {

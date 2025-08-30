@@ -13,7 +13,7 @@
 
 'use client';
 
-import { User as SupabaseUser } from '@supabase/supabase-js';
+import { type User as SupabaseUser } from '@supabase/supabase-js';
 import React, {
   createContext,
   useContext,
@@ -30,14 +30,14 @@ import {
   isSubscriptionActive as checkSubscriptionActive,
   getDaysUntilExpiration,
   getPermissionLevel,
-  PLAN_FEATURES,
+  type PLAN_FEATURES,
 } from '@/lib/auth/roles';
 import { logger } from '@/lib/utils/logger';
 import {
-  User,
-  SubscriptionPlan,
-  AdminPermission,
-  SessionData,
+  type User,
+  type SubscriptionPlan,
+  type AdminPermission,
+  type SessionData,
 } from '@/types/auth';
 
 /**

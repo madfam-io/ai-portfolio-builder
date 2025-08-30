@@ -12,16 +12,16 @@
  */
 
 import {
-  AIService,
-  EnhancedContent,
-  BioContext,
-  ProjectEnhancement,
-  TemplateRecommendation,
-  UserProfile,
-  QualityScore,
+  type AIService,
+  type EnhancedContent,
+  type BioContext,
+  type ProjectEnhancement,
+  type TemplateRecommendation,
+  type UserProfile,
+  type QualityScore,
   AIServiceError,
 } from './types';
-import { DeepSeekConfig, DeepSeekUsageStats } from './deepseek/types';
+import { type DeepSeekConfig, type DeepSeekUsageStats } from './deepseek/types';
 import { DeepSeekAPIClient } from './deepseek/api-client';
 import {
   buildBioPrompt,

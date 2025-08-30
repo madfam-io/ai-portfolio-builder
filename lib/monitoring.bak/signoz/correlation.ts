@@ -11,7 +11,6 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-/* eslint-disable require-await */
 /**
  * PostHog-SigNoz Correlation Utilities
  *

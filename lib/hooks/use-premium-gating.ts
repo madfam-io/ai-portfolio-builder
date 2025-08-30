@@ -30,7 +30,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   premiumGating,
-  PremiumGatingResult,
+  type PremiumGatingResult,
   BUSINESS_USER_TIERS,
 } from '@/lib/monetization/premium-gating';
 import {

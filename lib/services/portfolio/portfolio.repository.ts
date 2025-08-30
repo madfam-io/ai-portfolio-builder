@@ -14,9 +14,9 @@
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import {
-  Portfolio,
-  CreatePortfolioDTO,
-  UpdatePortfolioDTO,
+  type Portfolio,
+  type CreatePortfolioDTO,
+  type UpdatePortfolioDTO,
 } from '@/types/portfolio';
 
 import { getMockPortfolios } from './__mocks__/portfolio.mock';

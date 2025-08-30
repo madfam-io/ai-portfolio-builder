@@ -33,7 +33,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -52,7 +52,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Project } from '@/types/portfolio';
+import { type Project } from '@/types/portfolio';
 import { useToast } from '@/hooks/use-toast';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import {
@@ -247,7 +247,6 @@ function SortableProjectItem({
   );
 }
 
-// eslint-disable-next-line complexity
 export function ProjectsSection({
   projects = [],
   onUpdate,

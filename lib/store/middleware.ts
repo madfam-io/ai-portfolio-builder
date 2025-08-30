@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { StateCreator, StoreMutatorIdentifier } from 'zustand';
+import { type StateCreator, type StoreMutatorIdentifier } from 'zustand';
 
 import { logger as utilLogger } from '@/lib/utils/logger';
 /**

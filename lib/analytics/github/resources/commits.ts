@@ -11,9 +11,9 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Octokit } from '@octokit/rest';
+import { type Octokit } from '@octokit/rest';
 import { logger } from '@/lib/utils/logger';
-import { GitHubCommit } from '../types';
+import { type GitHubCommit } from '../types';
 
 /**
  * GitHub commit operations

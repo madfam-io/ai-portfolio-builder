@@ -61,7 +61,7 @@ import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useSubscription } from '@/lib/hooks/use-subscription';
 import { useUpgradePrompts } from '@/lib/hooks/use-upgrade-prompts';
 import { logger } from '@/lib/utils/logger';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 import { CompletionBadge } from '@/components/portfolio/CompletionBadge';
 
 // Helper function to load portfolios with error handling
@@ -151,7 +151,6 @@ const usePortfolioCreation = (
   return { handleCreatePortfolio };
 };
 
-// eslint-disable-next-line complexity
 function DashboardContent(): React.ReactElement {
   const { t } = useLanguage();
   const { user } = useAuthStore();
@@ -415,7 +414,8 @@ function DashboardContent(): React.ReactElement {
                             <div className="flex items-center gap-2">
                               <Globe className="h-3 w-3" />
                               <span className="text-xs">
-                                {portfolio.subdomain}.portfolio-builder.madfam.io
+                                {portfolio.subdomain}
+                                .portfolio-builder.madfam.io
                               </span>
                             </div>
                           )}

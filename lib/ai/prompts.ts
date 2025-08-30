@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { PromptTemplate } from './types';
+import { type PromptTemplate } from './types';
 
 /**
  * AI Model Prompt Templates

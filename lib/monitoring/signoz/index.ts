@@ -24,7 +24,10 @@ export function trackTrace(name: string, fn: () => any): any {
   return result;
 }
 
-export async function trackAsyncTrace<T>(name: string, fn: () => Promise<T>): Promise<T> {
+export async function trackAsyncTrace<T>(
+  name: string,
+  fn: () => Promise<T>
+): Promise<T> {
   const start = Date.now();
   const result = await fn();
   const duration = Date.now() - start;

@@ -19,7 +19,7 @@ import { logger } from '@/lib/utils/logger';
 import { useAIStore } from './ai-store';
 import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
-import { RootState } from './types';
+import { type RootState } from './types';
 import { useUIStore } from './ui-store';
 
 /**

@@ -18,7 +18,7 @@ import {
   AIServiceError,
   ModelUnavailableError,
   QuotaExceededError,
-  ModelResponse,
+  type ModelResponse,
 } from '../types';
 
 /**

@@ -39,7 +39,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { ContactInfo, SocialLinks } from '@/types/portfolio';
+import { type ContactInfo, type SocialLinks } from '@/types/portfolio';
 
 interface ContactSectionProps {
   contact: ContactInfo;
@@ -106,7 +106,6 @@ const SOCIAL_PLATFORMS = [
   },
 ];
 
-// eslint-disable-next-line complexity
 export function ContactSection({
   contact = {},
   social = {},

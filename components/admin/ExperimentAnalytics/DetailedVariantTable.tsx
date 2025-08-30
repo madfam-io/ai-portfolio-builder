@@ -15,8 +15,8 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle } from 'lucide-react';
 import {
-  UniversalExperimentConfig,
-  ExperimentResult,
+  type UniversalExperimentConfig,
+  type ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
 
 interface DetailedVariantTableProps {

@@ -15,7 +15,7 @@ import { create } from 'zustand';
 import { devtools, subscribeWithSelector, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { UIState, UIActions, Toast } from './types';
+import { type UIState, type UIActions, type Toast } from './types';
 
 /**
  * UI Store

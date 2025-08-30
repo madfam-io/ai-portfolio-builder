@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Skill } from '@/types/portfolio';
+import { type Skill } from '@/types/portfolio';
 import { cn } from '@/lib/utils';
 
 interface SkillsSectionProps {
@@ -61,7 +61,6 @@ const SKILL_LEVELS = [
   { value: 'expert', label: 'Expert', color: 'bg-purple-100 text-purple-800' },
 ];
 
-// eslint-disable-next-line complexity
 export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
   const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);

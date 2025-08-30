@@ -27,8 +27,8 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Clock } from 'lucide-react';
 import {
-  UniversalExperimentConfig,
-  ExperimentResult,
+  type UniversalExperimentConfig,
+  type ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
 
 interface ExperimentDetailsProps {

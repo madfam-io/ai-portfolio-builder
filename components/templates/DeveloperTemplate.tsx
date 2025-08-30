@@ -25,7 +25,7 @@ import {
 import React from 'react';
 
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 /**
  * @fileoverview Developer Portfolio Template

@@ -32,7 +32,7 @@ import {
   experimentationEngine,
   getExperimentVariant,
   trackExperimentConversion,
-  ExperimentResult,
+  type ExperimentResult,
 } from '@/lib/experimentation/ab-testing';
 import { logger } from '@/lib/utils/logger';
 

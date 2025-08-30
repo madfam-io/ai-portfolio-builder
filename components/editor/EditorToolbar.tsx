@@ -27,7 +27,7 @@ import {
   User as FiUser,
 } from 'lucide-react';
 
-import { TemplateType } from '@/types/portfolio';
+import { type TemplateType } from '@/types/portfolio';
 
 interface EditorToolbarProps {
   previewMode: 'desktop' | 'tablet' | 'mobile';

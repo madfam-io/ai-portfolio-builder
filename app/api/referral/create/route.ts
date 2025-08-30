@@ -18,7 +18,7 @@
  * fraud detection, and analytics tracking.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
 import { referralEngine } from '@madfam/referral/engine';
 import type { CreateReferralRequest } from '@madfam/referral/types';

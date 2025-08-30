@@ -12,7 +12,7 @@
  */
 
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import { DemoPortfolioService } from '@/lib/services/demo-portfolio-service';
 import { DeveloperTemplate } from '@/components/templates/DeveloperTemplate';
 import { DesignerTemplate } from '@/components/templates/DesignerTemplate';

@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { KeywordAnalysis, KeywordResearch } from './types';
+import { type KeywordAnalysis, type KeywordResearch } from './types';
 
 /**
  * Keyword Analysis and Optimization Module

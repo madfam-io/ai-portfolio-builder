@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface SubdomainStepProps {
   publishData: {
@@ -210,7 +210,9 @@ export function SubdomainStep({
             onSubdomainChange={handleSubdomainChange}
             onBlur={checkSubdomainAvailability}
           />
-          <span className="text-muted-foreground">.portfolio-builder.madfam.io</span>
+          <span className="text-muted-foreground">
+            .portfolio-builder.madfam.io
+          </span>
         </div>
         <p className="text-sm text-muted-foreground mt-2">
           {t.subdomainHint ||
@@ -237,7 +239,8 @@ export function SubdomainStep({
           {t.yourPortfolioUrl || 'Your portfolio URL will be:'}
         </p>
         <p className="text-lg font-mono">
-          https://{publishData.subdomain || 'yourname'}.portfolio-builder.madfam.io
+          https://{publishData.subdomain || 'yourname'}
+          .portfolio-builder.madfam.io
         </p>
       </div>
 

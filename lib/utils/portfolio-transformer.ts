@@ -12,14 +12,14 @@
  */
 
 import {
-  Portfolio,
-  TemplateType,
-  PortfolioStatus,
-  Experience,
-  Education,
-  Project,
-  Skill,
-  Certification,
+  type Portfolio,
+  type TemplateType,
+  type PortfolioStatus,
+  type Experience,
+  type Education,
+  type Project,
+  type Skill,
+  type Certification,
 } from '@/types/portfolio';
 
 /**

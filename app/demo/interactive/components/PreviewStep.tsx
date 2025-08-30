@@ -18,7 +18,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface PreviewStepProps {
   portfolio: Portfolio;

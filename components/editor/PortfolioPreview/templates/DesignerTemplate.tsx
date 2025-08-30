@@ -14,7 +14,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface DesignerTemplateProps {
   portfolio: Portfolio;

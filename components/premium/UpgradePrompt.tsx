@@ -54,7 +54,7 @@ import {
   X,
 } from 'lucide-react';
 import {
-  PremiumGatingResult,
+  type PremiumGatingResult,
   BUSINESS_USER_TIERS,
 } from '@/lib/monetization/premium-gating';
 import { useConversionOptimization } from '@/lib/hooks/use-premium-gating';

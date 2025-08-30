@@ -13,8 +13,8 @@
 
 import {
   withAuth,
-  AuthenticatedRequest,
-  RouteContext,
+  type AuthenticatedRequest,
+  type RouteContext,
 } from '@/lib/api/middleware/auth';
 import {
   apiSuccess,

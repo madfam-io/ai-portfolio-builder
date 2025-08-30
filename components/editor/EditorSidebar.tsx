@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-import { Portfolio, SectionType } from '@/types/portfolio';
+import { type Portfolio, type SectionType } from '@/types/portfolio';
 import { HeroSection } from './sections/HeroSection';
 import { ExperienceSection } from './sections/ExperienceSection';
 import { EducationSection } from './sections/EducationSection';

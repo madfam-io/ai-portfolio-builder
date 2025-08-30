@@ -13,7 +13,7 @@
 
 'use client';
 
-import { SectionProps } from '../types';
+import { type SectionProps } from '../types';
 import { getSectionClasses } from '../utils';
 
 export function ExperienceSection({

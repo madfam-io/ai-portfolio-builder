@@ -19,10 +19,10 @@ import { useState, useMemo } from 'react';
 import {
   getAvailableTemplates,
   getTemplateConfig,
-  TemplateConfig,
+  type TemplateConfig,
 } from '@/lib/templates/templateConfig';
 import { logger } from '@/lib/utils/logger';
-import { TemplateType } from '@/types/portfolio';
+import { type TemplateType } from '@/types/portfolio';
 
 /**
  * @fileoverview Enhanced Template Selector Component

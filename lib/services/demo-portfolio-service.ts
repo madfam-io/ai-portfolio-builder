@@ -18,7 +18,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 import type { SampleDataConfig } from '@/lib/utils/sample-data/types';
 import {
   developerSampleData,
@@ -32,7 +32,6 @@ import {
 } from '@/lib/utils/sample-data';
 import { TEMPLATE_CONFIGS } from '@/lib/templates/templateConfig';
 import type { TemplateType } from '@/types/portfolio';
-import { createClient } from '@/lib/supabase/client';
 import { track } from '@/lib/monitoring/unified/events';
 
 export interface DemoPortfolio {
@@ -262,27 +261,18 @@ export class DemoPortfolioService {
 
     // If user is logged in, save to database
     if (options.userId) {
-      const supabase = createClient();
-      if (!supabase) {
-        throw new Error('Supabase client not available');
-      }
-
-      const { data: portfolio, error } = await supabase
-        .from('portfolios')
-        .insert({
-          user_id: options.userId,
+      const portfolio = await prisma.portfolio.create({
+        data: {
+          userId: options.userId,
           name: `${demo.name} Portfolio`,
           slug: `demo-${demo.id}-${Date.now()}`,
-          content: portfolioContent,
-          settings: portfolioSettings,
-          is_published: false,
-          is_demo: true,
-          demo_id: demo.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
+          content: portfolioContent as any,
+          settings: portfolioSettings as any,
+          isPublished: false,
+          isDemo: true,
+          demoId: demo.id,
+        },
+      });
 
       return {
         portfolioId: portfolio.id,
@@ -376,18 +366,16 @@ export class DemoPortfolioService {
       throw new Error('Demo portfolio not found');
     }
 
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Check if user already has this demo
-    const { data: existing } = await supabase
-      .from('portfolios')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('demo_id', demoId)
-      .single();
+    const existing = await prisma.portfolio.findFirst({
+      where: {
+        userId: userId,
+        demoId: demoId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
     if (existing) {
       return existing.id;
@@ -409,21 +397,17 @@ export class DemoPortfolioService {
    * Get user's demo portfolios
    */
   static async getUserDemoPortfolios(userId: string): Promise<any[]> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
+    const portfolios = await prisma.portfolio.findMany({
+      where: {
+        userId: userId,
+        isDemo: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
-    const { data, error } = await supabase
-      .from('portfolios')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('is_demo', true)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-
-    return data || [];
+    return portfolios;
   }
 
   /**
@@ -440,28 +424,19 @@ export class DemoPortfolioService {
     }
 
     const temporaryPortfolio = JSON.parse(stored);
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Save to database
-    const { data: portfolio, error } = await supabase
-      .from('portfolios')
-      .insert({
-        user_id: userId,
+    const portfolio = await prisma.portfolio.create({
+      data: {
+        userId: userId,
         name: temporaryPortfolio.name,
         slug: `portfolio-${Date.now()}`,
-        content: temporaryPortfolio.content,
-        settings: temporaryPortfolio.settings,
-        is_published: false,
-        is_demo: true,
-        demo_id: temporaryPortfolio.demo_id,
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
+        content: temporaryPortfolio.content as any,
+        settings: temporaryPortfolio.settings as any,
+        isPublished: false,
+        isDemo: true,
+        demoId: temporaryPortfolio.demo_id,
+      },
+    });
 
     // Clean up session storage
     sessionStorage.removeItem(`demo-portfolio-${temporaryId}`);

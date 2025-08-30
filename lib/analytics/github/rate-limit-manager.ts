@@ -11,10 +11,10 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Octokit } from '@octokit/rest';
+import { type Octokit } from '@octokit/rest';
 import { logger } from '@/lib/utils/logger';
 import { createClient } from '@/lib/supabase/server';
-import { RateLimitInfo, GitHubIntegration } from '@/types/analytics';
+import { type RateLimitInfo, type GitHubIntegration } from '@/types/analytics';
 
 /**
  * Manages GitHub API rate limiting

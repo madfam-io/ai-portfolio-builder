@@ -37,7 +37,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { PerformanceMonitor } from '@/lib/performance/optimization';
 import { createMobileOptimizer } from '@/lib/performance/mobile-optimization';
-import { SectionType } from '@/types/portfolio';
+import { type SectionType } from '@/types/portfolio';
 import {
   trackEditorSectionEdited,
   trackPortfolioUpdated,
@@ -58,7 +58,7 @@ import { CompletionBadge } from '@/components/portfolio/CompletionBadge';
  *
  * Enhanced editor interface with AI features, real-time preview, and drag-and-drop
  */
-// eslint-disable-next-line complexity
+
 export function EditorContent() {
   const router = useRouter();
   const { t } = useLanguage();

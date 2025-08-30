@@ -51,7 +51,11 @@ export class Monitoring {
     }
   }
 
-  performance(name: string, duration: number, context?: Record<string, any>): void {
+  performance(
+    name: string,
+    duration: number,
+    context?: Record<string, any>
+  ): void {
     if (this.config.enabled) {
       console.log('Performance metric:', name, `${duration}ms`, context);
       // In production, this would send to Vercel Analytics

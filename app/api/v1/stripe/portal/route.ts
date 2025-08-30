@@ -21,7 +21,7 @@
 import { NextResponse } from 'next/server';
 
 import { stripeService } from '@/lib/services/stripe/stripe';
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
 import { getAppUrl } from '@/lib/config/env';

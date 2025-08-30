@@ -80,7 +80,6 @@ interface Invoice {
   downloadUrl?: string;
 }
 
-// eslint-disable-next-line complexity
 function BillingContent() {
   const router = useRouter();
   const { t } = useLanguage();

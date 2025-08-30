@@ -66,7 +66,10 @@ class InfrastructureAdapter {
         await kvCache.set(key, value, { ttl });
       } else {
         // Use in-memory cache for development
-        this.memoryCache.set(key, { value, expires: ttl ? Date.now() + (ttl * 1000) : null });
+        this.memoryCache.set(key, {
+          value,
+          expires: ttl ? Date.now() + ttl * 1000 : null,
+        });
       }
     } catch (error) {
       console.warn('Cache set failed:', error);
@@ -82,12 +85,12 @@ class InfrastructureAdapter {
         // Use in-memory cache for development
         const cached = this.memoryCache.get(key);
         if (!cached) return null;
-        
+
         if (cached.expires && Date.now() > cached.expires) {
           this.memoryCache.delete(key);
           return null;
         }
-        
+
         return cached.value;
       }
     } catch (error) {
@@ -109,7 +112,10 @@ class InfrastructureAdapter {
   }
 
   // In-memory cache for development
-  private memoryCache = new Map<string, { value: any; expires: number | null }>();
+  private memoryCache = new Map<
+    string,
+    { value: any; expires: number | null }
+  >();
 
   /**
    * Database operations
@@ -119,7 +125,10 @@ class InfrastructureAdapter {
       return await railwayDb.query<T>(sql, params);
     } else {
       // Use Supabase or local database for development
-      console.log('Dev mode: Database query:', { sql: sql.substring(0, 100), params });
+      console.log('Dev mode: Database query:', {
+        sql: sql.substring(0, 100),
+        params,
+      });
       return [];
     }
   }
@@ -128,7 +137,10 @@ class InfrastructureAdapter {
     if (this.isProduction) {
       return await railwayDb.queryOne<T>(sql, params);
     } else {
-      console.log('Dev mode: Database query one:', { sql: sql.substring(0, 100), params });
+      console.log('Dev mode: Database query one:', {
+        sql: sql.substring(0, 100),
+        params,
+      });
       return null;
     }
   }
@@ -145,7 +157,11 @@ class InfrastructureAdapter {
   /**
    * CDN operations
    */
-  async purgeCDNCache(options: { files?: string[]; tags?: string[]; all?: boolean }): Promise<void> {
+  async purgeCDNCache(options: {
+    files?: string[];
+    tags?: string[];
+    all?: boolean;
+  }): Promise<void> {
     if (!this.isProduction) {
       console.log('Dev mode: Would purge CDN cache', options);
       return;
@@ -232,7 +248,8 @@ class InfrastructureAdapter {
       console.error('CDN health check failed:', error);
     }
 
-    results.overall = results.storage && results.cache && results.database && results.cdn;
+    results.overall =
+      results.storage && results.cache && results.database && results.cdn;
 
     return results;
   }
@@ -261,7 +278,11 @@ class InfrastructureAdapter {
     return url;
   }
 
-  async deletePortfolioAsset(userId: string, portfolioId: string, fileName: string): Promise<void> {
+  async deletePortfolioAsset(
+    userId: string,
+    portfolioId: string,
+    fileName: string
+  ): Promise<void> {
     await this.deleteFile(`portfolios/${userId}/${portfolioId}/${fileName}`);
     await this.cacheDelete(`portfolio:${portfolioId}`);
     await this.purgeCDNCache({ tags: [`portfolio-${portfolioId}`] });

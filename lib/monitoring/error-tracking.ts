@@ -17,7 +17,10 @@ export function trackError(error: Error, context?: Record<string, any>): void {
   // In production, would send to Vercel Analytics or external service
 }
 
-export function captureException(error: Error, context?: Record<string, any>): void {
+export function captureException(
+  error: Error,
+  context?: Record<string, any>
+): void {
   trackError(error, context);
 }
 

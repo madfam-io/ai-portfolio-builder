@@ -17,7 +17,7 @@ import { Check, RefreshCw } from 'lucide-react';
 import React from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface EditorStepProps {
   portfolio: Portfolio;

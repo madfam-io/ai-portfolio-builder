@@ -33,17 +33,17 @@ import {
   useCallback,
   useContext,
   createContext,
-  ReactNode,
+  type ReactNode,
 } from 'react';
 import {
   universalExperimentEngine,
   getExperimentVariant,
   trackExperimentExposure,
   trackExperimentConversion,
-  UniversalExperimentVariant,
-  ExperimentAssignment,
-  ExperimentContext,
-  ExperimentResult,
+  type UniversalExperimentVariant,
+  type ExperimentAssignment,
+  type ExperimentContext,
+  type ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
 
 // Context for experiment provider

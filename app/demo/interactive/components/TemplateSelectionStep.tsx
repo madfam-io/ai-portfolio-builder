@@ -17,7 +17,7 @@ import { RefreshCw } from 'lucide-react';
 import React from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
-import { TemplateType } from '@/types/portfolio';
+import { type TemplateType } from '@/types/portfolio';
 
 interface TemplateSelectionStepProps {
   selectedTemplate: TemplateType;

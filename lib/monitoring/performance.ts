@@ -12,7 +12,11 @@
  */
 
 // Simplified performance tracking using Vercel Web Vitals
-export function trackPerformance(name: string, value: number, context?: Record<string, any>): void {
+export function trackPerformance(
+  name: string,
+  value: number,
+  context?: Record<string, any>
+): void {
   console.log(`Performance: ${name} = ${value}ms`, context);
   // In production, would send to Vercel Analytics
 }

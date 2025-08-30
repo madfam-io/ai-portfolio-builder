@@ -13,9 +13,9 @@
 
 import { logger } from '@/lib/utils/logger';
 import {
-  Portfolio,
-  CreatePortfolioDTO,
-  UpdatePortfolioDTO,
+  type Portfolio,
+  type CreatePortfolioDTO,
+  type UpdatePortfolioDTO,
 } from '@/types/portfolio';
 
 /**

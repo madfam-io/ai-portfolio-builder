@@ -14,7 +14,7 @@
 'use client';
 
 import React from 'react';
-import { PortfolioPreviewProps } from './PortfolioPreview/types';
+import { type PortfolioPreviewProps } from './PortfolioPreview/types';
 import {
   getContainerClasses,
   getCustomStyles,

@@ -12,7 +12,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { versionedApiHandler } from '@/lib/api/response-helpers';
 import {
   enhancedStripeService,

@@ -17,7 +17,7 @@
  * Handles all marketplace operations including browsing, purchasing, and managing premium templates
  */
 
-import { createClient } from '@/lib/supabase/client';
+import { prisma } from '@/lib/db/prisma';
 import { generateLicenseKey } from '@/lib/utils/license';
 import { track } from '@/lib/monitoring/unified/events';
 import type {
@@ -43,87 +43,91 @@ export class MarketplaceService {
     total: number;
     hasMore: boolean;
   }> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
     const { query, filters, page = 1, limit = 12 } = params;
     const offset = (page - 1) * limit;
 
-    let queryBuilder = supabase
-      .from('premium_templates')
-      .select('*', { count: 'exact' })
-      .eq('status', 'active');
+    // Build where conditions
+    const where: any = {
+      status: 'active',
+    };
 
     // Apply search query
     if (query) {
-      queryBuilder = queryBuilder.or(
-        `name.ilike.%${query}%,description.ilike.%${query}%,tags.cs.{${query}}`
-      );
+      where.OR = [
+        { name: { contains: query, mode: 'insensitive' } },
+        { description: { contains: query, mode: 'insensitive' } },
+        { tags: { has: query } },
+      ];
     }
 
     // Apply filters
     if (filters.category) {
-      queryBuilder = queryBuilder.eq('category', filters.category);
+      where.category = filters.category;
     }
 
     if (filters.priceRange) {
-      queryBuilder = queryBuilder
-        .gte('price_usd', filters.priceRange.min)
-        .lte('price_usd', filters.priceRange.max);
+      where.priceUsd = {
+        gte: filters.priceRange.min,
+        lte: filters.priceRange.max,
+      };
     }
 
     if (filters.rating) {
-      queryBuilder = queryBuilder.gte('rating', filters.rating);
+      where.rating = {
+        gte: filters.rating,
+      };
     }
 
     if (filters.industries?.length) {
-      queryBuilder = queryBuilder.contains('industries', filters.industries);
+      where.industries = {
+        hasEvery: filters.industries,
+      };
     }
 
     if (filters.featured) {
-      queryBuilder = queryBuilder.eq('featured', true);
+      where.featured = true;
     }
 
     if (filters.bestSeller) {
-      queryBuilder = queryBuilder.eq('best_seller', true);
+      where.bestSeller = true;
     }
 
     if (filters.newArrival) {
-      queryBuilder = queryBuilder.eq('new_arrival', true);
+      where.newArrival = true;
     }
 
     // Apply sorting
+    let orderBy: any;
     switch (filters.sortBy) {
       case 'popular':
-        queryBuilder = queryBuilder.order('purchases_count', {
-          ascending: false,
-        });
+        orderBy = { purchasesCount: 'desc' };
         break;
       case 'newest':
-        queryBuilder = queryBuilder.order('published_at', { ascending: false });
+        orderBy = { publishedAt: 'desc' };
         break;
       case 'price_low':
-        queryBuilder = queryBuilder.order('price_usd', { ascending: true });
+        orderBy = { priceUsd: 'asc' };
         break;
       case 'price_high':
-        queryBuilder = queryBuilder.order('price_usd', { ascending: false });
+        orderBy = { priceUsd: 'desc' };
         break;
       case 'rating':
-        queryBuilder = queryBuilder.order('rating', { ascending: false });
+        orderBy = { rating: 'desc' };
         break;
       default:
-        queryBuilder = queryBuilder
-          .order('featured', { ascending: false })
-          .order('purchases_count', { ascending: false });
+        orderBy = [{ featured: 'desc' }, { purchasesCount: 'desc' }];
     }
 
-    // Apply pagination
-    queryBuilder = queryBuilder.range(offset, offset + limit - 1);
-
-    const { data, error, count } = await queryBuilder;
-
-    if (error) throw error;
+    // Get data and count
+    const [data, count] = await Promise.all([
+      prisma.premiumTemplate.findMany({
+        where,
+        orderBy,
+        skip: offset,
+        take: limit,
+      }),
+      prisma.premiumTemplate.count({ where }),
+    ]);
 
     // Track search
     await track.marketplace.search({
@@ -143,19 +147,14 @@ export class MarketplaceService {
    * Get a single template by ID or slug
    */
   static async getTemplate(idOrSlug: string): Promise<PremiumTemplate | null> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
+    const data = await prisma.premiumTemplate.findFirst({
+      where: {
+        OR: [{ id: idOrSlug }, { slug: idOrSlug }],
+        status: 'active',
+      },
+    });
 
-    const { data, error } = await supabase
-      .from('premium_templates')
-      .select('*')
-      .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
-      .eq('status', 'active')
-      .single();
-
-    if (error || !data) return null;
+    if (!data) return null;
 
     // Track view
     await this.trackTemplateView(data.id);
@@ -167,20 +166,16 @@ export class MarketplaceService {
    * Get featured templates for homepage
    */
   static async getFeaturedTemplates(limit = 6): Promise<PremiumTemplate[]> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
-    const { data, error } = await supabase
-      .from('premium_templates')
-      .select('*')
-      .eq('status', 'active')
-      .eq('featured', true)
-      .order('purchases_count', { ascending: false })
-      .limit(limit);
-
-    if (error) throw error;
+    const data = await prisma.premiumTemplate.findMany({
+      where: {
+        status: 'active',
+        featured: true,
+      },
+      orderBy: {
+        purchasesCount: 'desc',
+      },
+      take: limit,
+    });
 
     return this.transformTemplates(data || []);
   }
@@ -192,20 +187,16 @@ export class MarketplaceService {
     category: string,
     limit = 12
   ): Promise<PremiumTemplate[]> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
-    const { data, error } = await supabase
-      .from('premium_templates')
-      .select('*')
-      .eq('status', 'active')
-      .eq('category', category)
-      .order('rating', { ascending: false })
-      .limit(limit);
-
-    if (error) throw error;
+    const data = await prisma.premiumTemplate.findMany({
+      where: {
+        status: 'active',
+        category: category,
+      },
+      orderBy: {
+        rating: 'desc',
+      },
+      take: limit,
+    });
 
     return this.transformTemplates(data || []);
   }
@@ -224,18 +215,13 @@ export class MarketplaceService {
     },
     licenseType: LicenseType = 'single_use'
   ): Promise<TemplatePurchase> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Check if already purchased
-    const { data: existing } = await supabase
-      .from('template_purchases')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .single();
+    const existing = await prisma.templatePurchase.findFirst({
+      where: {
+        userId: userId,
+        templateId: templateId,
+      },
+    });
 
     if (existing) {
       throw new Error('Template already purchased');
@@ -244,28 +230,30 @@ export class MarketplaceService {
     // Create purchase record
     const licenseKey = generateLicenseKey();
 
-    const { data: purchase, error } = await supabase
-      .from('template_purchases')
-      .insert({
-        user_id: userId,
-        template_id: templateId,
-        purchase_price: paymentDetails.amount,
+    const purchase = await prisma.templatePurchase.create({
+      data: {
+        userId: userId,
+        templateId: templateId,
+        purchasePrice: paymentDetails.amount,
         currency: paymentDetails.currency,
-        discount_applied: paymentDetails.discountApplied || 0,
-        stripe_payment_id: paymentDetails.stripePaymentId,
-        license_key: licenseKey,
-        license_type: licenseType,
-      })
-      .select('*, template:premium_templates(*)')
-      .single();
-
-    if (error) throw error;
+        discountApplied: paymentDetails.discountApplied || 0,
+        stripePaymentId: paymentDetails.stripePaymentId,
+        licenseKey: licenseKey,
+        licenseType: licenseType,
+      },
+      include: {
+        template: true,
+      },
+    });
 
     // Update template purchase count
-    await supabase.rpc('increment', {
-      table_name: 'premium_templates',
-      column_name: 'purchases_count',
-      row_id: templateId,
+    await prisma.premiumTemplate.update({
+      where: { id: templateId },
+      data: {
+        purchasesCount: {
+          increment: 1,
+        },
+      },
     });
 
     // Track purchase
@@ -284,18 +272,17 @@ export class MarketplaceService {
    * Get user's purchased templates
    */
   static async getUserPurchases(userId: string): Promise<TemplatePurchase[]> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
-    const { data, error } = await supabase
-      .from('template_purchases')
-      .select('*, template:premium_templates(*)')
-      .eq('user_id', userId)
-      .order('purchased_at', { ascending: false });
-
-    if (error) throw error;
+    const data = await prisma.templatePurchase.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        template: true,
+      },
+      orderBy: {
+        purchasedAt: 'desc',
+      },
+    });
 
     return (data || []).map(purchase =>
       MarketplaceService.transformPurchase(purchase as Record<string, unknown>)
@@ -309,19 +296,17 @@ export class MarketplaceService {
     userId: string,
     templateId: string
   ): Promise<boolean> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
+    const data = await prisma.templatePurchase.findFirst({
+      where: {
+        userId: userId,
+        templateId: templateId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-    const { data, error } = await supabase
-      .from('template_purchases')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .single();
-
-    return !error && !!data;
+    return !!data;
   }
 
   /**
@@ -332,20 +317,18 @@ export class MarketplaceService {
     templateId: string,
     portfolioName: string
   ): Promise<string> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Verify purchase
-    const { data: purchase, error: purchaseError } = await supabase
-      .from('template_purchases')
-      .select('*, template:premium_templates(*)')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .single();
+    const purchase = await prisma.templatePurchase.findFirst({
+      where: {
+        userId: userId,
+        templateId: templateId,
+      },
+      include: {
+        template: true,
+      },
+    });
 
-    if (purchaseError || !purchase) {
+    if (!purchase) {
       throw new Error('Template not purchased');
     }
 
@@ -354,39 +337,35 @@ export class MarketplaceService {
     }
 
     // Check license limits
-    if (purchase.license_type === 'single_use' && purchase.times_used > 0) {
+    if (purchase.licenseType === 'single_use' && purchase.timesUsed > 0) {
       throw new Error('Single-use license already used');
     }
 
     // Create portfolio from template
-    const { data: portfolio, error: portfolioError } = await supabase
-      .from('portfolios')
-      .insert({
-        user_id: userId,
+    const portfolio = await prisma.portfolio.create({
+      data: {
+        userId: userId,
         name: portfolioName,
-        template: purchase.template.template_type,
-        content: purchase.template.demo_portfolio_id
-          ? await this.getTemplateContent(purchase.template.demo_portfolio_id)
+        template: purchase.template.templateType,
+        content: purchase.template.demoPortfolioId
+          ? await this.getTemplateContent(purchase.template.demoPortfolioId)
           : {},
         settings: {
-          template: purchase.template.template_type,
-          premium_template_id: templateId,
+          template: purchase.template.templateType,
+          premiumTemplateId: templateId,
         },
-        is_published: false,
-      })
-      .select()
-      .single();
-
-    if (portfolioError) throw portfolioError;
+        isPublished: false,
+      },
+    });
 
     // Update usage count
-    await supabase
-      .from('template_purchases')
-      .update({
-        times_used: purchase.times_used + 1,
-        last_used_at: new Date().toISOString(),
-      })
-      .eq('id', purchase.id);
+    await prisma.templatePurchase.update({
+      where: { id: purchase.id },
+      data: {
+        timesUsed: purchase.timesUsed + 1,
+        lastUsedAt: new Date(),
+      },
+    });
 
     // Track usage
     await track.marketplace.useTemplate({
@@ -411,51 +390,51 @@ export class MarketplaceService {
       comment?: string;
     }
   ): Promise<TemplateReview> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Verify purchase
-    const { data: purchase } = await supabase
-      .from('template_purchases')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .single();
+    const purchase = await prisma.templatePurchase.findFirst({
+      where: {
+        userId: userId,
+        templateId: templateId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
     if (!purchase) {
       throw new Error('Cannot review unpurchased template');
     }
 
     // Check for existing review
-    const { data: existing } = await supabase
-      .from('template_reviews')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .single();
+    const existing = await prisma.templateReview.findFirst({
+      where: {
+        userId: userId,
+        templateId: templateId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
     if (existing) {
       throw new Error('You have already reviewed this template');
     }
 
     // Create review
-    const { data: newReview, error } = await supabase
-      .from('template_reviews')
-      .insert({
-        user_id: userId,
-        template_id: templateId,
-        purchase_id: purchase.id,
+    const newReview = await prisma.templateReview.create({
+      data: {
+        userId: userId,
+        templateId: templateId,
+        purchaseId: purchase.id,
         rating: review.rating,
         title: review.title,
         comment: review.comment,
         status: 'pending', // Reviews go through moderation
-      })
-      .select('*, user:auth.users(email, raw_user_meta_data)')
-      .single();
-
-    if (error) throw error;
+      },
+      include: {
+        user: true,
+      },
+    });
 
     // Update template rating (will be recalculated by a trigger or scheduled job)
     await this.updateTemplateRating(templateId);
@@ -484,43 +463,49 @@ export class MarketplaceService {
     total: number;
     averageRating: number;
   }> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
     const offset = (page - 1) * limit;
 
-    const { data, error, count } = await supabase
-      .from('template_reviews')
-      .select('*, user:auth.users(email, raw_user_meta_data)', {
-        count: 'exact',
-      })
-      .eq('template_id', templateId)
-      .eq('status', 'approved')
-      .order('featured', { ascending: false })
-      .order('helpful_count', { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (error) throw error;
-
-    // Get average rating
-    const { data: stats } = await supabase
-      .from('template_reviews')
-      .select('rating')
-      .eq('template_id', templateId)
-      .eq('status', 'approved');
+    const [data, count, stats] = await Promise.all([
+      prisma.templateReview.findMany({
+        where: {
+          templateId: templateId,
+          status: 'approved',
+        },
+        include: {
+          user: true,
+        },
+        orderBy: [{ featured: 'desc' }, { helpfulCount: 'desc' }],
+        skip: offset,
+        take: limit,
+      }),
+      prisma.templateReview.count({
+        where: {
+          templateId: templateId,
+          status: 'approved',
+        },
+      }),
+      prisma.templateReview.findMany({
+        where: {
+          templateId: templateId,
+          status: 'approved',
+        },
+        select: {
+          rating: true,
+        },
+      }),
+    ]);
 
     const averageRating = stats?.length
       ? stats.reduce((sum, r) => sum + r.rating, 0) / stats.length
       : 0;
 
     return {
-      reviews: (data || []).map(review =>
+      reviews: data.map(review =>
         MarketplaceService.transformReview(
           review as unknown as Record<string, unknown>
         )
       ),
-      total: count || 0,
+      total: count,
       averageRating,
     };
   }
@@ -532,22 +517,24 @@ export class MarketplaceService {
     userId: string,
     templateId: string
   ): Promise<boolean> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
     // Check if already in wishlist
-    const { data: existing } = await supabase
-      .from('template_wishlist')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .single();
+    const existing = await prisma.templateWishlist.findFirst({
+      where: {
+        userId: userId,
+        templateId: templateId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
     if (existing) {
       // Remove from wishlist
-      await supabase.from('template_wishlist').delete().eq('id', existing.id);
+      await prisma.templateWishlist.delete({
+        where: {
+          id: existing.id,
+        },
+      });
 
       await track.marketplace.wishlist({
         action: 'remove',
@@ -558,9 +545,11 @@ export class MarketplaceService {
       return false;
     } else {
       // Add to wishlist
-      await supabase.from('template_wishlist').insert({
-        user_id: userId,
-        template_id: templateId,
+      await prisma.templateWishlist.create({
+        data: {
+          userId: userId,
+          templateId: templateId,
+        },
       });
 
       await track.marketplace.wishlist({
@@ -577,42 +566,53 @@ export class MarketplaceService {
    * Get user's wishlist
    */
   static async getUserWishlist(userId: string): Promise<PremiumTemplate[]> {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
+    const data = await prisma.templateWishlist.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        template: true,
+      },
+      orderBy: {
+        addedAt: 'desc',
+      },
+    });
 
-    const { data, error } = await supabase
-      .from('template_wishlist')
-      .select('template:premium_templates(*)')
-      .eq('user_id', userId)
-      .order('added_at', { ascending: false });
-
-    if (error) throw error;
-
-    return (data || [])
-      .map(
-        item =>
-          (item as Record<string, unknown>).template as Record<string, unknown>
-      )
+    return data
+      .map(item => item.template)
       .filter(Boolean)
-      .map(template => MarketplaceService.transformTemplate(template));
+      .map(template =>
+        MarketplaceService.transformTemplate(
+          template as Record<string, unknown>
+        )
+      );
   }
 
   // Helper methods
 
   private static async trackTemplateView(templateId: string) {
     // Update analytics (could be done via edge function for better performance)
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    await supabase.rpc('upsert_template_analytics', {
-      p_template_id: templateId,
-      p_date: today,
-      p_views: 1,
+    // Upsert template analytics (you'll need to implement this logic)
+    await prisma.templateAnalytics.upsert({
+      where: {
+        templateId_date: {
+          templateId: templateId,
+          date: today,
+        },
+      },
+      update: {
+        views: {
+          increment: 1,
+        },
+      },
+      create: {
+        templateId: templateId,
+        date: today,
+        views: 1,
+      },
     });
 
     await track.marketplace.view({
@@ -621,29 +621,30 @@ export class MarketplaceService {
   }
 
   private static async updateTemplateRating(templateId: string) {
-    const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
-
-    const { data: reviews } = await supabase
-      .from('template_reviews')
-      .select('rating')
-      .eq('template_id', templateId)
-      .eq('status', 'approved');
+    const reviews = await prisma.templateReview.findMany({
+      where: {
+        templateId: templateId,
+        status: 'approved',
+      },
+      select: {
+        rating: true,
+      },
+    });
 
     if (!reviews || reviews.length === 0) return;
 
     const averageRating =
       reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
 
-    await supabase
-      .from('premium_templates')
-      .update({
+    await prisma.premiumTemplate.update({
+      where: {
+        id: templateId,
+      },
+      data: {
         rating: averageRating,
-        reviews_count: reviews.length,
-      })
-      .eq('id', templateId);
+        reviewsCount: reviews.length,
+      },
+    });
   }
 
   private static getTemplateContent(_demoPortfolioId: string) {
@@ -663,36 +664,34 @@ export class MarketplaceService {
       longDescription: data.long_description as string | undefined,
       category: data.category as string,
       tags: (data.tags as string[]) || [],
-      priceUsd: parseFloat(data.price_usd as string),
-      priceMxn: parseFloat(data.price_mxn as string),
-      priceEur: parseFloat(data.price_eur as string),
-      discountPercentage: (data.discount_percentage as number) || 0,
-      templateType: data.template_type as string,
-      previewUrl: data.preview_url as string | undefined,
-      thumbnailUrl: data.thumbnail_url as string | undefined,
-      galleryImages: (data.gallery_images as string[]) || [],
-      demoPortfolioId: data.demo_portfolio_id as string | undefined,
+      priceUsd: data.priceUsd as number,
+      priceMxn: data.priceMxn as number,
+      priceEur: data.priceEur as number,
+      discountPercentage: (data.discountPercentage as number) || 0,
+      templateType: data.templateType as string,
+      previewUrl: data.previewUrl as string | undefined,
+      thumbnailUrl: data.thumbnailUrl as string | undefined,
+      galleryImages: (data.galleryImages as string[]) || [],
+      demoPortfolioId: data.demoPortfolioId as string | undefined,
       features: (data.features as TemplateFeature[]) || [],
       industries: (data.industries as string[]) || [],
-      bestFor: (data.best_for as string[]) || [],
+      bestFor: (data.bestFor as string[]) || [],
       customizationOptions:
-        (data.customization_options as CustomizationOption[]) || [],
-      purchasesCount: (data.purchases_count as number) || 0,
-      rating: parseFloat((data.rating as string) || '0') || 0,
-      reviewsCount: (data.reviews_count as number) || 0,
-      authorId: data.author_id as string,
-      authorName: data.author_name as string,
-      authorAvatar: data.author_avatar as string | undefined,
-      revenueShare: parseFloat((data.revenue_share as string) || '0.7') || 0.7,
+        (data.customizationOptions as CustomizationOption[]) || [],
+      purchasesCount: (data.purchasesCount as number) || 0,
+      rating: (data.rating as number) || 0,
+      reviewsCount: (data.reviewsCount as number) || 0,
+      authorId: data.authorId as string,
+      authorName: data.authorName as string,
+      authorAvatar: data.authorAvatar as string | undefined,
+      revenueShare: (data.revenueShare as number) || 0.7,
       status: data.status as TemplateStatus,
       featured: (data.featured as boolean) || false,
-      newArrival: (data.new_arrival as boolean) || false,
-      bestSeller: (data.best_seller as boolean) || false,
-      createdAt: new Date(data.created_at as string),
-      updatedAt: new Date(data.updated_at as string),
-      publishedAt: data.published_at
-        ? new Date(data.published_at as string)
-        : undefined,
+      newArrival: (data.newArrival as boolean) || false,
+      bestSeller: (data.bestSeller as boolean) || false,
+      createdAt: data.createdAt as Date,
+      updatedAt: data.updatedAt as Date,
+      publishedAt: data.publishedAt as Date | undefined,
     };
   }
 
@@ -707,27 +706,22 @@ export class MarketplaceService {
   ): TemplatePurchase {
     return {
       id: data.id as string,
-      userId: data.user_id as string,
-      templateId: data.template_id as string,
+      userId: data.userId as string,
+      templateId: data.templateId as string,
       template: data.template
         ? this.transformTemplate(data.template as Record<string, unknown>)
         : undefined,
-      purchasePrice: parseFloat(data.purchase_price as string),
+      purchasePrice: data.purchasePrice as number,
       currency: data.currency as Currency,
-      discountApplied:
-        parseFloat((data.discount_applied as string) || '0') || 0,
-      stripePaymentId: data.stripe_payment_id as string | undefined,
-      licenseKey: data.license_key as string,
-      licenseType: data.license_type as LicenseType,
-      timesUsed: (data.times_used as number) || 0,
-      lastUsedAt: data.last_used_at
-        ? new Date(data.last_used_at as string)
-        : undefined,
+      discountApplied: (data.discountApplied as number) || 0,
+      stripePaymentId: data.stripePaymentId as string | undefined,
+      licenseKey: data.licenseKey as string,
+      licenseType: data.licenseType as LicenseType,
+      timesUsed: (data.timesUsed as number) || 0,
+      lastUsedAt: data.lastUsedAt as Date | undefined,
       status: data.status as PurchaseStatus,
-      purchasedAt: new Date(data.purchased_at as string),
-      expiresAt: data.expires_at
-        ? new Date(data.expires_at as string)
-        : undefined,
+      purchasedAt: data.purchasedAt as Date,
+      expiresAt: data.expiresAt as Date | undefined,
     };
   }
 
@@ -735,28 +729,24 @@ export class MarketplaceService {
     data: Record<string, unknown>
   ): TemplateReview {
     const user = data.user as Record<string, unknown> | undefined;
-    const userMetaData = user?.raw_user_meta_data as
-      | Record<string, unknown>
-      | undefined;
 
     return {
       id: data.id as string,
-      templateId: data.template_id as string,
-      userId: data.user_id as string,
-      purchaseId: data.purchase_id as string,
+      templateId: data.templateId as string,
+      userId: data.userId as string,
+      purchaseId: data.purchaseId as string,
       rating: data.rating as number,
       title: data.title as string | undefined,
       comment: data.comment as string | undefined,
       userName:
-        (userMetaData?.name as string) ||
-        (user?.email as string)?.split('@')[0],
-      userAvatar: userMetaData?.avatar_url as string | undefined,
-      helpfulCount: (data.helpful_count as number) || 0,
-      notHelpfulCount: (data.not_helpful_count as number) || 0,
+        (user?.name as string) || (user?.email as string) || 'Anonymous',
+      userAvatar: user?.image as string | undefined,
+      helpfulCount: (data.helpfulCount as number) || 0,
+      notHelpfulCount: (data.notHelpfulCount as number) || 0,
       status: data.status as ReviewStatus,
       featured: (data.featured as boolean) || false,
-      createdAt: new Date(data.created_at as string),
-      updatedAt: new Date(data.updated_at as string),
+      createdAt: data.createdAt as Date,
+      updatedAt: data.updatedAt as Date,
     };
   }
 }

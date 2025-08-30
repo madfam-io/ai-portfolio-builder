@@ -77,7 +77,8 @@ export function SatisfactionSurvey({
   const steps = [
     {
       title: 'Overall Experience',
-      description: 'How satisfied are you with Portfolio Builder Portfolio Builder?',
+      description:
+        'How satisfied are you with Portfolio Builder Portfolio Builder?',
       field: 'overallSatisfaction' as const,
       scale: '1 = Very Dissatisfied, 10 = Very Satisfied',
     },
@@ -242,7 +243,8 @@ export function SatisfactionSurvey({
                 Help Us Improve
               </CardTitle>
               <CardDescription>
-                Your feedback shapes the future of Portfolio Builder Portfolio Builder
+                Your feedback shapes the future of Portfolio Builder Portfolio
+                Builder
               </CardDescription>
             </div>
             <Button variant="ghost" size="icon" onClick={onDismiss}>

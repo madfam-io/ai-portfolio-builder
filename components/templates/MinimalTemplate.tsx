@@ -27,7 +27,7 @@ import {
   Calendar,
 } from 'lucide-react';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 /**
  * @fileoverview Minimal Portfolio Template

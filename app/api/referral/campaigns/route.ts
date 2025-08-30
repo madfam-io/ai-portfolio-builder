@@ -17,7 +17,7 @@
  * Handles fetching active referral campaigns with user eligibility filtering.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
 import { referralEngine } from '@madfam/referral/engine';
 import { logger } from '@/lib/utils/logger';

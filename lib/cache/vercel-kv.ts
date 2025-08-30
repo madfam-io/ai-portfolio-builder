@@ -26,7 +26,7 @@ class VercelKVCache {
   async set(key: string, value: any, options?: CacheOptions): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
-      
+
       if (options?.ttl) {
         await kv.setex(key, options.ttl, serializedValue);
       } else if (options?.ex) {
@@ -51,7 +51,7 @@ class VercelKVCache {
       if (value === null || value === undefined) {
         return null;
       }
-      
+
       if (typeof value === 'string') {
         try {
           return JSON.parse(value);
@@ -60,7 +60,7 @@ class VercelKVCache {
           return value as T;
         }
       }
-      
+
       return value as T;
     } catch (error) {
       console.error('KV Cache get error:', error);
@@ -113,7 +113,7 @@ class VercelKVCache {
       const values = await kv.mget(...keys);
       return values.map(value => {
         if (value === null || value === undefined) return null;
-        
+
         if (typeof value === 'string') {
           try {
             return JSON.parse(value);
@@ -121,7 +121,7 @@ class VercelKVCache {
             return value as T;
           }
         }
-        
+
         return value as T;
       });
     } catch (error) {
@@ -139,7 +139,7 @@ class VercelKVCache {
         key,
         JSON.stringify(value),
       ]);
-      
+
       await kv.mset(Object.fromEntries(pipeline));
     } catch (error) {
       console.error('KV Cache mset error:', error);
@@ -201,9 +201,13 @@ class VercelKVCache {
   /**
    * Portfolio-specific cache methods
    */
-  
+
   // Cache portfolio data
-  async cachePortfolio(portfolioId: string, data: any, ttl = 300): Promise<void> {
+  async cachePortfolio(
+    portfolioId: string,
+    data: any,
+    ttl = 300
+  ): Promise<void> {
     await this.set(`portfolio:${portfolioId}`, data, { ttl });
   }
 
@@ -246,11 +250,11 @@ class VercelKVCache {
   async incrementRateLimit(identifier: string, window = 3600): Promise<number> {
     const key = `ratelimit:${identifier}`;
     const current = await this.incr(key);
-    
+
     if (current === 1) {
       await this.expire(key, window);
     }
-    
+
     return current;
   }
 

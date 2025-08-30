@@ -24,10 +24,10 @@
 
 'use client';
 
-import React, { useEffect, useState, ReactNode } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { UniversalExperimentProvider } from '@/lib/hooks/use-universal-experiment';
-import { ExperimentContext } from '@/lib/experimentation/universal-experiments';
+import { type ExperimentContext } from '@/lib/experimentation/universal-experiments';
 
 interface ExperimentProviderProps {
   children: ReactNode;

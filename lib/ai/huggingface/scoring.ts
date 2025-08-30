@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { QualityScore } from '../types';
+import { type QualityScore } from '../types';
 
 /**
  * Content Quality Scoring Module

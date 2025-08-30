@@ -11,7 +11,12 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 interface R2Config {
@@ -32,9 +37,12 @@ class R2Storage {
       accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
       accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
       secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
-      bucketName: process.env.CLOUDFLARE_BUCKET_NAME || 'portfolio-builder-assets',
+      bucketName:
+        process.env.CLOUDFLARE_BUCKET_NAME || 'portfolio-builder-assets',
       region: process.env.CLOUDFLARE_REGION || 'auto',
-      publicUrl: process.env.NEXT_PUBLIC_CDN_URL || 'https://cdn.portfolio-builder.madfam.io',
+      publicUrl:
+        process.env.NEXT_PUBLIC_CDN_URL ||
+        'https://cdn.portfolio-builder.madfam.io',
     };
 
     this.client = new S3Client({
@@ -111,7 +119,7 @@ class R2Storage {
 
       const response = await this.client.send(command);
       const chunks: Uint8Array[] = [];
-      
+
       if (response.Body) {
         for await (const chunk of response.Body as any) {
           chunks.push(chunk);

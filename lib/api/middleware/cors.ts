@@ -21,7 +21,7 @@
  * @version 0.4.0-beta
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export interface CORSOptions {
   origin?: string | string[] | boolean;

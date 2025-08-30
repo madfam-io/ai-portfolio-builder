@@ -12,15 +12,17 @@
  */
 
 // Simplified APM using Vercel Analytics
-export function startTransaction(name: string): { end: (context?: any) => void } {
+export function startTransaction(name: string): {
+  end: (context?: any) => void;
+} {
   const startTime = Date.now();
-  
+
   return {
     end: (context?: any) => {
       const duration = Date.now() - startTime;
       console.log(`Transaction ${name}: ${duration}ms`, context);
       // In production, would send to Vercel Analytics
-    }
+    },
   };
 }
 
@@ -33,7 +35,10 @@ export function addTransactionContext(context: Record<string, any>): void {
 }
 
 // Higher-order function for APM tracking
-export function withAPMTracking<T extends (...args: any[]) => any>(name: string, fn: T): T {
+export function withAPMTracking<T extends (...args: any[]) => any>(
+  name: string,
+  fn: T
+): T {
   return ((...args: any[]) => {
     const transaction = startTransaction(name);
     try {

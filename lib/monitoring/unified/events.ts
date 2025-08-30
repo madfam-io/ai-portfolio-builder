@@ -12,7 +12,10 @@
  */
 
 // Unified event tracking using PostHog
-export function trackEvent(event: string, properties?: Record<string, any>): void {
+export function trackEvent(
+  event: string,
+  properties?: Record<string, any>
+): void {
   console.log('Event:', event, properties);
   // In production, would send to PostHog
 }
@@ -21,7 +24,10 @@ export function track(event: string, properties?: Record<string, any>): void {
   trackEvent(event, properties);
 }
 
-export function identifyUser(userId: string, properties?: Record<string, any>): void {
+export function identifyUser(
+  userId: string,
+  properties?: Record<string, any>
+): void {
   console.log('User identified:', userId, properties);
   // In production, would send to PostHog
 }

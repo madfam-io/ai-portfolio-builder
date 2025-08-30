@@ -15,7 +15,7 @@
 
 import Image from 'next/image';
 import { Github } from 'lucide-react';
-import { SectionProps } from '../types';
+import { type SectionProps } from '../types';
 import { getSectionClasses } from '../utils';
 
 interface ProjectsSectionProps extends SectionProps {

@@ -11,8 +11,8 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Portfolio } from '@/types/portfolio';
-import { PreviewStyles } from './types';
+import { type Portfolio } from '@/types/portfolio';
+import { type PreviewStyles } from './types';
 
 /**
  * Get container classes based on preview mode

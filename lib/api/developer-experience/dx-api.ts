@@ -32,7 +32,7 @@
 import { logger } from '@/lib/utils/logger';
 import {
   aiCodeQualityEngine,
-  CodeQualityReport,
+  type CodeQualityReport,
 } from '@/lib/ai/code-quality/engine';
 
 export interface DeveloperExperienceMetrics {

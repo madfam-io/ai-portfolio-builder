@@ -71,7 +71,7 @@ import {
 
 import {
   aiCodeQualityEngine,
-  CodeQualityReport,
+  type CodeQualityReport,
 } from '@/lib/ai/code-quality/engine';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { cn } from '@/lib/utils';

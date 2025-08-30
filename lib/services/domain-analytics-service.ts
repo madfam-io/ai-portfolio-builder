@@ -52,7 +52,10 @@ export class DomainAnalyticsService {
         session_id: this.generateSessionId(),
       });
     } catch (error) {
-      logger.error('Failed to track page view', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to track page view',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   }
 
@@ -202,7 +205,10 @@ export class DomainAnalyticsService {
         metadata: details,
       });
     } catch (error) {
-      logger.error('Failed to record SSL event', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to record SSL event',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   }
 

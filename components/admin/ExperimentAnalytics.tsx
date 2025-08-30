@@ -72,9 +72,9 @@ import {
 } from 'lucide-react';
 
 import {
-  UniversalExperimentConfig,
-  UniversalExperimentVariant,
-  ExperimentResult,
+  type UniversalExperimentConfig,
+  type UniversalExperimentVariant,
+  type ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
 import { StatisticalAnalysisChart } from './ExperimentAnalytics/StatisticalAnalysisChart';
 import { DetailedVariantTable } from './ExperimentAnalytics/DetailedVariantTable';

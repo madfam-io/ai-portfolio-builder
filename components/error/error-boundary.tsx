@@ -13,7 +13,7 @@
 
 'use client';
 
-import React, { Component, ReactNode, ErrorInfo } from 'react';
+import React, { Component, type ReactNode, type ErrorInfo } from 'react';
 import { errorLogger } from '@/lib/services/error/error-logger';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';

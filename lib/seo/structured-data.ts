@@ -11,7 +11,12 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Portfolio, Project, Experience, Education } from '@/types/portfolio';
+import {
+  type Portfolio,
+  type Project,
+  type Experience,
+  type Education,
+} from '@/types/portfolio';
 
 /**
  * Structured Data Generation for SEO

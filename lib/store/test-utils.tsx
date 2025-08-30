@@ -13,7 +13,7 @@
 
 import { act } from '@testing-library/react';
 import React from 'react';
-import { StoreApi } from 'zustand';
+import { type StoreApi } from 'zustand';
 
 /**
  * Store Test Utilities

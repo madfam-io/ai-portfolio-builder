@@ -18,7 +18,7 @@
  * including checkout session creation and portal access.
  */
 
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { loadStripe, type Stripe } from '@stripe/stripe-js';
 import { env } from '@/lib/config/env';
 import { logger } from '@/lib/utils/logger';
 

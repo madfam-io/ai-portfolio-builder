@@ -12,11 +12,11 @@
  */
 
 import {
-  User,
-  AdminPermission,
-  AdminRole,
-  SubscriptionPlan,
-  PermissionContext,
+  type User,
+  type AdminPermission,
+  type AdminRole,
+  type SubscriptionPlan,
+  type PermissionContext,
   ADMIN_PERMISSIONS,
   PLAN_FEATURES,
 } from '@/types/auth';

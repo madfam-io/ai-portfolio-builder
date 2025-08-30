@@ -31,7 +31,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-import { PreviewMode, PreviewState } from '@/hooks/useRealTimePreview';
+import {
+  type PreviewMode,
+  type PreviewState,
+} from '@/hooks/useRealTimePreview';
 
 /**
  * @fileoverview Preview Controls Component

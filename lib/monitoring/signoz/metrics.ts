@@ -12,22 +12,42 @@
  */
 
 // Legacy SigNoz metrics stub
-export function recordMetric(name: string, value: number, tags?: Record<string, string>): void {
+export function recordMetric(
+  name: string,
+  value: number,
+  tags?: Record<string, string>
+): void {
   console.log(`Metric ${name}: ${value}`, tags);
 }
 
-export function incrementCounter(name: string, value = 1, tags?: Record<string, string>): void {
+export function incrementCounter(
+  name: string,
+  value = 1,
+  tags?: Record<string, string>
+): void {
   console.log(`Counter ${name}: +${value}`, tags);
 }
 
-export function recordHistogram(name: string, value: number, tags?: Record<string, string>): void {
+export function recordHistogram(
+  name: string,
+  value: number,
+  tags?: Record<string, string>
+): void {
   console.log(`Histogram ${name}: ${value}`, tags);
 }
 
-export function recordGauge(name: string, value: number, tags?: Record<string, string>): void {
+export function recordGauge(
+  name: string,
+  value: number,
+  tags?: Record<string, string>
+): void {
   console.log(`Gauge ${name}: ${value}`, tags);
 }
 
-export function recordPerformanceMetric(name: string, value: number, tags?: Record<string, string>): void {
+export function recordPerformanceMetric(
+  name: string,
+  value: number,
+  tags?: Record<string, string>
+): void {
   console.log(`Performance metric ${name}: ${value}ms`, tags);
 }

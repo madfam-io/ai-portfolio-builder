@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { ErrorType } from './error-types';
+import { type ErrorType } from './error-types';
 
 /**
  * @fileoverview Error Handling Utilities
@@ -70,7 +70,7 @@ export function serializeError(error: unknown): Record<string, any> {
 /**
  * Detect error type from error object
  */
-// eslint-disable-next-line complexity
+
 export function getErrorType(error: unknown): ErrorType {
   if (!error) return 'unknown';
 

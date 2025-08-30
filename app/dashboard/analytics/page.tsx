@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import { AnalyticsDashboard } from '@/components/dashboard/analytics-dashboard';
 
 export const metadata: Metadata = {

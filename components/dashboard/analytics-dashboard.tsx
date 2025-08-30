@@ -84,8 +84,10 @@ export function AnalyticsDashboard() {
         const result = await response.json();
         setData(result);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        logger.error('Failed to fetch analytics', error instanceof Error ? error : new Error(String(error)));
+        logger.error(
+          'Failed to fetch analytics',
+          error instanceof Error ? error : new Error(String(error))
+        );
       } finally {
         setLoading(false);
       }

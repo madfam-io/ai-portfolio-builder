@@ -14,11 +14,11 @@
 import { logger } from '@/lib/utils/logger';
 
 import {
-  ErrorReport,
-  ErrorType,
-  ErrorSeverity,
-  ErrorHandler,
-  ErrorFilter,
+  type ErrorReport,
+  type ErrorType,
+  type ErrorSeverity,
+  type ErrorHandler,
+  type ErrorFilter,
 } from './error-types';
 import { serializeError, getErrorType, getErrorContext } from './error-utils';
 

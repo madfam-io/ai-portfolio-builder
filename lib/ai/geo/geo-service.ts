@@ -13,16 +13,19 @@
 
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
 import { logger } from '@/lib/utils/logger';
-import { GEOContent, SEOMetadata } from '@/types/geo';
+import { type GEOContent, type SEOMetadata } from '@/types/geo';
 
 import { HuggingFaceService } from '../huggingface-service';
-import { GEOEnhancementRequest, GEOEnhancementResponse } from '../types';
+import {
+  type GEOEnhancementRequest,
+  type GEOEnhancementResponse,
+} from '../types';
 
 import { ContentOptimizer } from './content-optimizer';
 import {
-  OptimizeContentRequest,
-  GEOSettings as LocalGEOSettings,
-  KeywordResearch,
+  type OptimizeContentRequest,
+  type GEOSettings as LocalGEOSettings,
+  type KeywordResearch,
 } from './types';
 import { KeywordAnalyzer } from './keyword-analyzer';
 import { MetadataGenerator } from './metadata-generator';

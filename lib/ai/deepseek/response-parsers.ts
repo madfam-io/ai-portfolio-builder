@@ -18,12 +18,12 @@
  */
 
 import {
-  EnhancedContent,
-  ProjectEnhancement,
-  TemplateRecommendation,
-  QualityScore,
+  type EnhancedContent,
+  type ProjectEnhancement,
+  type TemplateRecommendation,
+  type QualityScore,
 } from '../types';
-import { DeepSeekResponse } from './types';
+import { type DeepSeekResponse } from './types';
 
 /**
  * Parse bio enhancement response

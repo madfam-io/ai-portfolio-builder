@@ -18,12 +18,12 @@
 
 import { logger } from '@/lib/utils/logger';
 import {
-  LinkedInFullProfile,
-  LinkedInImportResult,
-  LinkedInPosition,
-  LinkedInEducation,
-  LinkedInProject,
-  LinkedInCertification,
+  type LinkedInFullProfile,
+  type LinkedInImportResult,
+  type LinkedInPosition,
+  type LinkedInEducation,
+  type LinkedInProject,
+  type LinkedInCertification,
 } from './types';
 
 export class LinkedInParser {

@@ -24,10 +24,10 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 import {
   renderSections,
-  SectionRenderMap,
+  type SectionRenderMap,
 } from '@/lib/utils/template-sections';
 
 interface ModernTemplateProps {

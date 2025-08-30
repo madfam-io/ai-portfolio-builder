@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import dns from 'dns/promises';
 import { logger } from '@/lib/utils/logger';
@@ -101,7 +101,8 @@ export async function POST(request: NextRequest) {
       record.includes(`prisma-verify=${domain.verification_token}`)
     );
 
-    const hasCnameRecord = cnameRecord === 'portfolios.portfolio-builder.madfam.io';
+    const hasCnameRecord =
+      cnameRecord === 'portfolios.portfolio-builder.madfam.io';
 
     // Both records must be present for full verification
     const verified = hasVerificationToken && hasCnameRecord;

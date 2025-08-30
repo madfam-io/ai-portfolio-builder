@@ -19,11 +19,11 @@ export class UnifiedMonitoring {
   static track(event: string, properties?: Record<string, any>): void {
     console.log('Unified tracking:', event, properties);
   }
-  
+
   static error(error: Error, context?: Record<string, any>): void {
     console.error('Unified error:', error.message, context);
   }
-  
+
   static performance(metric: string, value: number): void {
     console.log('Unified performance:', metric, value);
   }
@@ -32,6 +32,9 @@ export class UnifiedMonitoring {
 export default UnifiedMonitoring;
 
 // Additional exports for backward compatibility
-export function withAPMTracking<T extends (...args: any[]) => any>(name: string, fn: T): T {
+export function withAPMTracking<T extends (...args: any[]) => any>(
+  name: string,
+  fn: T
+): T {
   return fn; // Simplified - just pass through
 }

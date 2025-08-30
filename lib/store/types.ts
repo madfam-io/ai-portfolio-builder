@@ -11,9 +11,9 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { User } from '@supabase/supabase-js';
+import { type User } from '@supabase/supabase-js';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 /**
  * Global Store Types

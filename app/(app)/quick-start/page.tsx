@@ -17,7 +17,7 @@
  * Allows users to quickly create a portfolio from templates
  */
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import { QuickStartGallery } from '@/components/demo/QuickStartGallery';
 import { QuickStartHeader } from '@/components/demo/QuickStartHeader';
 import { createClient } from '@/lib/supabase/server';

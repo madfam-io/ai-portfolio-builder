@@ -53,7 +53,7 @@ import {
 
 import { ExperimentDashboard } from '@/components/admin/ExperimentDashboard';
 import { ExperimentAnalytics } from '@/components/admin/ExperimentAnalytics';
-import { UniversalExperimentConfig } from '@/lib/experimentation/universal-experiments';
+import { type UniversalExperimentConfig } from '@/lib/experimentation/universal-experiments';
 
 export default function ExperimentsAdminPage() {
   const [selectedTab, setSelectedTab] = useState('dashboard');
@@ -216,7 +216,8 @@ export default function ExperimentsAdminPage() {
                 Universal Experiments
               </h1>
               <p className="text-gray-600 mt-2">
-                Manage A/B tests across the entire Portfolio Builder platform - v0.4.0-beta
+                Manage A/B tests across the entire Portfolio Builder platform -
+                v0.4.0-beta
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -510,7 +511,8 @@ export default function ExperimentsAdminPage() {
                 <CardHeader>
                   <CardTitle>Integration Status</CardTitle>
                   <CardDescription>
-                    Status of experiment integrations across Portfolio Builder platform
+                    Status of experiment integrations across Portfolio Builder
+                    platform
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

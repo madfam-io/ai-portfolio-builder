@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { StateCreator, StoreApi } from 'zustand';
+import { type StateCreator, type StoreApi } from 'zustand';
 
 import { showErrorToast, showSuccessToast } from './ui-store';
 

@@ -15,7 +15,7 @@
  * Performance optimization middleware for runtime improvements
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -187,7 +187,10 @@ export function withQueryOptimization<
         return response;
       }
     } catch (error) {
-      logger.error('Cache read error', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Cache read error',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
 
     // Execute handler and cache result
@@ -199,7 +202,10 @@ export function withQueryOptimization<
         setCache(cacheKey, responseData, cacheTTL);
         response.headers.set('X-Cache', 'MISS');
       } catch (error) {
-        logger.error('Cache write error', error instanceof Error ? error : new Error(String(error)));
+        logger.error(
+          'Cache write error',
+          error instanceof Error ? error : new Error(String(error))
+        );
       }
     }
 

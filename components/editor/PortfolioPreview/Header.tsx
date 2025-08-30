@@ -21,7 +21,7 @@ import {
   Twitter as FiTwitter,
   ExternalLink as FiExternalLink,
 } from 'lucide-react';
-import { SectionProps } from './types';
+import { type SectionProps } from './types';
 import { getActiveSocialLinks } from './utils';
 
 export function PortfolioHeader({ portfolio }: SectionProps) {

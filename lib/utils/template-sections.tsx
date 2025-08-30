@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Portfolio, SectionType } from '@/types/portfolio';
+import { type Portfolio, type SectionType } from '@/types/portfolio';
 
 // Default section order
 export const DEFAULT_SECTION_ORDER: SectionType[] = [

@@ -15,7 +15,7 @@
  * Mock response generators for DeepSeek development mode
  */
 
-import { DeepSeekResponse } from './types';
+import { type DeepSeekResponse } from './types';
 
 /**
  * Get mock response for development

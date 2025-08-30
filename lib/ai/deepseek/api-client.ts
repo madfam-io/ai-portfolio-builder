@@ -22,7 +22,7 @@ import {
   ModelUnavailableError,
   QuotaExceededError,
 } from '../types';
-import { DeepSeekConfig, DeepSeekResponse } from './types';
+import { type DeepSeekConfig, type DeepSeekResponse } from './types';
 import { getMockResponse } from './mock-responses';
 
 export class DeepSeekAPIClient {

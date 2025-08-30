@@ -29,8 +29,8 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Play, Pause, Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
 import {
-  UniversalExperimentConfig,
-  ExperimentResult,
+  type UniversalExperimentConfig,
+  type ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
 
 interface ExperimentCardProps {

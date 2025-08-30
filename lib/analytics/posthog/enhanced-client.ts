@@ -18,7 +18,7 @@
 'use client';
 
 import React from 'react';
-import { PostHog } from 'posthog-js';
+import { type PostHog } from 'posthog-js';
 import { useEffect, useState } from 'react';
 import { env } from '@/lib/config/env';
 import { logger } from '@/lib/utils/logger';

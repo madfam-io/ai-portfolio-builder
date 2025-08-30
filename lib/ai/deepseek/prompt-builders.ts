@@ -18,7 +18,7 @@
  */
 
 import { BIO_PROMPTS, PROJECT_PROMPTS, TEMPLATE_PROMPTS } from '../prompts';
-import { BioContext, UserProfile } from '../types';
+import { type BioContext, type UserProfile } from '../types';
 
 /**
  * Build bio enhancement prompt

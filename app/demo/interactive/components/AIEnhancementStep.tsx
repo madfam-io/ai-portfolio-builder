@@ -19,7 +19,7 @@ import React from 'react';
 import { AIModelComparison } from '@/components/demo/AIModelComparison';
 import { AnimatedBioEnhancement } from '@/components/demo/AnimatedBioEnhancement';
 import { ProjectEnhancementDemo } from '@/components/demo/ProjectEnhancementDemo';
-import { Portfolio, TemplateType } from '@/types/portfolio';
+import { type Portfolio, type TemplateType } from '@/types/portfolio';
 
 interface AIEnhancementStepProps {
   portfolio: Portfolio;

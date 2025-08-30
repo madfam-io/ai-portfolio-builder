@@ -54,8 +54,8 @@ import {
 
 import {
   universalExperimentEngine,
-  UniversalExperimentConfig,
-  ExperimentResult,
+  type UniversalExperimentConfig,
+  type ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
 
 // Import extracted components
@@ -143,7 +143,8 @@ export function ExperimentDashboard({
               Universal Experiments
             </h1>
             <p className="text-gray-600 mt-2">
-              Manage A/B tests across the entire Portfolio Builder platform - v0.4.0-beta
+              Manage A/B tests across the entire Portfolio Builder platform -
+              v0.4.0-beta
             </p>
           </div>
           <div className="flex gap-3">
@@ -170,7 +171,8 @@ export function ExperimentDashboard({
                 <DialogHeader>
                   <DialogTitle>Create Universal Experiment</DialogTitle>
                   <DialogDescription>
-                    Set up a new A/B test for any part of the Portfolio Builder platform
+                    Set up a new A/B test for any part of the Portfolio Builder
+                    platform
                   </DialogDescription>
                 </DialogHeader>
                 <ExperimentCreator onClose={() => setShowCreateDialog(false)} />

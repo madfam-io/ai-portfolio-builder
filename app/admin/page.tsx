@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
@@ -36,7 +36,8 @@ import {
 
 export const metadata: Metadata = {
   title: 'Admin Overview | Portfolio Builder',
-  description: 'Admin dashboard overview for Portfolio Builder portfolio builder',
+  description:
+    'Admin dashboard overview for Portfolio Builder portfolio builder',
 };
 
 export default async function AdminOverviewPage() {
@@ -120,8 +121,8 @@ export default async function AdminOverviewPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Admin Overview</h1>
         <p className="text-muted-foreground">
-          Welcome to the Portfolio Builder admin dashboard. Monitor and manage your
-          platform.
+          Welcome to the Portfolio Builder admin dashboard. Monitor and manage
+          your platform.
         </p>
       </div>
 

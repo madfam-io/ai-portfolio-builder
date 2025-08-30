@@ -28,11 +28,11 @@
  * @version 1.0.0 - Revenue Generation Engine
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import {
   aiCodeQualityEngine,
-  CodeQualityReport,
+  type CodeQualityReport,
 } from '@/lib/ai/code-quality/engine';
 import { logger } from '@/lib/utils/logger';
 // import { withRateLimit } from '@/lib/api/middleware/rate-limit';

@@ -11,10 +11,10 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Octokit } from '@octokit/rest';
+import { type Octokit } from '@octokit/rest';
 import { logger } from '@/lib/utils/logger';
-import { GitHubContributor } from '../types';
-import { Contributor } from '@/types/analytics';
+import { type GitHubContributor } from '../types';
+import { type Contributor } from '@/types/analytics';
 
 /**
  * GitHub contributor operations

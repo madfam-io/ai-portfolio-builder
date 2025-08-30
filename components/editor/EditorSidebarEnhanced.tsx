@@ -34,7 +34,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -45,7 +45,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { Portfolio, SectionType } from '@/types/portfolio';
+import { type Portfolio, type SectionType } from '@/types/portfolio';
 import { HeroSection } from './sections/HeroSection';
 import { ExperienceSection } from './sections/ExperienceSection';
 import { EducationSection } from './sections/EducationSection';

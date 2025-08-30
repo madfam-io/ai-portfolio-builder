@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { TourStep } from '../GuidedTour';
+import { type TourStep } from '../GuidedTour';
 
 export const editorTourSteps: TourStep[] = [
   {

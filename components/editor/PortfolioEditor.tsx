@@ -20,10 +20,10 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { useEditorHistory } from '@/hooks/useEditorHistory';
 import { logger } from '@/lib/utils/logger';
 import {
-  Portfolio,
-  PortfolioEditorState,
-  TemplateType,
-  SectionType,
+  type Portfolio,
+  type PortfolioEditorState,
+  type TemplateType,
+  type SectionType,
 } from '@/types/portfolio';
 
 import { EditorHeader } from './EditorHeader';

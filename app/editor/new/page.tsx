@@ -22,7 +22,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
-import { TemplateType } from '@/types/portfolio';
+import { type TemplateType } from '@/types/portfolio';
 
 // Import step components
 import { BasicInfoStep } from './components/BasicInfoStep';

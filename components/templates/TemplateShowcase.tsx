@@ -36,7 +36,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { cn } from '@/lib/utils';
-import { TemplateType } from '@/types/portfolio';
+import { type TemplateType } from '@/types/portfolio';
 
 interface TemplateShowcaseProps {
   onSelect: (template: TemplateType) => void;

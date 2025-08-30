@@ -19,7 +19,7 @@ import { Progress } from '@/components/ui/progress';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Portfolio, SectionType } from '@/types/portfolio';
+import { type Portfolio, type SectionType } from '@/types/portfolio';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
 interface CompletionIndicatorProps {

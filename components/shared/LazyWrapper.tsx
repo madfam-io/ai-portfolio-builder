@@ -13,7 +13,7 @@
 
 'use client';
 
-import React, { Suspense, ComponentType, ReactNode } from 'react';
+import React, { Suspense, type ComponentType, type ReactNode } from 'react';
 
 /**
  * @fileoverview Lazy Loading Wrapper Component

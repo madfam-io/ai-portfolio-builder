@@ -16,7 +16,7 @@
 import { useState } from 'react';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { cn } from '@/lib/utils';
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface EditorCanvasProps {
   portfolio: Portfolio;
@@ -30,7 +30,7 @@ interface EditorCanvasProps {
  * Main editing area for portfolio content
  * Shows form fields based on active section
  */
-// eslint-disable-next-line complexity
+
 export function EditorCanvas({
   portfolio,
   onDataChange,

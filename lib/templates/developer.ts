@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Portfolio, Skill } from '@/types/portfolio';
+import { type Portfolio, type Skill } from '@/types/portfolio';
 
 /**
  * Developer Portfolio Template

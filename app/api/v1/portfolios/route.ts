@@ -13,7 +13,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { apiSuccess, versionedApiHandler } from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';

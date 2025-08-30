@@ -18,14 +18,14 @@ import { ReadabilityOptimizer } from './optimizers/readability-optimizer';
 import { GEOScoreCalculator } from './score-calculator';
 import { SuggestionGenerator } from './suggestion-generator';
 import {
-  ContentStructure,
-  ReadabilityMetrics,
-  GEOContent,
-  GEOScore,
-  GEOSuggestion,
-  GEOSettings,
-  OptimizeContentRequest,
-  OptimizeContentResponse,
+  type ContentStructure,
+  type ReadabilityMetrics,
+  type GEOContent,
+  type GEOScore,
+  type GEOSuggestion,
+  type GEOSettings,
+  type OptimizeContentRequest,
+  type OptimizeContentResponse,
 } from './types';
 
 /**

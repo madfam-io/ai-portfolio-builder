@@ -23,7 +23,7 @@ import {
   Share2,
 } from 'lucide-react';
 
-import { Portfolio } from '@/types/portfolio';
+import { type Portfolio } from '@/types/portfolio';
 
 interface EditorHeaderProps {
   portfolio: Portfolio;

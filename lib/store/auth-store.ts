@@ -21,7 +21,7 @@ import {
 } from '@/lib/services/auth/auth-service';
 import { logger } from '@/lib/utils/logger';
 
-import { AuthState, AuthActions } from './types';
+import { type AuthState, type AuthActions } from './types';
 
 /**
  * Auth Store

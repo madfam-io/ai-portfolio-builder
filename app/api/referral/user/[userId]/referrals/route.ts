@@ -17,7 +17,7 @@
  * Handles fetching a user's referrals with filtering and pagination support.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';

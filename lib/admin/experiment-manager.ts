@@ -26,12 +26,12 @@
 
 import {
   universalExperimentEngine,
-  UniversalExperimentConfig,
-  UniversalExperimentVariant,
-  ExperimentContext,
-  ExperimentType,
-  ExperimentStatus,
-  ExperimentMetric,
+  type UniversalExperimentConfig,
+  type UniversalExperimentVariant,
+  type ExperimentContext,
+  type ExperimentType,
+  type ExperimentStatus,
+  type ExperimentMetric,
 } from '@/lib/experimentation/universal-experiments';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';

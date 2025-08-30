@@ -18,9 +18,9 @@
  * Updates user subscription status in the database.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 import { stripeService } from '@/lib/services/stripe/stripe';
 import { logger } from '@/lib/utils/logger';

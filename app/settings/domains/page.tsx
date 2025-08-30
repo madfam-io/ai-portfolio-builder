@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { DomainSettingsContent } from './components/DomainSettingsContent';
 

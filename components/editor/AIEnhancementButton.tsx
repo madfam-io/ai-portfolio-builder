@@ -17,7 +17,7 @@ import { Loader, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { aiClient } from '@/lib/ai/client';
-import { BioContext } from '@/lib/ai/types';
+import { type BioContext } from '@/lib/ai/types';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 import { showToast } from '@/lib/utils/toast';

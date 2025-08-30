@@ -34,7 +34,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Education } from '@/types/portfolio';
+import { type Education } from '@/types/portfolio';
 
 interface EducationSectionProps {
   education: Education[];
@@ -52,7 +52,6 @@ interface EducationFormData {
   achievements?: string[];
 }
 
-// eslint-disable-next-line complexity
 export function EducationSection({
   education = [],
   onUpdate,

@@ -20,7 +20,7 @@
  * @version 1.0.0 - Business Excellence Foundation
  */
 
-import { premiumGating, PremiumGatingResult } from './premium-gating';
+import { premiumGating, type PremiumGatingResult } from './premium-gating';
 
 /**
  * Convenience function for feature access checks

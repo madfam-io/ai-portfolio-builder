@@ -17,7 +17,7 @@
  * Combines PostHog analytics and SigNoz APM for API routes
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { withAPMTracking } from '@/lib/monitoring/unified';
 import { getCurrentTraceId, addSpanAttributes } from '@/lib/monitoring/signoz';
 import { captureServerEvent } from '@/lib/analytics/posthog/server';

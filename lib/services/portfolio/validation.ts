@@ -12,12 +12,12 @@
  */
 
 import {
-  Portfolio,
-  CreatePortfolioDTO,
-  UpdatePortfolioDTO,
+  type Portfolio,
+  type CreatePortfolioDTO,
+  type UpdatePortfolioDTO,
 } from '@/types/portfolio';
 
-import { ValidationResult } from './types';
+import { type ValidationResult } from './types';
 
 /**
  * @fileoverview Portfolio validation utilities

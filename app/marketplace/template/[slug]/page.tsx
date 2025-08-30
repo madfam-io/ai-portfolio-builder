@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { MarketplaceService } from '@/lib/services/marketplace-service';
 import { TemplateDetailContent } from './components/TemplateDetailContent';

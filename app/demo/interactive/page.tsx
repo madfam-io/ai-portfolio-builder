@@ -15,12 +15,15 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useRealTimePreview, PreviewMode } from '@/hooks/useRealTimePreview';
+import {
+  useRealTimePreview,
+  type PreviewMode,
+} from '@/hooks/useRealTimePreview';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
 import { showToast } from '@/lib/utils/toast';
-import { Portfolio, TemplateType } from '@/types/portfolio';
+import { type Portfolio, type TemplateType } from '@/types/portfolio';
 
 import { AIEnhancementStep } from './components/AIEnhancementStep';
 import { DemoHeader } from './components/DemoHeader';
@@ -133,7 +136,6 @@ const TemplateStepRenderer = ({
   />
 );
 
-// eslint-disable-next-line complexity
 const EditorStepRenderer = ({
   portfolio,
   previewConfig,

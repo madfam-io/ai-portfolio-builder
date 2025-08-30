@@ -108,8 +108,8 @@ export default function DomainNotFoundPage() {
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
                     <span>
-                      Log in to your Portfolio Builder account and check your domain
-                      settings
+                      Log in to your Portfolio Builder account and check your
+                      domain settings
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
@@ -144,7 +144,8 @@ export default function DomainNotFoundPage() {
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
                     <span>
-                      Try accessing the portfolio through the Portfolio Builder subdomain
+                      Try accessing the portfolio through the Portfolio Builder
+                      subdomain
                     </span>
                   </li>
                   <li className="flex items-start gap-2">

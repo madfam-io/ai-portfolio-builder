@@ -20,7 +20,7 @@
 
 import { NextResponse } from 'next/server';
 
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { createClient } from '@/lib/supabase/server';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';

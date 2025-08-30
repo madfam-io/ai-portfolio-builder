@@ -14,7 +14,7 @@
 'use client';
 
 import { Mail, Phone } from 'lucide-react';
-import { SectionProps } from '../types';
+import { type SectionProps } from '../types';
 
 export function ContactSection({ portfolio }: SectionProps) {
   return (
