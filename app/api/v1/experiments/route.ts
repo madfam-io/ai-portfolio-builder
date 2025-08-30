@@ -116,11 +116,11 @@ export async function GET(request: Request): Promise<Response> {
     // Calculate additional metrics
     const experimentsWithMetrics = experiments.map((experiment: any) => {
       const totalVisitors = experiment.variants.reduce(
-        (sum: number, v) => sum + (v.visitorCount ?? 0),
+        (sum: number, v: any) => sum + (v.visitorCount ?? 0),
         0
       );
       const totalConversions = experiment.variants.reduce(
-        (sum: number, v) => sum + (v.conversionCount ?? 0),
+        (sum: number, v: any) => sum + (v.conversionCount ?? 0),
         0
       );
 
