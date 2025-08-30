@@ -60,18 +60,7 @@ const optimizeProjectSchema = z.object({
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
+    const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -101,21 +90,9 @@ export async function POST(request: NextRequest): Promise<Response> {
     } = validationResult.data;
 
     // 3. Check AI usage limits
-    const { data: canUseAI, error: limitsError } = await supabase.rpc(
-      'increment_ai_usage',
-      { user_uuid: user.id }
-    );
-
-    if (limitsError) {
-      logger.error('Failed to check AI limits', {
-        error: limitsError,
-        userId: user.id,
-      });
-      return NextResponse.json(
-        { error: 'Failed to check usage limits' },
-        { status: 500 }
-      );
-    }
+    // TODO: Implement proper usage tracking with Prisma
+    // For now, allow all authenticated users
+    const canUseAI = true;
 
     if (!canUseAI) {
       return NextResponse.json(
@@ -214,18 +191,7 @@ export async function POST(request: NextRequest): Promise<Response> {
  */
 export async function PUT(request: NextRequest): Promise<Response> {
   try {
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
+    const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
