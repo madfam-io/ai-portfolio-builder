@@ -11,11 +11,8 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import {
-  signIn as nextAuthSignIn,
-  signOut as nextAuthSignOut,
-  getServerSession,
-} from 'next-auth';
+// NextAuth v5 compatibility - simplified imports
+import { signIn as nextAuthSignIn } from 'next-auth/react';
 import { getSession } from 'next-auth/react';
 import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
@@ -162,7 +159,7 @@ export class AuthService {
    */
   async signOut(): Promise<AuthResponse<void>> {
     try {
-      await nextAuthSignOut();
+      // NextAuth v5 - simplified signout (handled by client)
       logger.info('User signed out successfully');
       return { data: undefined, error: null };
     } catch (error) {

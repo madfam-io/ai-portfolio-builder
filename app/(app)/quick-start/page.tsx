@@ -47,8 +47,8 @@ export default async function QuickStartPage() {
 
     userProfile = profile
       ? {
-          industry: profile.industry,
-          experience: profile.experienceLevel,
+          industry: profile.industry || undefined,
+          experience: profile.experienceLevel || undefined,
           goals: profile.goals,
         }
       : undefined;
