@@ -16,15 +16,10 @@ import Stripe from 'stripe';
 import { getCurrentUser } from '@/lib/auth/session';
 import { withErrorHandling } from '@/lib/api/middleware/error-handler';
 import { logger } from '@/lib/utils/logger';
+import { prisma } from '@/lib/db/prisma';
 
 const getServerUser = async () => {
-  const supabase = getCurrentUser(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  );
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   return user;
 };
 
@@ -43,19 +38,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     apiVersion: '2025-08-27.basil',
   });
 
-  // Initialize Supabase inside the handler
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    logger.error('Supabase configuration missing');
-    return NextResponse.json(
-      { error: 'Database service not configured' },
-      { status: 503 }
-    );
-  }
-
-  const supabase = getCurrentUser(supabaseUrl, supabaseKey);
   try {
     // Get authenticated user
     const user = await getServerUser();
@@ -132,24 +115,25 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     const currentPeriodStart = Math.floor(Date.now() / 1000);
     const currentPeriodEnd = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // 30 days
 
-    // Update user profile with subscription info
-    const { error: updateError } = await supabase
-      .from('user_profiles')
-      .update({
-        subscription_tier: planName,
-        subscription_status: subscription.status,
-        stripe_customer_id: session.customer as string,
-        stripe_subscription_id: subscription.id,
-        subscription_start_date: new Date(
-          currentPeriodStart * 1000
-        ).toISOString(),
-        subscription_end_date: new Date(currentPeriodEnd * 1000).toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', user.id);
+    // Update user with subscription info
+    try {
+      // Convert planName to SubscriptionTier enum value
+      let subscriptionTier: 'FREE' | 'PRO' | 'BUSINESS' | 'ENTERPRISE' = 'PRO';
+      if (planName === 'free') subscriptionTier = 'FREE';
+      else if (planName === 'pro') subscriptionTier = 'PRO';
+      else if (planName === 'business') subscriptionTier = 'BUSINESS';
+      else if (planName === 'enterprise') subscriptionTier = 'ENTERPRISE';
 
-    if (updateError) {
-      logger.error('Failed to update user subscription', updateError);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          subscriptionTier,
+          subscriptionStatus: 'ACTIVE',
+          subscriptionExpiresAt: new Date(currentPeriodEnd * 1000),
+        },
+      });
+    } catch (updateError) {
+      logger.error('Failed to update user subscription', updateError as Error);
       throw new Error('Failed to update subscription');
     }
 

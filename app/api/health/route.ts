@@ -14,7 +14,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { infrastructure } from '@/lib/adapters/infrastructure-adapter';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const startTime = Date.now();
 
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
 }
 
 // Also support HEAD requests for load balancers
-export async function HEAD(request: NextRequest) {
+export async function HEAD(_request: NextRequest) {
   try {
     const health = await infrastructure.healthCheck();
     const statusCode = health.overall ? 200 : 503;
@@ -87,7 +87,7 @@ export async function HEAD(request: NextRequest) {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
-  } catch (error) {
+  } catch {
     return new NextResponse(null, { status: 500 });
   }
 }

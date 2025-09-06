@@ -111,17 +111,12 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
   );
 
   const handleNext = async () => {
-    await track.user.action(
-      'onboarding_step_completed',
-      'system',
-      async () => {
-        await Promise.resolve(completeStep(currentStep.id));
-      },
-      {
-        step: currentStep.id,
-        flow: flow.id,
-      }
-    );
+    track('onboarding_step_completed', {
+      step: currentStep.id,
+      flow: flow.id,
+    });
+    
+    await completeStep(currentStep.id);
 
     // Check if this was the last step
     const nextStep = flow.steps.find(s => !s.completed && !s.skipped);
@@ -131,31 +126,21 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
   };
 
   const handleSkip = () => {
-    track.user.action(
-      'onboarding_step_skipped',
-      'system',
-      async () => {
-        await Promise.resolve(skipStep(currentStep.id));
-      },
-      {
-        step: currentStep.id,
-        flow: flow.id,
-      }
-    );
+    track('onboarding_step_skipped', {
+      step: currentStep.id,
+      flow: flow.id,
+    });
+    
+    skipStep(currentStep.id);
   };
 
   const handleComplete = () => {
-    track.user.action(
-      'onboarding_completed',
-      'system',
-      async () => {
-        await Promise.resolve(completeOnboarding());
-      },
-      {
-        flow: flow.id,
-        progress,
-      }
-    );
+    track('onboarding_completed', {
+      flow: flow.id,
+      progress,
+    });
+    
+    completeOnboarding();
 
     // Redirect based on flow type
     if (flow.userType === 'new') {
@@ -166,18 +151,13 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
   };
 
   const handleClose = () => {
-    track.user.action(
-      'onboarding_closed',
-      'system',
-      async () => {
-        await Promise.resolve(completeOnboarding());
-      },
-      {
-        flow: flow.id,
-        progress,
-        reason: 'user_closed',
-      }
-    );
+    track('onboarding_closed', {
+      flow: flow.id,
+      progress,
+      reason: 'user_closed',
+    });
+    
+    completeOnboarding();
   };
 
   const currentStepIndex = flow.currentStepIndex;

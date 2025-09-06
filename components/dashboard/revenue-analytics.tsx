@@ -122,7 +122,7 @@ export function RevenueAnalytics() {
             description: 'Revenue metrics have been updated',
           });
         }
-      } catch (_error) {
+      } catch {
         toast({
           title: 'Error',
           description: 'Failed to load revenue data',

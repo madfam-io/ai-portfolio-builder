@@ -185,7 +185,7 @@ export default function ExperimentsAdminPage() {
         };
 
         setPlatformStats(stats);
-      } catch (_error) {
+      } catch {
         // Error logged via monitoring
       } finally {
         setLoading(false);

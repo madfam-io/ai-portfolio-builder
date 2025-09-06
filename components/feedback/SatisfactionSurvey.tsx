@@ -178,7 +178,7 @@ export function SatisfactionSurvey({
       });
 
       onComplete?.();
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Submission Failed',
         description: 'Please try again later.',

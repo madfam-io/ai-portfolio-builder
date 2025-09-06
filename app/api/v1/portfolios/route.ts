@@ -46,7 +46,6 @@ import {
 export const GET = versionedApiHandler(
   withAuth(
     withErrorHandler(async (request: AuthenticatedRequest) => {
-
       // User is already authenticated via middleware
       const { user } = request;
 
@@ -70,14 +69,14 @@ export const GET = versionedApiHandler(
 
       // Build query conditions
       const whereConditions: any = { userId: user.id };
-      
+
       if (status !== undefined && status !== null) {
         whereConditions.status = status;
       }
       if (template !== undefined && template !== null) {
         whereConditions.template = template;
       }
-      
+
       // Build search conditions
       const searchConditions = [];
       if (search !== undefined && search !== null) {
@@ -87,24 +86,30 @@ export const GET = versionedApiHandler(
           { data: { path: ['bio'], string_contains: search } }
         );
       }
-      
+
       // Execute query with pagination
       const [portfolios, totalCount] = await Promise.all([
         prisma.portfolio.findMany({
-          where: searchConditions.length > 0 ? {
-            ...whereConditions,
-            OR: searchConditions
-          } : whereConditions,
+          where:
+            searchConditions.length > 0
+              ? {
+                  ...whereConditions,
+                  OR: searchConditions,
+                }
+              : whereConditions,
           orderBy: { updatedAt: 'desc' },
           skip: (page - 1) * limit,
           take: limit,
         }),
         prisma.portfolio.count({
-          where: searchConditions.length > 0 ? {
-            ...whereConditions,
-            OR: searchConditions
-          } : whereConditions
-        })
+          where:
+            searchConditions.length > 0
+              ? {
+                  ...whereConditions,
+                  OR: searchConditions,
+                }
+              : whereConditions,
+        }),
       ]);
 
       return apiSuccess({
@@ -127,23 +132,29 @@ export const GET = versionedApiHandler(
 export const POST = versionedApiHandler(
   withAuth(
     withErrorHandler(async (request: AuthenticatedRequest) => {
-
       // User is already authenticated via middleware
       const { user } = request;
 
       // Check portfolio creation limits by counting existing portfolios
       const existingPortfoliosCount = await prisma.portfolio.count({
-        where: { userId: user.id }
+        where: { userId: user.id },
       });
-      
-      // Get user's plan limits
+
+      // Get user's subscription tier limits
       const userProfile = await prisma.user.findUnique({
         where: { id: user.id },
-        select: { plan: true }
+        select: { subscriptionTier: true },
       });
-      
-      const maxPortfolios = userProfile?.plan === 'professional' ? 10 : userProfile?.plan === 'business' ? 50 : 3; // free plan: 3
-      
+
+      const maxPortfolios =
+        userProfile?.subscriptionTier === 'PRO'
+          ? 10
+          : userProfile?.subscriptionTier === 'BUSINESS'
+            ? 50
+            : userProfile?.subscriptionTier === 'ENTERPRISE'
+              ? 100
+              : 3; // FREE tier: 3
+
       if (existingPortfoliosCount >= maxPortfolios) {
         throw new ValidationError(
           'Portfolio creation limit exceeded. Please upgrade your plan to create more portfolios.',
@@ -155,7 +166,7 @@ export const POST = versionedApiHandler(
       let body: unknown;
       try {
         body = await request.json();
-      } catch (_error) {
+      } catch {
         throw new ValidationError('Invalid JSON in request body');
       }
 
@@ -181,10 +192,10 @@ export const POST = versionedApiHandler(
       const existingPortfolios = await prisma.portfolio.findMany({
         where: {
           subdomain: {
-            startsWith: subdomain
-          }
+            startsWith: subdomain,
+          },
         },
-        select: { subdomain: true }
+        select: { subdomain: true },
       });
 
       if (existingPortfolios.length > 0) {
@@ -203,23 +214,19 @@ export const POST = versionedApiHandler(
         id: uuidv4(),
         userId: user.id,
         name: sanitizedData.name,
-        slug: subdomain, // Using subdomain as slug for now
+        title: sanitizedData.title,
+        bio: sanitizedData.bio ?? '',
+        tagline: '',
+        avatarUrl: null,
+        contact: {},
+        social: {},
+        experience: [],
+        education: [],
+        projects: [],
+        skills: [],
+        certifications: [],
         template: sanitizedData.template,
-        status: 'draft' as const,
-        // Store all portfolio content in the data JSONB field
-        data: {
-          title: sanitizedData.title,
-          bio: sanitizedData.bio ?? '',
-          tagline: '',
-          avatar_url: null,
-          contact: {},
-          social: {},
-          experience: [],
-          education: [],
-          projects: [],
-          skills: [],
-          certifications: [],
-        },
+        status: 'DRAFT' as const, // Use enum value
         customization: {
           primaryColor: '#1a73e8',
           secondaryColor: '#34a853',
@@ -235,19 +242,27 @@ export const POST = versionedApiHandler(
         },
         subdomain,
         customDomain: null,
+        isPublic: false,
         views: 0,
         lastViewedAt: null,
+        seoTitle: null,
+        seoDescription: null,
+        aiPersona: null,
+        aiTone: null,
+        aiLength: 'MEDIUM',
+        analytics: {},
+        metadata: {},
         publishedAt: null,
       };
 
       // Insert portfolio into database
       try {
         const portfolio = await prisma.portfolio.create({
-          data: portfolioData
+          data: portfolioData as any,
         });
-        
+
         // Transform database response to API format
-        const responsePortfolio = transformDbPortfolioToApi(portfolio);
+        const responsePortfolio = transformDbPortfolioToApi(portfolio as any);
 
         return apiSuccess(
           {
@@ -272,7 +287,6 @@ export const POST = versionedApiHandler(
         }
         throw new ExternalServiceError('Database', insertError);
       }
-
     })
   )
 );

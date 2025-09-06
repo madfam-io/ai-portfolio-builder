@@ -1084,7 +1084,9 @@ export class UniversalExperimentEngine {
     config: UniversalExperimentConfig
   ): Promise<void> {
     try {
-      // Store experiment in database using Prisma
+      // NOTE: universalExperiment model doesn't exist in current Prisma schema
+      // Commenting out database operation until schema is updated
+      /*
       await prisma.universalExperiment.create({
         data: {
           id: config.id,
@@ -1109,8 +1111,9 @@ export class UniversalExperimentEngine {
           updatedAt: config.updatedAt,
         },
       });
+      */
 
-      logger.info(`Universal experiment persisted: ${config.id}`);
+      logger.info(`Universal experiment would be persisted: ${config.id} (database operation disabled - model doesn't exist)`);
     } catch (error) {
       logger.error(
         'Failed to persist experiment',
@@ -1127,7 +1130,9 @@ export class UniversalExperimentEngine {
     event: ExperimentEvent
   ): Promise<void> {
     try {
-      // Store event in database using Prisma
+      // NOTE: experimentEvent model doesn't exist in current Prisma schema
+      // Commenting out database operation until schema is updated
+      /*
       await prisma.experimentEvent.create({
         data: {
           id: event.eventId,
@@ -1139,10 +1144,11 @@ export class UniversalExperimentEngine {
           properties: event.properties,
         },
       });
+      */
 
       // Track to PostHog and other analytics systems
       logger.info(
-        `Tracking experiment event: ${event.eventName} for ${experimentId}:${variantId}`
+        `Tracking experiment event: ${event.eventName} for ${experimentId}:${variantId} (database operation disabled - model doesn't exist)`
       );
     } catch (error) {
       logger.error(

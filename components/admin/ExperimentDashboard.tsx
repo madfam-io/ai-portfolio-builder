@@ -93,7 +93,7 @@ export function ExperimentDashboard({
       // In a real implementation, this would fetch from the API
       // For now, we'll simulate with the existing data
       await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (_error) {
+    } catch {
       // console.error('Failed to refresh experiments:', error);
     } finally {
       setLoading(false);
@@ -106,7 +106,7 @@ export function ExperimentDashboard({
       const experimentResults =
         await universalExperimentEngine.getExperimentResults(experimentId);
       setResults(prev => new Map(prev).set(experimentId, experimentResults));
-    } catch (_error) {
+    } catch {
       // console.error('Failed to load experiment results:', error);
     }
   }, []);

@@ -112,7 +112,7 @@ export function PerformanceExcellenceDashboard({
 
       setReport(analysisReport);
       updateAchievements(analysisReport);
-    } catch (_error) {
+    } catch {
       // Error handled silently
     } finally {
       setLoading(false);

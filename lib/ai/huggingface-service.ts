@@ -998,7 +998,7 @@ export async function improveSection(
       quality: content.length > 50 ? 80 : 40,
       error: null,
     };
-  } catch (_error) {
+  } catch {
     return {
       improved: content,
       suggestions: [],
@@ -1072,7 +1072,7 @@ export async function assessContentQuality(content: {
       strengths,
       error: null,
     };
-  } catch (_error) {
+  } catch {
     return {
       overall: 0,
       breakdown: {

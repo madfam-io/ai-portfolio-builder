@@ -15,15 +15,10 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
 import { withErrorHandling } from '@/lib/api/middleware/error-handler';
 import { logger } from '@/lib/utils/logger';
+import { prisma } from '@/lib/db/prisma';
 
 const getServerUser = async () => {
-  const supabase = getCurrentUser(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  );
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   return user;
 };
 
@@ -78,19 +73,6 @@ async function verifyDomain(
 
 export const POST = withErrorHandling(
   async (request: NextRequest, { params }: { params: { id: string } }) => {
-    // Initialize Supabase inside the handler
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-      logger.error('Supabase configuration missing');
-      return NextResponse.json(
-        { error: 'Database service not configured' },
-        { status: 503 }
-      );
-    }
-
-    const supabase = getCurrentUser(supabaseUrl, supabaseKey);
 
     // Cloudflare API for domain verification (if using Cloudflare)
     const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
@@ -122,14 +104,19 @@ export const POST = withErrorHandling(
 
     try {
       // Check if portfolio exists and belongs to user
-      const { data: portfolio, error: portfolioError } = await supabase
-        .from('portfolios')
-        .select('id, subdomain, user_id')
-        .eq('id', portfolioId)
-        .eq('user_id', user.id)
-        .single();
+      const portfolio = await prisma.portfolio.findFirst({
+        where: {
+          id: portfolioId,
+          userId: user.id,
+        },
+        select: {
+          id: true,
+          subdomain: true,
+          userId: true,
+        },
+      });
 
-      if (portfolioError || !portfolio) {
+      if (!portfolio) {
         return NextResponse.json(
           { error: 'Portfolio not found' },
           { status: 404 }
@@ -137,13 +124,12 @@ export const POST = withErrorHandling(
       }
 
       // Check if user has pro subscription
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('subscription_tier')
-        .eq('user_id', user.id)
-        .single();
+      const profile = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { subscriptionTier: true },
+      });
 
-      if (!profile || profile.subscription_tier === 'free') {
+      if (!profile || profile.subscriptionTier === 'FREE') {
         return NextResponse.json(
           { error: 'Custom domains require a Pro subscription' },
           { status: 403 }
@@ -151,12 +137,15 @@ export const POST = withErrorHandling(
       }
 
       // Check if domain is already in use
-      const { data: existingDomain } = await supabase
-        .from('portfolios')
-        .select('id')
-        .eq('custom_domain', domain)
-        .neq('id', portfolioId)
-        .single();
+      const existingDomain = await prisma.portfolio.findFirst({
+        where: {
+          customDomain: domain,
+          NOT: {
+            id: portfolioId,
+          },
+        },
+        select: { id: true },
+      });
 
       if (existingDomain) {
         return NextResponse.json(
@@ -165,19 +154,14 @@ export const POST = withErrorHandling(
         );
       }
 
-      // Update portfolio with custom domain
-      const { error: updateError } = await supabase
-        .from('portfolios')
-        .update({
-          custom_domain: domain,
-          custom_domain_status: 'pending',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', portfolioId);
-
-      if (updateError) {
-        throw updateError;
-      }
+      // Update portfolio with custom domain (note: customDomainStatus field doesn't exist in schema)
+      await prisma.portfolio.update({
+        where: { id: portfolioId },
+        data: {
+          customDomain: domain,
+          updatedAt: new Date(),
+        },
+      });
 
       // If using Cloudflare, create DNS records automatically
       if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) {
@@ -228,16 +212,15 @@ export const POST = withErrorHandling(
       }
 
       // Start domain verification in background
+      // Note: Domain status tracking would need to be implemented through a separate table or field
       setTimeout(async () => {
-        const verification = await verifyDomain(domain, portfolio.subdomain);
+        const verification = await verifyDomain(domain, portfolio.subdomain!);
         if (verification.pointsToUs) {
-          await supabase
-            .from('portfolios')
-            .update({
-              custom_domain_status: 'active',
-              custom_domain_verified_at: new Date().toISOString(),
-            })
-            .eq('id', portfolioId);
+          // Domain verification success would be tracked differently
+          logger.info('Domain verification successful', {
+            portfolioId,
+            domain,
+          });
         }
       }, 5000);
 
@@ -278,19 +261,6 @@ export const POST = withErrorHandling(
 
 export const DELETE = withErrorHandling(
   async (request: NextRequest, { params }: { params: { id: string } }) => {
-    // Initialize Supabase inside the handler
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-      logger.error('Supabase configuration missing');
-      return NextResponse.json(
-        { error: 'Database service not configured' },
-        { status: 503 }
-      );
-    }
-
-    const supabase = getCurrentUser(supabaseUrl, supabaseKey);
 
     const user = await getServerUser();
     if (!user) {
@@ -301,14 +271,18 @@ export const DELETE = withErrorHandling(
 
     try {
       // Check if portfolio exists and belongs to user
-      const { data: portfolio, error: portfolioError } = await supabase
-        .from('portfolios')
-        .select('id, custom_domain')
-        .eq('id', portfolioId)
-        .eq('user_id', user.id)
-        .single();
+      const portfolio = await prisma.portfolio.findFirst({
+        where: {
+          id: portfolioId,
+          userId: user.id,
+        },
+        select: {
+          id: true,
+          customDomain: true,
+        },
+      });
 
-      if (portfolioError || !portfolio) {
+      if (!portfolio) {
         return NextResponse.json(
           { error: 'Portfolio not found' },
           { status: 404 }
@@ -316,24 +290,18 @@ export const DELETE = withErrorHandling(
       }
 
       // Remove custom domain
-      const { error: updateError } = await supabase
-        .from('portfolios')
-        .update({
-          custom_domain: null,
-          custom_domain_status: null,
-          custom_domain_verified_at: null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', portfolioId);
-
-      if (updateError) {
-        throw updateError;
-      }
+      await prisma.portfolio.update({
+        where: { id: portfolioId },
+        data: {
+          customDomain: null,
+          updatedAt: new Date(),
+        },
+      });
 
       logger.info('Custom domain removed', {
         userId: user.id,
         portfolioId,
-        domain: portfolio.custom_domain,
+        domain: portfolio.customDomain,
       });
 
       return NextResponse.json({ success: true });

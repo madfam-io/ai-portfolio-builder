@@ -14,7 +14,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { ZodError, type ZodSchema } from 'zod';
 
-import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -55,16 +54,11 @@ export function apiSuccess<T>(
 }
 
 /**
- * Get Supabase client with error handling
+ * Get database client with error handling
+ * Note: This function is deprecated. Use Prisma client directly for database operations.
  */
-export async function getSupabaseClient() {
-  const supabase = await createClient();
-
-  if (!supabase) {
-    throw new Error('Database connection not available');
-  }
-
-  return supabase;
+export async function getDatabaseClient() {
+  throw new Error('getDatabaseClient is deprecated. Use Prisma client directly.');
 }
 
 /**
@@ -100,7 +94,8 @@ export function withErrorHandling<T extends unknown[], R>(
       // Handle database connection errors
       if (
         error instanceof Error &&
-        error.message === 'Database connection not available'
+        (error.message === 'Database connection not available' ||
+         error.message.includes('Prisma'))
       ) {
         return apiError('Database service not available', { status: 503 });
       }

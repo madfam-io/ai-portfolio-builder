@@ -161,7 +161,7 @@ export function SubdomainStep({
         setSubdomainAvailable(false);
         setErrorMessage(data.error || 'Failed to check subdomain availability');
       }
-    } catch (_error) {
+    } catch {
       setSubdomainAvailable(false);
       setErrorMessage('Failed to check subdomain availability');
     } finally {

@@ -11,61 +11,31 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { signIn, signOut } from 'next-auth/react';
+import { hash, compare } from 'bcryptjs';
+import { prisma } from '@/lib/db/prisma';
+import { logger } from '@/lib/utils/logger';
 
-import type {
-  AuthResponse,
-  User,
-  Session,
-  SupabaseClient,
-  AuthError,
-} from '@supabase/supabase-js';
-
-// Create Supabase client factory function for better testability
-function createSupabaseClient(): SupabaseClient | null {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return null;
-  }
-
-  return createClient(supabaseUrl, supabaseAnonKey);
+// NextAuth compatible types
+export interface AuthResponse<T = any> {
+  data: T | null;
+  error: AuthError | null;
 }
 
-// Default client instance
-let supabaseInstance: SupabaseClient | null = null;
-let supabaseInitialized = false;
-
-function getSupabaseClient(): SupabaseClient | null {
-  if (!supabaseInitialized) {
-    supabaseInstance = createSupabaseClient();
-    supabaseInitialized = true;
-  }
-  return supabaseInstance;
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
 }
 
-// Helper function to ensure Supabase is configured
-function requireSupabaseClient(): SupabaseClient {
-  const client = getSupabaseClient();
-  if (!client) {
-    throw new Error(
-      'Authentication service not configured. Please set up Supabase environment variables.'
-    );
-  }
-  return client;
+export interface Session {
+  user: User;
+  expires: string;
 }
 
-// For testing: allow setting a mock client
-export function setSupabaseClient(client: SupabaseClient): void {
-  supabaseInstance = client;
-  supabaseInitialized = true;
-}
-
-// For testing: reset to default client
-export function resetSupabaseClient(): void {
-  supabaseInstance = null;
-  supabaseInitialized = false;
+export interface AuthError extends Error {
+  message: string;
 }
 
 // Types for authentication
@@ -136,59 +106,95 @@ export async function signUp(
   email: string,
   password: string,
   fullName?: string
-): Promise<AuthResponse> {
-  const supabase = requireSupabaseClient();
+): Promise<AuthResponse<{ user: User; requiresEmailVerification: boolean }>> {
+  try {
+    // Client-side validation
+    if (!isValidEmail(email)) {
+      throw new Error('Invalid email format');
+    }
 
-  // Client-side validation
-  if (!isValidEmail(email)) {
-    throw new Error('Invalid email format');
-  }
+    if (!isValidPassword(password)) {
+      throw new Error(
+        'Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters'
+      );
+    }
 
-  if (!isValidPassword(password)) {
-    throw new Error(
-      'Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters'
-    );
-  }
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
-  const signUpData: {
-    email: string;
-    password: string;
-    options?: {
+    if (existingUser) {
+      throw new Error('User already exists');
+    }
+
+    // Hash password
+    const hashedPassword = await hash(password, 12);
+
+    // Create user
+    const user = await prisma.user.create({
       data: {
-        full_name: string;
-      };
-    };
-  } = {
-    email,
-    password,
-  };
-
-  if (fullName) {
-    signUpData.options = {
-      data: {
-        full_name: fullName,
+        email,
+        password: hashedPassword,
+        name: fullName,
+        emailVerified: null, // Will be verified later
       },
+    });
+
+    const userData: User = {
+      id: user.id,
+      email: user.email,
+      name: user.name || undefined,
+      image: user.image || undefined,
+    };
+
+    logger.info('User signed up successfully', { userId: user.id });
+
+    return {
+      data: {
+        user: userData,
+        requiresEmailVerification: true,
+      },
+      error: null,
+    };
+  } catch (error) {
+    logger.error('Sign up error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Sign up failed'),
     };
   }
-
-  const response = await supabase.auth.signUp(signUpData);
-  return response;
 }
 
 /**
- * Sign in an existing user
+ * Sign in an existing user using NextAuth
  */
-export async function signIn(
+export async function signInWithCredentials(
   email: string,
   password: string
-): Promise<AuthResponse> {
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+): Promise<AuthResponse<any>> {
+  try {
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    });
 
-  return response;
+    if (result?.error) {
+      throw new Error(result.error);
+    }
+
+    return {
+      data: result,
+      error: null,
+    };
+  } catch (error) {
+    logger.error('Sign in error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Sign in failed'),
+    };
+  }
 }
 
 /**
@@ -197,73 +203,109 @@ export async function signIn(
 export async function signInWithOAuth(
   provider: OAuthProvider,
   redirectTo?: string
-): Promise<{ data: { url: string | null } | null; error: AuthError | null }> {
-  const supabase = requireSupabaseClient();
+): Promise<AuthResponse<any>> {
+  try {
+    const result = await signIn(provider, {
+      callbackUrl: redirectTo || '/dashboard',
+      redirect: false,
+    });
 
-  const defaultRedirectTo =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/auth/callback`
-      : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`;
-  const response = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: redirectTo || defaultRedirectTo,
-    },
-  });
-
-  return response;
+    return {
+      data: result,
+      error: null,
+    };
+  } catch (error) {
+    logger.error('OAuth sign in error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('OAuth sign in failed'),
+    };
+  }
 }
 
 /**
  * Sign out the current user
  */
-export async function signOut(): Promise<{ error: AuthError | null }> {
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.signOut();
-  return response;
+export async function signOutUser(): Promise<AuthResponse<void>> {
+  try {
+    await signOut({ redirect: false });
+    return { data: undefined, error: null };
+  } catch (error) {
+    logger.error('Sign out error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Sign out failed'),
+    };
+  }
 }
 
 /**
- * Get the current authenticated user
+ * Get the current authenticated user from database
  */
-export async function getCurrentUser(): Promise<{
-  data: { user: User | null };
-  error: AuthError | null;
-}> {
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.getUser();
-  return response;
+export async function getCurrentUser(): Promise<AuthResponse<User>> {
+  try {
+    // This function would typically be called server-side
+    // where we have access to the session
+    throw new Error('getCurrentUser should be called server-side');
+  } catch (error) {
+    logger.error('Get current user error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Get current user failed'),
+    };
+  }
 }
 
 /**
- * Get the current session
+ * Get the current session - placeholder for client-side use
  */
-export async function getCurrentSession(): Promise<{
-  data: { session: Session | null };
-  error: AuthError | null;
-}> {
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.getSession();
-  return response;
+export async function getCurrentSession(): Promise<AuthResponse<Session>> {
+  try {
+    // This should be handled by NextAuth's useSession hook on client
+    throw new Error('getCurrentSession should use NextAuth hooks on client');
+  } catch (error) {
+    logger.error('Get current session error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Get current session failed'),
+    };
+  }
 }
 
 /**
- * Listen to authentication state changes
+ * Listen to authentication state changes - placeholder for NextAuth compatibility
  */
 export function onAuthStateChange(
   callback: (event: string, session: Session | null) => void
 ) {
-  const supabase = requireSupabaseClient();
-  return supabase.auth.onAuthStateChange(callback);
+  // NextAuth handles session changes through React context
+  // This is a placeholder for Supabase compatibility
+  logger.info('Auth state change listener registered (NextAuth compatibility mode)');
+  
+  // Return unsubscribe function
+  return () => {
+    logger.info('Auth state change listener unsubscribed');
+  };
 }
 
 /**
- * Refresh the current session
+ * Refresh the current session - handled by NextAuth
  */
-export async function refreshSession(): Promise<AuthResponse> {
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.refreshSession();
-  return response;
+export async function refreshSession(): Promise<AuthResponse<Session>> {
+  try {
+    // NextAuth handles session refresh automatically
+    logger.info('Session refresh requested - handled by NextAuth');
+    return {
+      data: null,
+      error: null,
+    };
+  } catch (error) {
+    logger.error('Session refresh error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Session refresh failed'),
+    };
+  }
 }
 
 /**
@@ -271,48 +313,109 @@ export async function refreshSession(): Promise<AuthResponse> {
  */
 export async function resetPassword(
   email: string
-): Promise<{ error: AuthError | null }> {
-  if (!isValidEmail(email)) {
-    throw new Error('Invalid email format');
+): Promise<AuthResponse<void>> {
+  try {
+    if (!isValidEmail(email)) {
+      throw new Error('Invalid email format');
+    }
+
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      // Don't reveal if user exists or not for security
+      logger.info('Password reset requested for non-existent email', { email });
+      return { data: undefined, error: null };
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomUUID();
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+    // Store reset token
+    // NOTE: resetToken and resetTokenExpiry fields don't exist in current User model
+    // This would need to be added to the schema if password reset is needed
+    // await prisma.user.update({
+    //   where: { email },
+    //   data: {
+    //     resetToken,
+    //     resetTokenExpiry,
+    //   },
+    // });
+
+    // TODO: Send email with reset token
+    logger.info('Password reset token generated', { email });
+
+    return { data: undefined, error: null };
+  } catch (error) {
+    logger.error('Password reset error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Password reset failed'),
+    };
   }
-
-  const defaultRedirectTo =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/auth/reset-password`
-      : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password`;
-
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: defaultRedirectTo,
-  });
-
-  return response;
 }
 
 /**
  * Update user password
  */
 export async function updatePassword(
+  userId: string,
   password: string
-): Promise<{ error: AuthError | null }> {
-  if (!isValidPassword(password)) {
-    throw new Error(
-      'Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters'
-    );
-  }
+): Promise<AuthResponse<void>> {
+  try {
+    if (!isValidPassword(password)) {
+      throw new Error(
+        'Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters'
+      );
+    }
 
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.updateUser({ password });
-  return response;
+    const hashedPassword = await hash(password, 12);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        // resetToken and resetTokenExpiry fields don't exist in current schema
+      },
+    });
+
+    logger.info('Password updated successfully', { userId });
+    return { data: undefined, error: null };
+  } catch (error) {
+    logger.error('Password update error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('Password update failed'),
+    };
+  }
 }
 
 /**
  * Update user metadata
  */
 export async function updateUserMetadata(
+  userId: string,
   metadata: Record<string, unknown>
-): Promise<{ error: AuthError | null }> {
-  const supabase = requireSupabaseClient();
-  const response = await supabase.auth.updateUser({ data: metadata });
-  return response;
+): Promise<AuthResponse<void>> {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...metadata,
+        updatedAt: new Date(),
+      },
+    });
+
+    logger.info('User metadata updated successfully', { userId });
+    return { data: undefined, error: null };
+  } catch (error) {
+    logger.error('User metadata update error:', error as Error);
+    return {
+      data: null,
+      error: error instanceof Error ? error : new Error('User metadata update failed'),
+    };
+  }
 }

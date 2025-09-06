@@ -13,7 +13,7 @@
 
 import { logger } from '@/lib/utils/logger';
 import type { SeedingOptions } from '@/lib/database/seeder';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PrismaClient } from '@prisma/client';
 
 /**
  * Generate pull requests for a repository
@@ -70,8 +70,8 @@ export function generatePullRequests(
 
     pullRequests.push({
       id: `pr-${repositoryId}-${i}`,
-      repository_id: repositoryId,
-      pr_number: i + 1,
+      repositoryId: repositoryId,
+      prNumber: i + 1,
       title: titles[i % titles.length],
       body: `Description for pull request ${i + 1}`,
       state,
@@ -85,18 +85,18 @@ export function generatePullRequests(
       ),
       additions: Math.floor(Math.random() * 300) + 10,
       deletions: Math.floor(Math.random() * 100) + 5,
-      changed_files: Math.floor(Math.random() * 10) + 1,
+      changedFiles: Math.floor(Math.random() * 10) + 1,
       commits: Math.floor(Math.random() * 8) + 1,
       comments: Math.floor(Math.random() * 15),
-      review_comments: Math.floor(Math.random() * 8),
-      cycle_time_hours: cycleTimeHours,
-      lead_time_hours: leadTimeHours,
-      created_at: createdAt,
-      updated_at: new Date(
+      reviewComments: Math.floor(Math.random() * 8),
+      cycleTimeHours: cycleTimeHours,
+      leadTimeHours: leadTimeHours,
+      createdAt: createdAt,
+      updatedAt: new Date(
         createdAt.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000
       ),
-      merged_at: mergedAt,
-      closed_at: closedAt,
+      mergedAt: mergedAt,
+      closedAt: closedAt,
     });
   }
 
@@ -107,16 +107,21 @@ export function generatePullRequests(
  * Seed pull requests table
  */
 export async function seedPullRequests(
-  client: SupabaseClient,
+  client: PrismaClient,
   options: SeedingOptions
 ): Promise<number> {
+  // NOTE: PullRequest model does not exist in the current Prisma schema
+  // The following code is commented out until the model is added to the schema
+  
+  logger.info('Skipping pull requests seeding - PullRequest model not found in schema');
+  return 0;
+  
+  /*
   logger.info('Seeding pull requests...');
 
   try {
     // Check for existing pull requests
-    const { count: existingCount } = await client
-      .from('pull_requests')
-      .select('*', { count: 'exact', head: true });
+    const existingCount = await client.pullRequest.count();
 
     if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
@@ -126,14 +131,10 @@ export async function seedPullRequests(
     }
 
     // Get all repositories
-    const { data: repositories, error: reposError } = await client
-      .from('repositories')
-      .select('id')
-      .eq('is_active', true);
-
-    if (reposError || !repositories) {
-      throw new Error(`Failed to fetch repositories: ${reposError?.message}`);
-    }
+    const repositories = await client.repository.findMany({
+      where: { isActive: true },
+      select: { id: true }
+    });
 
     if (repositories.length === 0) {
       logger.warn('No repositories found, skipping pull requests seeding');
@@ -155,20 +156,12 @@ export async function seedPullRequests(
     for (let i = 0; i < allPullRequests.length; i += batchSize) {
       const batch = allPullRequests.slice(i, i + batchSize);
 
-      const { data, error } = await client
-        .from('pull_requests')
-        .insert(batch)
-        .select('id');
+      const result = await client.pullRequest.createMany({
+        data: batch,
+        skipDuplicates: true
+      });
 
-      if (error) {
-        logger.error(
-          `Error inserting pull requests batch ${i / batchSize + 1}:`,
-          error
-        );
-        throw error;
-      }
-
-      insertedCount += data?.length || 0;
+      insertedCount += result.count;
     }
 
     logger.info(`Successfully seeded ${insertedCount} pull requests`);
@@ -180,4 +173,5 @@ export async function seedPullRequests(
     );
     throw error;
   }
+  */
 }

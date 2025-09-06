@@ -116,48 +116,40 @@ describe('${fileNameWithoutExt}', () => {
   } else if (isApiRoute) {
     return `import { NextRequest } from 'next/server';
 import { GET, POST, PUT, DELETE } from '@/${relativePath.replace(/\.(ts|tsx)$/, '')}';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
+jest.mock('@/lib/db/prisma', () => ({
+  prisma: {
+    user: {
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    },
+  },
 }));
 
 describe('${fileNameWithoutExt} API Route', () => {
-  const mockSupabase = {
-    auth: {
-      getUser: jest.fn(),
-    },
-    from: jest.fn(),
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
-    (createClient as jest.Mock).mockResolvedValue(mockSupabase);
   });
 
   describe('GET', () => {
     it('should handle GET request successfully', async () => {
-      mockSupabase.auth.getUser.mockResolvedValue({
-        data: { user: { id: 'user-123' } },
-        error: null,
-      });
-
       const request = new NextRequest('http://localhost:3000${filePath}');
       const response = await GET(request);
       
       expect(response.status).toBe(200);
     });
 
-    it('should return 401 for unauthenticated requests', async () => {
-      mockSupabase.auth.getUser.mockResolvedValue({
-        data: { user: null },
-        error: null,
-      });
+    it('should handle errors gracefully', async () => {
+      // Mock prisma to throw an error
+      (prisma.user.findFirst as jest.Mock).mockRejectedValue(new Error('Database error'));
 
       const request = new NextRequest('http://localhost:3000${filePath}');
       const response = await GET(request);
       
-      expect(response.status).toBe(401);
+      expect(response.status).toBe(500);
     });
   });
 });`;

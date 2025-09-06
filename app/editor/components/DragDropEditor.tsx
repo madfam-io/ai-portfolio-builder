@@ -195,7 +195,7 @@ export function DragDropEditor({
     try {
       await save();
       // Show success toast or notification
-    } catch (_error) {
+    } catch {
       // Show error toast or notification
     }
   }, [save]);

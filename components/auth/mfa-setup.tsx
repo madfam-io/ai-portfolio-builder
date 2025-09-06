@@ -68,7 +68,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       const status = await mfaService.getMFAStatus();
       setMfaStatus(status);
       onStatusChange?.(status.enabled);
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: 'Failed to load MFA status',
@@ -89,7 +89,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       const data = await mfaService.setupMFA();
       setSetupData(data);
       setStep('setup');
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: 'Failed to set up MFA',
@@ -124,7 +124,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
           variant: 'destructive',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: 'Failed to verify MFA setup',
@@ -146,7 +146,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
         title: 'MFA Disabled',
         description: 'Two-factor authentication has been disabled.',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: 'Failed to disable MFA',
@@ -168,7 +168,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
           return newSet;
         });
       }, 2000);
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: 'Failed to copy to clipboard',

@@ -12,7 +12,8 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth/session';
+// getCurrentUser import removed as it's not used in this simplified callback
+import { prisma } from '@/lib/db/prisma';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { logger } from '@/lib/utils/logger';
 
@@ -45,41 +46,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = await getCurrentUser();
+    // Verify state parameter from session
+    const sessionData = await prisma.session.findUnique({
+      where: { sessionToken: state },
+      select: { userId: true, expires: true },
+    });
 
-    if (!supabase) {
-      return NextResponse.redirect(
-        new URL(
-          '/dashboard/integrations?error=service_unavailable',
-          request.url
-        )
-      );
-    }
-
-    // Verify state parameter
-    const { data: stateData, error: stateError } = await supabase
-      .from('oauth_states')
-      .select('user_id, expires_at')
-      .eq('state', state)
-      .eq('provider', 'linkedin')
-      .single();
-
-    if (stateError || !stateData) {
-      logger.error('Invalid OAuth state:', stateError);
+    if (!sessionData) {
+      logger.error('Invalid OAuth state: session not found');
       return NextResponse.redirect(
         new URL('/dashboard/integrations?error=invalid_state', request.url)
       );
     }
 
     // Check if state has expired
-    if (new Date(stateData.expires_at) < new Date()) {
+    if (sessionData.expires < new Date()) {
       return NextResponse.redirect(
         new URL('/dashboard/integrations?error=state_expired', request.url)
       );
     }
 
     // Delete used state
-    await supabase.from('oauth_states').delete().eq('state', state);
+    await prisma.session.delete({ where: { sessionToken: state } });
 
     // Exchange code for access token
     const linkedInClient = new LinkedInClient();
@@ -117,25 +105,35 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Store LinkedIn connection in database
-    const { error: upsertError } = await supabase
-      .from('linkedin_connections')
-      .upsert({
-        user_id: stateData.user_id,
-        linkedin_id: profile.id,
-        access_token: tokenData.access_token,
-        refresh_token: tokenData.refresh_token,
-        expires_at: new Date(
-          Date.now() + tokenData.expires_in * 1000
-        ).toISOString(),
-        scope: tokenData.scope,
-        profile_data: profile,
-        connected_at: new Date().toISOString(),
-        last_sync_at: new Date().toISOString(),
+    // Store LinkedIn connection in Account table
+    try {
+      await prisma.account.upsert({
+        where: {
+          provider_providerAccountId: {
+            provider: 'linkedin',
+            providerAccountId: profile.id,
+          },
+        },
+        create: {
+          userId: sessionData.userId,
+          type: 'oauth',
+          provider: 'linkedin',
+          providerAccountId: profile.id,
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token,
+          expires_at: Math.floor(Date.now() / 1000) + tokenData.expires_in,
+          scope: tokenData.scope,
+          token_type: 'Bearer',
+        },
+        update: {
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token,
+          expires_at: Math.floor(Date.now() / 1000) + tokenData.expires_in,
+          scope: tokenData.scope,
+        },
       });
-
-    if (upsertError) {
-      logger.error('Failed to store LinkedIn connection:', upsertError);
+    } catch (upsertError) {
+      logger.error('Failed to store LinkedIn connection:', upsertError as any);
       return NextResponse.redirect(
         new URL('/dashboard/integrations?error=storage_failed', request.url)
       );

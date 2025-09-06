@@ -95,32 +95,38 @@ function validateAndTransformCertifications(data: unknown): Certification[] {
  */
 interface DatabasePortfolio {
   id: string;
-  user_id: string;
+  userId: string;
   name: string;
+  title: string;
+  bio: string;
+  tagline: string | null;
+  avatarUrl: string | null;
+  contact: any; // Prisma Json type
+  social: any; // Prisma Json type
+  experience: any; // Prisma Json type
+  education: any; // Prisma Json type
+  projects: any; // Prisma Json type
+  skills: any; // Prisma Json type
+  certifications: any; // Prisma Json type
   template: TemplateType;
-  customization: Record<string, unknown>;
-  ai_settings: Record<string, unknown>;
+  customization: any; // Prisma Json type
+  aiSettings?: any; // Prisma Json type - optional
   status: PortfolioStatus;
   subdomain: string | null;
-  custom_domain: string | null;
-  views: number;
-  last_viewed_at: string | null;
-  created_at: string;
-  updated_at: string;
-  published_at: string | null;
-  data: {
-    title?: string;
-    bio?: string;
-    tagline?: string;
-    avatar_url?: string | null;
-    contact?: Record<string, string>;
-    social?: Record<string, string>;
-    experience?: Array<Record<string, unknown>>;
-    education?: Array<Record<string, unknown>>;
-    projects?: Array<Record<string, unknown>>;
-    skills?: Array<Record<string, unknown>>;
-    certifications?: Array<Record<string, unknown>>;
-  };
+  customDomain: string | null;
+  isPublic?: boolean; // optional
+  views?: number; // optional
+  lastViewedAt?: Date | null; // optional
+  seoTitle?: string | null; // optional
+  seoDescription?: string | null; // optional
+  aiPersona?: string | null; // optional
+  aiTone?: string | null; // optional
+  aiLength?: string; // optional
+  analytics?: any; // Prisma Json type - optional
+  metadata?: any; // Prisma Json type - optional
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt?: Date | null; // optional
 }
 
 /**
@@ -130,39 +136,46 @@ interface DatabasePortfolio {
 export function transformDbPortfolioToApi(
   dbPortfolio: DatabasePortfolio
 ): Portfolio {
-  // Extract portfolio content from JSONB data field
-  const data = dbPortfolio.data || {};
-
   return {
     id: dbPortfolio.id,
-    userId: dbPortfolio.user_id,
+    userId: dbPortfolio.userId,
     name: dbPortfolio.name,
-    title: data.title || '',
-    bio: data.bio || '',
-    tagline: data.tagline || '',
-    avatarUrl: data.avatar_url || undefined,
-    contact: data.contact || {},
-    social: data.social || {},
-    experience: validateAndTransformExperience(data.experience),
-    education: validateAndTransformEducation(data.education),
-    projects: validateAndTransformProjects(data.projects),
-    skills: validateAndTransformSkills(data.skills),
-    certifications: validateAndTransformCertifications(data.certifications),
+    title: dbPortfolio.title,
+    bio: dbPortfolio.bio,
+    tagline: dbPortfolio.tagline || '',
+    avatarUrl: dbPortfolio.avatarUrl || undefined,
+    contact: dbPortfolio.contact || {},
+    social: dbPortfolio.social || {},
+    experience: validateAndTransformExperience(dbPortfolio.experience),
+    education: validateAndTransformEducation(dbPortfolio.education),
+    projects: validateAndTransformProjects(dbPortfolio.projects),
+    skills: validateAndTransformSkills(dbPortfolio.skills),
+    certifications: validateAndTransformCertifications(dbPortfolio.certifications),
     template: dbPortfolio.template,
     customization: dbPortfolio.customization || {},
-    aiSettings: dbPortfolio.ai_settings || {},
+    aiSettings: dbPortfolio.aiSettings || {},
     status: dbPortfolio.status,
     subdomain: dbPortfolio.subdomain || undefined,
-    customDomain: dbPortfolio.custom_domain || undefined,
+    customDomain: dbPortfolio.customDomain || undefined,
     views: dbPortfolio.views || 0,
-    lastViewedAt: dbPortfolio.last_viewed_at
-      ? new Date(dbPortfolio.last_viewed_at)
-      : undefined,
-    createdAt: new Date(dbPortfolio.created_at),
-    updatedAt: new Date(dbPortfolio.updated_at),
-    publishedAt: dbPortfolio.published_at
-      ? new Date(dbPortfolio.published_at)
-      : undefined,
+    lastViewedAt: dbPortfolio.lastViewedAt || undefined,
+    createdAt: dbPortfolio.createdAt,
+    updatedAt: dbPortfolio.updatedAt,
+    publishedAt: dbPortfolio.publishedAt || undefined,
+    data: {
+      // Legacy data field for backward compatibility
+      title: dbPortfolio.title,
+      bio: dbPortfolio.bio,
+      tagline: dbPortfolio.tagline,
+      avatarUrl: dbPortfolio.avatarUrl,
+      contact: dbPortfolio.contact,
+      social: dbPortfolio.social,
+      experience: dbPortfolio.experience,
+      education: dbPortfolio.education,
+      projects: dbPortfolio.projects,
+      skills: dbPortfolio.skills,
+      certifications: dbPortfolio.certifications,
+    },
   };
 }
 
@@ -171,21 +184,37 @@ export function transformDbPortfolioToApi(
  * Packages portfolio content into JSONB data field
  */
 interface DatabasePortfolioUpdate {
-  id?: string;
-  user_id?: string;
+  // Note: id and userId are not updateable in Prisma updates
   name?: string;
-  slug?: string;
+  title?: string;
+  bio?: string;
+  tagline?: string | null;
+  avatarUrl?: string | null;
+  contact?: any;
+  social?: any;
+  experience?: any;
+  education?: any;
+  projects?: any;
+  skills?: any;
+  certifications?: any;
   template?: TemplateType;
   status?: PortfolioStatus;
-  customization?: Record<string, unknown>;
-  ai_settings?: Record<string, unknown>;
+  customization?: any;
+  aiSettings?: any;
   subdomain?: string;
-  custom_domain?: string;
+  customDomain?: string;
+  isPublic?: boolean;
   views?: number;
-  last_viewed_at?: string;
-  published_at?: string;
-  updated_at?: string;
-  data?: Record<string, unknown>;
+  lastViewedAt?: Date | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  aiPersona?: string | null;
+  aiTone?: string | null;
+  aiLength?: string;
+  analytics?: any;
+  metadata?: any;
+  publishedAt?: Date | null;
+  updatedAt?: Date;
 }
 
 export function transformApiPortfolioToDb(
@@ -193,61 +222,42 @@ export function transformApiPortfolioToDb(
 ): DatabasePortfolioUpdate {
   const dbData: DatabasePortfolioUpdate = {};
 
-  // If data field is provided, use it directly; otherwise extract from fields
-  const dataFields = apiPortfolio.data || {
-    title: apiPortfolio.title,
-    bio: apiPortfolio.bio,
-    tagline: apiPortfolio.tagline,
-    avatar_url: apiPortfolio.avatarUrl,
-    contact: apiPortfolio.contact,
-    social: apiPortfolio.social,
-    experience: apiPortfolio.experience,
-    education: apiPortfolio.education,
-    projects: apiPortfolio.projects,
-    skills: apiPortfolio.skills,
-    certifications: apiPortfolio.certifications,
-  };
-
-  // Root-level fields
-  if (apiPortfolio.id) dbData.id = apiPortfolio.id;
-  if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
+  // Map direct fields from API to database
   if (apiPortfolio.name) dbData.name = apiPortfolio.name;
-  if (apiPortfolio.subdomain) dbData.slug = apiPortfolio.subdomain;
+  if (apiPortfolio.title) dbData.title = apiPortfolio.title;
+  if (apiPortfolio.bio) dbData.bio = apiPortfolio.bio;
+  if (apiPortfolio.tagline !== undefined) dbData.tagline = apiPortfolio.tagline;
+  if (apiPortfolio.avatarUrl !== undefined) dbData.avatarUrl = apiPortfolio.avatarUrl;
+  if (apiPortfolio.contact) dbData.contact = apiPortfolio.contact;
+  if (apiPortfolio.social) dbData.social = apiPortfolio.social;
+  if (apiPortfolio.experience) dbData.experience = apiPortfolio.experience;
+  if (apiPortfolio.education) dbData.education = apiPortfolio.education;
+  if (apiPortfolio.projects) dbData.projects = apiPortfolio.projects;
+  if (apiPortfolio.skills) dbData.skills = apiPortfolio.skills;
+  if (apiPortfolio.certifications) dbData.certifications = apiPortfolio.certifications;
+  
   if (apiPortfolio.template) dbData.template = apiPortfolio.template;
   if (apiPortfolio.status) dbData.status = apiPortfolio.status;
-  if (apiPortfolio.customization)
-    dbData.customization = { ...apiPortfolio.customization };
-  if (apiPortfolio.aiSettings)
-    dbData.ai_settings = { ...apiPortfolio.aiSettings };
+  if (apiPortfolio.customization) dbData.customization = apiPortfolio.customization;
+  if (apiPortfolio.aiSettings) dbData.aiSettings = apiPortfolio.aiSettings;
   if (apiPortfolio.subdomain) dbData.subdomain = apiPortfolio.subdomain;
-  if (apiPortfolio.customDomain)
-    dbData.custom_domain = apiPortfolio.customDomain;
+  if (apiPortfolio.customDomain) dbData.customDomain = apiPortfolio.customDomain;
   if (apiPortfolio.views !== undefined) dbData.views = apiPortfolio.views;
 
   // Date fields
   if (apiPortfolio.lastViewedAt) {
-    dbData.last_viewed_at =
-      apiPortfolio.lastViewedAt instanceof Date
-        ? apiPortfolio.lastViewedAt.toISOString()
-        : apiPortfolio.lastViewedAt;
+    dbData.lastViewedAt = apiPortfolio.lastViewedAt instanceof Date
+      ? apiPortfolio.lastViewedAt
+      : new Date(apiPortfolio.lastViewedAt);
   }
   if (apiPortfolio.publishedAt) {
-    dbData.published_at =
-      apiPortfolio.publishedAt instanceof Date
-        ? apiPortfolio.publishedAt.toISOString()
-        : apiPortfolio.publishedAt;
+    dbData.publishedAt = apiPortfolio.publishedAt instanceof Date
+      ? apiPortfolio.publishedAt
+      : new Date(apiPortfolio.publishedAt);
   }
 
-  // Package content into data field, merging with existing data if updating
-  if (apiPortfolio.data && typeof apiPortfolio.data === 'object') {
-    // If raw data updates are provided, merge them
-    dbData.data = { ...dataFields, ...apiPortfolio.data };
-  } else {
-    dbData.data = dataFields;
-  }
-
-  // Always update the updated_at timestamp
-  dbData.updated_at = new Date().toISOString();
+  // Always update the updatedAt timestamp
+  dbData.updatedAt = new Date();
 
   return dbData;
 }

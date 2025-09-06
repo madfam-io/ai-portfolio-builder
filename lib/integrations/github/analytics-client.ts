@@ -13,7 +13,7 @@
 
 import { Octokit } from '@octokit/rest';
 
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -81,25 +81,23 @@ export class GitHubAnalyticsClient {
    * Create client from user ID by fetching stored token
    */
   static async fromUserId(userId: string): Promise<GitHubAnalyticsClient> {
-    const supabase = await createClient();
-    if (!supabase) {
+    if (!prisma) {
       throw new Error('Database connection not available');
     }
 
     // Fetch GitHub integration
-    const { data: integration, error } = await supabase
-      .from('github_integrations')
-      .select('encrypted_token')
-      .eq('user_id', userId)
-      .single();
+    const integration = await prisma.gitHubIntegration.findFirst({
+      where: { userId },
+      select: { accessToken: true }
+    });
 
-    if (error || !integration) {
+    if (!integration) {
       throw new Error('GitHub integration not found');
     }
 
     // TODO: Decrypt the token (implement encryption service)
     // For now, assuming token is not encrypted
-    const accessToken = integration.encrypted_token;
+    const accessToken = integration.accessToken;
 
     return new GitHubAnalyticsClient(accessToken, userId);
   }

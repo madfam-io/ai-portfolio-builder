@@ -13,6 +13,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { LinkedInParser } from '@/lib/services/integrations/linkedin/parser';
 import { type LinkedInFullProfile } from '@/lib/services/integrations/linkedin/types';
@@ -108,9 +109,6 @@ function buildPortfolioUpdates(
 
 // Helper function to update existing portfolio
 async function updateExistingPortfolio(params: {
-  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
-    ? T
-    : never;
   portfolioId: string;
   userId: string;
   profileData: {
@@ -130,27 +128,18 @@ async function updateExistingPortfolio(params: {
   linkedInProfile: LinkedInFullProfile;
   options: ImportOptions;
 }) {
-  const {
-    supabase,
-    portfolioId,
-    userId,
-    profileData,
-    linkedInProfile,
-    options,
-  } = params;
+  const { portfolioId, userId, profileData, linkedInProfile, options } = params;
+
   // Verify user owns the portfolio
-  if (!supabase) {
-    return { error: 'Database connection not available', status: 503 };
-  }
+  const portfolio = await prisma.portfolio.findFirst({
+    where: {
+      id: portfolioId,
+      userId: userId,
+    },
+    select: { id: true },
+  });
 
-  const { data: portfolio, error: portfolioError } = await supabase
-    .from('portfolios')
-    .select('id')
-    .eq('id', portfolioId)
-    .eq('user_id', userId)
-    .single();
-
-  if (portfolioError || !portfolio) {
+  if (!portfolio) {
     return { error: 'Portfolio not found', status: 404 };
   }
 
@@ -158,31 +147,39 @@ async function updateExistingPortfolio(params: {
   const updates = buildPortfolioUpdates(profileData, linkedInProfile, options);
 
   // Update portfolio
-  const { error: updateError } = await supabase
-    .from('portfolios')
-    .update({
-      ...updates,
-      linkedin_imported_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', portfolioId);
-
-  if (updateError) {
-    logger.error('Failed to update portfolio:', updateError);
+  try {
+    await prisma.portfolio.update({
+      where: { id: portfolioId },
+      data: {
+        title: updates.title,
+        bio: updates.tagline || '',
+        experience: (updates.experience as any) || [],
+        education: (updates.education as any) || [],
+        skills: (updates.skills as any) || [],
+        projects: (updates.projects as any) || [],
+        certifications: (updates.certifications as any) || [],
+        updatedAt: new Date(),
+      },
+    });
+  } catch (updateError) {
+    logger.error('Failed to update portfolio:', updateError as any);
     return { error: 'Failed to update portfolio', status: 500 };
   }
 
   // Update user profile if needed
-  if (options.updateProfile !== false) {
-    await supabase
-      .from('profiles')
-      .update({
-        full_name: profileData.name,
-        avatar_url: profileData.avatar,
-        bio: profileData.bio,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', userId);
+  if (options.updateProfile !== false && profileData.name) {
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          name: profileData.name,
+          image: profileData.avatar,
+        },
+      });
+    } catch (error) {
+      // Log but don't fail if user update fails
+      logger.error('Failed to update user profile:', error as any);
+    }
   }
 
   return {
@@ -206,9 +203,6 @@ async function updateExistingPortfolio(params: {
 
 // Helper function to create new portfolio
 async function createNewPortfolio(params: {
-  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
-    ? T
-    : never;
   userId: string;
   profileData: {
     title?: string;
@@ -226,57 +220,53 @@ async function createNewPortfolio(params: {
   };
   linkedInProfile: LinkedInFullProfile;
 }) {
-  const { supabase, userId, profileData, linkedInProfile } = params;
-  if (!supabase) {
-    return { error: 'Database connection not available', status: 503 };
-  }
+  const { userId, profileData, linkedInProfile } = params;
 
-  const { data: newPortfolio, error: createError } = await supabase
-    .from('portfolios')
-    .insert({
-      user_id: userId,
-      title: profileData.title || 'My Portfolio',
-      tagline: LinkedInParser.generateBio(linkedInProfile),
-      is_published: false,
-      template: 'modern', // Default template
-      theme: 'light',
-      personal_info: {
-        name: profileData.name,
-        email: profileData.email,
-        location: profileData.location,
-        avatar_url: profileData.avatar,
+  try {
+    const newPortfolio = await prisma.portfolio.create({
+      data: {
+        userId: userId,
+        name: profileData.name || 'My Portfolio',
+        title: profileData.title || 'My Portfolio',
+        bio: LinkedInParser.generateBio(linkedInProfile) || '',
+        tagline: LinkedInParser.generateBio(linkedInProfile),
+        avatarUrl: profileData.avatar,
+        contact: {
+          email: profileData.email,
+          location: profileData.location,
+        },
+        social: {
+          linkedin: profileData.urls?.[0],
+        },
+        experience: profileData.experience as any,
+        education: profileData.education as any,
+        skills: profileData.skills as any,
+        projects: profileData.projects as any,
+        certifications: profileData.certifications as any,
+        template: 'DEVELOPER', // Default template
+        status: 'DRAFT',
+        seoKeywords: [],
       },
-      experience: profileData.experience,
-      education: profileData.education,
-      skills: profileData.skills,
-      projects: profileData.projects,
-      certifications: profileData.certifications,
-      social_links: profileData.urls,
-      linkedin_imported_at: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .select()
-    .single();
+      select: { id: true },
+    });
 
-  if (createError) {
-    logger.error('Failed to create portfolio:', createError);
+    return {
+      success: true,
+      portfolioId: newPortfolio.id,
+      created: true,
+      imported: {
+        basicInfo: true,
+        experience: profileData.experience.length > 0,
+        education: profileData.education.length > 0,
+        skills: profileData.skills.length > 0,
+        projects: profileData.projects.length > 0,
+        certifications: profileData.certifications.length > 0,
+      },
+    };
+  } catch (createError) {
+    logger.error('Failed to create portfolio:', createError as any);
     return { error: 'Failed to create portfolio', status: 500 };
   }
-
-  return {
-    success: true,
-    portfolioId: newPortfolio.id,
-    created: true,
-    imported: {
-      basicInfo: true,
-      experience: profileData.experience.length > 0,
-      education: profileData.education.length > 0,
-      skills: profileData.skills.length > 0,
-      projects: profileData.projects.length > 0,
-      certifications: profileData.certifications.length > 0,
-    },
-  };
 }
 
 /**
@@ -285,22 +275,10 @@ async function createNewPortfolio(params: {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -311,21 +289,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { portfolioId, options = {} } = body;
 
-    // Get LinkedIn connection
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
+    // Get LinkedIn connection from Account table
+    const connection = await prisma.account.findFirst({
+      where: {
+        userId: user.id,
+        provider: 'linkedin',
+      },
+    });
 
-    const { data: connection, error: connectionError } = await supabase
-      .from('linkedin_connections')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
-
-    if (connectionError || !connection) {
+    if (!connection) {
       return NextResponse.json(
         { error: 'LinkedIn not connected' },
         { status: 404 }
@@ -333,7 +305,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if token has expired
-    if (new Date(connection.expires_at) < new Date()) {
+    const expiresAt = connection.expires_at
+      ? new Date(connection.expires_at * 1000)
+      : new Date(0);
+    if (expiresAt < new Date()) {
       return NextResponse.json(
         { error: 'LinkedIn token expired' },
         { status: 401 }
@@ -346,7 +321,7 @@ export async function POST(request: NextRequest) {
     try {
       // Fetch full profile
       const linkedInProfile: LinkedInFullProfile =
-        await linkedInClient.fetchFullProfile(connection.access_token);
+        await linkedInClient.fetchFullProfile(connection.access_token || '');
 
       // Parse profile data
       const parsedProfile = LinkedInParser.parseProfile(linkedInProfile);
@@ -370,7 +345,6 @@ export async function POST(request: NextRequest) {
       let result;
       if (portfolioId) {
         result = await updateExistingPortfolio({
-          supabase,
           portfolioId,
           userId: user.id,
           profileData: formattedProfileData,
@@ -379,7 +353,6 @@ export async function POST(request: NextRequest) {
         });
       } else {
         result = await createNewPortfolio({
-          supabase,
           userId: user.id,
           profileData: formattedProfileData,
           linkedInProfile,

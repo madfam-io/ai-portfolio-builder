@@ -116,7 +116,7 @@ export function withPerformanceOptimization<
       }
 
       return response;
-    } catch (_error) {
+    } catch {
       // Even errors should have response time headers
       const processingTime = Date.now() - startTime;
       const errorResponse = NextResponse.json(

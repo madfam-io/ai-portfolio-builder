@@ -126,15 +126,11 @@ export function QuickStartGallery({
 
     try {
       // Track selection
-      await track.user.action(
-        'quick_start_selected',
-        user?.id || 'anonymous',
-        async () => {},
-        {
-          demo_id: demoId,
-          has_account: !!user,
-        }
-      );
+      track('quick_start_selected', {
+        demo_id: demoId,
+        has_account: !!user,
+        user_id: user?.id || 'anonymous',
+      });
 
       if (onSelect) {
         onSelect(demoId);
@@ -154,7 +150,7 @@ export function QuickStartGallery({
       } else {
         router.push(`/editor/${result.portfolioId}`);
       }
-    } catch (_error) {
+    } catch {
       // Failed to create demo portfolio
     } finally {
       setLoadingDemo(null);
@@ -162,12 +158,10 @@ export function QuickStartGallery({
   };
 
   const handlePreview = (demoId: string) => {
-    track.user.action(
-      'demo_preview_clicked',
-      user?.id || 'anonymous',
-      async () => {},
-      { demo_id: demoId }
-    );
+    track('demo_preview_clicked', {
+      demo_id: demoId,
+      user_id: user?.id || 'anonymous',
+    });
 
     // Open in new tab
     window.open(`/demo/preview/${demoId}`, '_blank');
@@ -188,13 +182,14 @@ export function QuickStartGallery({
         `Copy of ${demos.find(d => d.id === demoId)?.name}`
       );
 
-      await track.user.action('demo_cloned', user.id, async () => {}, {
+      track('demo_cloned', {
         demo_id: demoId,
         portfolio_id: portfolioId,
+        user_id: user.id,
       });
 
       setTimeout(() => setCopiedDemo(null), 2000);
-    } catch (_error) {
+    } catch {
       // Failed to clone demo
       setCopiedDemo(null);
     }

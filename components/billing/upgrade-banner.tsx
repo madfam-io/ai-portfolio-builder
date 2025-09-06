@@ -68,7 +68,7 @@ export function UpgradeBanner({
           variant: 'destructive',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',
@@ -232,7 +232,7 @@ export function InlineUpgradePrompt({
           variant: 'destructive',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',

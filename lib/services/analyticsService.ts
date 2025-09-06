@@ -52,15 +52,9 @@ export class AnalyticsService {
   constructor(userId: string) {
     this.userId = userId;
     this.githubClient = new GitHubAnalyticsClient();
-    this.repositoryService = new RepositoryAnalyticsService(
-      userId,
-      this.githubClient
-    );
-    this.metricsService = new MetricsCalculationService(
-      userId,
-      this.githubClient
-    );
-    this.dashboardService = new DashboardAnalyticsService(userId);
+    this.repositoryService = new RepositoryAnalyticsService();
+    this.metricsService = new MetricsCalculationService();
+    this.dashboardService = new DashboardAnalyticsService();
   }
 
   /**

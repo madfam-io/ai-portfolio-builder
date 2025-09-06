@@ -23,63 +23,54 @@ import {
 } from '@/lib/api/response-helpers';
 import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
+import { prisma } from '@/lib/db/prisma';
 
 // Helper function to transform variant data
-function transformVariant(variant: Record<string, unknown>) {
+function transformVariant(variant: any) {
   return {
     id: variant.id,
-    portfolioId: variant.portfolio_id,
+    portfolioId: variant.portfolioId,
     name: variant.name,
     slug: variant.slug,
-    isDefault: variant.is_default,
-    isPublished: variant.is_published,
-    contentOverrides: variant.content_overrides || {},
-    audienceProfile: variant.audience_profile || {},
-    aiOptimization: variant.ai_optimization || {},
+    isDefault: variant.isDefault,
+    isPublished: variant.isPublished,
+    contentOverrides: variant.contentOverrides || {},
+    audienceProfile: variant.audienceProfile || {},
+    aiOptimization: variant.aiOptimization || {},
     analytics: variant.analytics || {},
-    createdAt: variant.created_at,
-    updatedAt: variant.updated_at,
+    createdAt: variant.createdAt,
+    updatedAt: variant.updatedAt,
   };
 }
 
 // Helper function to verify variant ownership
 async function verifyVariantOwnership(
-  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
-    ? T
-    : never,
   variantId: string,
   userId: string
 ) {
-  if (!supabase) {
-    throw new Error('Database connection not available');
+  try {
+    const variant = await prisma.portfolioVariant.findUnique({
+      where: { id: variantId },
+      include: {
+        portfolio: {
+          select: { userId: true },
+        },
+      },
+    });
+
+    if (!variant) {
+      return { error: 'Variant not found', status: 404 };
+    }
+
+    // Verify user owns the portfolio
+    if (variant.portfolio.userId !== userId) {
+      return { error: 'Unauthorized', status: 403 };
+    }
+
+    return { variant };
+  } catch (error) {
+    return { error: 'Database error', status: 500 };
   }
-
-  const { data: variant, error } = await supabase
-    .from('portfolio_variants')
-    .select(
-      `
-      *,
-      audience_profile:audience_profiles(*),
-      portfolio:portfolios(user_id)
-    `
-    )
-    .eq('id', variantId)
-    .single();
-
-  if (error || !variant) {
-    return { error: 'Variant not found', status: 404 };
-  }
-
-  // Verify user owns the portfolio
-  const portfolioData = Array.isArray(variant.portfolio)
-    ? variant.portfolio[0]
-    : variant.portfolio;
-
-  if (!portfolioData || portfolioData.user_id !== userId) {
-    return { error: 'Unauthorized', status: 403 };
-  }
-
-  return { variant };
 }
 
 // Using RouteContext from auth middleware
@@ -99,14 +90,7 @@ export const GET = versionedApiHandler(
       if (!variantId || typeof variantId !== 'string') {
         return apiError('Invalid variant ID', { status: 400 });
       }
-      const supabase = await getCurrentUser();
-
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
-
       const result = await verifyVariantOwnership(
-        supabase,
         variantId,
         request.user.id
       );
@@ -147,67 +131,41 @@ export const PATCH = versionedApiHandler(
         return apiError('Invalid variant ID', { status: 400 });
       }
       const updates = await request.json();
-      const supabase = await getCurrentUser();
-
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
 
       // Verify ownership first
-      const { data: existingVariant, error: fetchError } = await supabase
-        .from('portfolio_variants')
-        .select(
-          `
-          id,
-          portfolio:portfolios(user_id)
-        `
-        )
-        .eq('id', variantId)
-        .single();
+      const existingVariant = await prisma.portfolioVariant.findUnique({
+        where: { id: variantId },
+        include: {
+          portfolio: {
+            select: { userId: true },
+          },
+        },
+      });
 
-      if (fetchError || !existingVariant) {
+      if (!existingVariant) {
         return apiError('Variant not found', { status: 404 });
       }
 
       // Verify user owns the portfolio
-      const portfolioData = Array.isArray(existingVariant.portfolio)
-        ? existingVariant.portfolio[0]
-        : existingVariant.portfolio;
-      if (!portfolioData || portfolioData.user_id !== request.user.id) {
+      if (existingVariant.portfolio.userId !== request.user.id) {
         return apiError('Unauthorized', { status: 403 });
       }
 
       // Prepare updates
-      const dbUpdates: Record<string, unknown> = {};
+      const dbUpdates: any = {};
 
       if ('name' in updates) dbUpdates.name = updates.name;
-      if ('slug' in updates) dbUpdates.slug = updates.slug;
-      if ('isDefault' in updates) dbUpdates.is_default = updates.isDefault;
-      if ('isPublished' in updates)
-        dbUpdates.is_published = updates.isPublished;
-      if ('contentOverrides' in updates)
-        dbUpdates.content_overrides = updates.contentOverrides;
-      if ('aiOptimization' in updates)
-        dbUpdates.ai_optimization = updates.aiOptimization;
-      if ('analytics' in updates) dbUpdates.analytics = updates.analytics;
+      if ('description' in updates) dbUpdates.description = updates.description;
+      if ('content' in updates) dbUpdates.content = updates.content;
+      if ('customization' in updates) dbUpdates.customization = updates.customization;
+      if ('isActive' in updates) dbUpdates.isActive = updates.isActive;
+      if ('isControl' in updates) dbUpdates.isControl = updates.isControl;
 
       // Update the variant
-      const { data: variant, error: updateError } = await supabase
-        .from('portfolio_variants')
-        .update(dbUpdates)
-        .eq('id', variantId)
-        .select(
-          `
-          *,
-          audience_profile:audience_profiles(*)
-        `
-        )
-        .single();
-
-      if (updateError) {
-        logger.error('Failed to update variant:', updateError);
-        return apiError('Failed to update variant', { status: 500 });
-      }
+      const variant = await prisma.portfolioVariant.update({
+        where: { id: variantId },
+        data: dbUpdates,
+      });
 
       // Transform to match TypeScript types
       const transformedVariant = transformVariant(variant);
@@ -243,55 +201,34 @@ export const DELETE = versionedApiHandler(
       if (!variantId || typeof variantId !== 'string') {
         return apiError('Invalid variant ID', { status: 400 });
       }
-      const supabase = await getCurrentUser();
-
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
-
       // Get variant with portfolio to verify ownership
-      const { data: variant, error: fetchError } = await supabase
-        .from('portfolio_variants')
-        .select(
-          `
-          id,
-          is_default,
-          portfolio:portfolios(user_id)
-        `
-        )
-        .eq('id', variantId)
-        .single();
+      const variant = await prisma.portfolioVariant.findUnique({
+        where: { id: variantId },
+        include: {
+          portfolio: {
+            select: { userId: true },
+          },
+        },
+      });
 
-      if (fetchError || !variant) {
+      if (!variant) {
         return apiError('Variant not found', { status: 404 });
       }
 
       // Verify user owns the portfolio
-      const portfolioDataDelete = Array.isArray(variant.portfolio)
-        ? variant.portfolio[0]
-        : variant.portfolio;
-      if (
-        !portfolioDataDelete ||
-        portfolioDataDelete.user_id !== request.user.id
-      ) {
+      if (variant.portfolio.userId !== request.user.id) {
         return apiError('Unauthorized', { status: 403 });
       }
 
-      // Prevent deleting default variant
-      if (variant.is_default) {
-        return apiError('Cannot delete default variant', { status: 400 });
+      // Prevent deleting control variant
+      if (variant.isControl) {
+        return apiError('Cannot delete control variant', { status: 400 });
       }
 
       // Delete the variant
-      const { error: deleteError } = await supabase
-        .from('portfolio_variants')
-        .delete()
-        .eq('id', variantId);
-
-      if (deleteError) {
-        logger.error('Failed to delete variant:', deleteError);
-        return apiError('Failed to delete variant', { status: 500 });
-      }
+      await prisma.portfolioVariant.delete({
+        where: { id: variantId },
+      });
 
       logger.info('Deleted portfolio variant', {
         userId: request.user.id,

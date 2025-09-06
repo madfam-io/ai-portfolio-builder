@@ -47,15 +47,17 @@ export class RateLimitManager {
       };
 
       // Update rate limit in database
-      if (this.integration) {
-        await prisma.githubIntegration.update({
-          where: { id: this.integration.id },
-          data: {
-            rateLimitRemaining: this.rateLimitInfo.remaining,
-            rateLimitResetAt: this.rateLimitInfo.reset,
-          },
-        });
-      }
+      // NOTE: rateLimitRemaining and rateLimitResetAt fields don't exist in current schema
+      // This would need to be added to the GitHubIntegration model if needed
+      // if (this.integration) {
+      //   await prisma.gitHubIntegration.update({
+      //     where: { id: this.integration.id },
+      //     data: {
+      //       rateLimitRemaining: this.rateLimitInfo.remaining,
+      //       rateLimitResetAt: this.rateLimitInfo.reset,
+      //     },
+      //   });
+      // }
 
       return this.rateLimitInfo;
     } catch (error) {

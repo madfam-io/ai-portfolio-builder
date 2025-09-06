@@ -296,13 +296,18 @@ class CDNManager {
    */
   async storePerformanceMetrics(metrics: PerformanceMetrics): Promise<void> {
     try {
-      if (isRedisAvailable()) {
+      if (isRedisAvailable) {
         const key = `perf:${Date.now()}:${Math.random().toString(36).substring(2)}`;
-        await redis.setex(key, 86400, JSON.stringify(metrics)); // Store for 24 hours
+        await redis.set(key, JSON.stringify(metrics), 86400); // Store for 24 hours
 
         // Add to performance timeline
-        await redis.lpush('perf:timeline', key);
-        await redis.ltrim('perf:timeline', 0, 999); // Keep last 1000 entries
+        // Note: lpush and ltrim not available in Vercel KV, using simplified approach
+        const timelineStr = await redis.get('perf:timeline');
+        const timeline = timelineStr ? JSON.parse(timelineStr) : [];
+        if (Array.isArray(timeline)) {
+          timeline.unshift(key);
+          await redis.set('perf:timeline', JSON.stringify(timeline.slice(0, 1000)));
+        }
       }
 
       logger.debug('Performance metrics stored', {
@@ -341,12 +346,14 @@ class CDNManager {
     }>;
   }> {
     try {
-      if (!isRedisAvailable()) {
+      if (!(isRedisAvailable)) {
         return this.getEmptyAnalytics();
       }
 
       // Get all performance metric keys from timeline
-      const keys = await redis.lrange('perf:timeline', 0, -1);
+      const timelineStr = await redis.get('perf:timeline');
+      const timeline = timelineStr ? JSON.parse(timelineStr) : [];
+      const keys = Array.isArray(timeline) ? timeline : [];
       const metrics = await this.fetchMetricsInRange(keys, startDate, endDate);
 
       if (metrics.length === 0) {
@@ -399,11 +406,11 @@ class CDNManager {
    * Configure caching policies
    */
   private async configureCaching(): Promise<void> {
-    if (isRedisAvailable()) {
-      await redis.setex(
+    if (isRedisAvailable) {
+      await redis.set(
         'cdn:cache_policy',
-        86400,
-        JSON.stringify(this.cachePolicy)
+        JSON.stringify(this.cachePolicy),
+        86400
       );
     }
   }
@@ -537,7 +544,7 @@ class CDNManager {
         if (metric.timestamp >= startDate && metric.timestamp <= endDate) {
           metrics.push(metric);
         }
-      } catch (_error) {
+      } catch {
         // Skip invalid entries
       }
     }

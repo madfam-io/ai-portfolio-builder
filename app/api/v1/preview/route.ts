@@ -25,6 +25,7 @@ import { renderDeveloperTemplate } from '@/lib/templates/developer';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import { previewQuerySchema, previewBodySchema } from '@/lib/validations/api';
+import { prisma } from '@/lib/db/prisma';
 
 import type { Portfolio, TemplateType } from '@/types/portfolio';
 
@@ -55,26 +56,18 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     const { portfolioId, template } = validationResult.data;
 
     // Get portfolio data from database
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      throw new Error('Database connection not available');
-    }
+    const dbPortfolio = await prisma.portfolio.findUnique({
+      where: { id: portfolioId },
+    });
 
-    const { data: dbPortfolio, error } = await supabase
-      .from('portfolios')
-      .select('*')
-      .eq('id', portfolioId)
-      .single();
-
-    if (error !== null || dbPortfolio === null || dbPortfolio === undefined) {
+    if (!dbPortfolio) {
       logger.error('Failed to fetch portfolio for preview', {
         portfolioId,
-        error,
       });
       return apiError('Portfolio not found', { status: 404 });
     }
 
-    const portfolio = transformDbPortfolioToApi(dbPortfolio);
+    const portfolio = transformDbPortfolioToApi(dbPortfolio as any);
 
     // Generate HTML based on template
     let html = '';

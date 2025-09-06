@@ -89,7 +89,7 @@ function NewPortfolioContent() {
 
       // Redirect to editor
       router.push(`/editor/${portfolio.id}`);
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description:

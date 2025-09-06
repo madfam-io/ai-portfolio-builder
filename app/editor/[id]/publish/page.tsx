@@ -126,7 +126,7 @@ function PublishContent({ params }: PageProps) {
         '_blank'
       );
       router.push('/dashboard');
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description:

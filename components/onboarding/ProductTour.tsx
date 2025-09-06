@@ -196,7 +196,7 @@ export function ProductTour() {
   const handleNext = () => {
     if (currentTourStep < currentSteps.length - 1) {
       nextTourStep();
-      track.user.action('tour_step_next', 'system', async () => {}, {
+      track('tour_step_next', {
         step: currentTourStep + 1,
         total_steps: currentSteps.length,
       });
@@ -208,7 +208,7 @@ export function ProductTour() {
   const handlePrevious = () => {
     if (currentTourStep > 0) {
       previousTourStep();
-      track.user.action('tour_step_previous', 'system', async () => {}, {
+      track('tour_step_previous', {
         step: currentTourStep - 1,
       });
     }
@@ -216,7 +216,7 @@ export function ProductTour() {
 
   const handleSkip = () => {
     endTour();
-    track.user.action('tour_skipped', 'system', async () => {}, {
+    track('tour_skipped', {
       skipped_at_step: currentTourStep,
       total_steps: currentSteps.length,
     });
@@ -224,7 +224,7 @@ export function ProductTour() {
 
   const handleComplete = () => {
     endTour();
-    track.user.action('tour_completed', 'system', async () => {}, {
+    track('tour_completed', {
       total_steps: currentSteps.length,
     });
   };

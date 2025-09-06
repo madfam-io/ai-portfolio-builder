@@ -24,6 +24,7 @@ import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { getCurrentUser } from '@/lib/auth/session';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
+import { prisma } from '@/lib/db/prisma';
 
 /**
  * GET /api/v1/user/limits
@@ -33,43 +34,76 @@ import { logger } from '@/lib/utils/logger';
 async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
   try {
     const { user } = request;
-    const supabase = await getCurrentUser();
-    if (!supabase) {
-      throw new AppError(
-        'DATABASE_NOT_AVAILABLE',
-        'Database service unavailable',
-        503
-      );
-    }
 
-    // Call the database function to get limits
-    const { data, error } = await supabase.rpc('check_user_plan_limits', {
-      user_uuid: user.id,
+    // Get user data and counts
+    const userData = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        id: true,
+        email: true,
+        subscriptionTier: true,
+        subscriptionStatus: true,
+        aiRequestsCount: true,
+        _count: {
+          select: {
+            portfolios: true,
+          },
+        },
+      },
     });
 
-    if (error) {
-      logger.error('Failed to check user limits', {
-        error,
-        userId: user.id,
-      });
-      throw new AppError(
-        'Failed to check user limits',
-        'LIMITS_CHECK_FAILED',
-        500
-      );
+    if (!userData) {
+      throw new AppError('User not found', 'USER_NOT_FOUND', 404);
     }
 
-    if (data?.error) {
-      logger.error('Database function returned error', {
-        error: data.error,
-        userId: user.id,
-      });
-      throw new AppError(data.error, 'USER_NOT_FOUND', 404);
-    }
+    // Define plan limits
+    const planLimits = {
+      FREE: {
+        maxPortfolios: 3,
+        maxAiGenerations: 10,
+        customDomains: false,
+        analytics: false,
+      },
+      PRO: {
+        maxPortfolios: 10,
+        maxAiGenerations: 100,
+        customDomains: true,
+        analytics: true,
+      },
+      BUSINESS: {
+        maxPortfolios: 50,
+        maxAiGenerations: 500,
+        customDomains: true,
+        analytics: true,
+      },
+      ENTERPRISE: {
+        maxPortfolios: 100,
+        maxAiGenerations: 1000,
+        customDomains: true,
+        analytics: true,
+      },
+    };
+
+    const currentLimits = planLimits[userData.subscriptionTier] || planLimits.FREE;
+
+    const data = {
+      userId: userData.id,
+      email: userData.email,
+      subscriptionTier: userData.subscriptionTier,
+      subscriptionStatus: userData.subscriptionStatus,
+      portfolioCount: userData._count.portfolios,
+      maxPortfolios: currentLimits.maxPortfolios,
+      aiCredits: userData.aiRequestsCount || 0,
+      maxAiGenerations: currentLimits.maxAiGenerations,
+      customDomainsEnabled: currentLimits.customDomains,
+      analyticsEnabled: currentLimits.analytics,
+      canCreatePortfolio: userData._count.portfolios < currentLimits.maxPortfolios,
+      canUseAi: (userData.aiRequestsCount || 0) > 0,
+    };
 
     logger.info('User limits retrieved successfully', {
       userId: user.id,
-      subscriptionTier: data.subscription_tier,
+      subscriptionTier: userData.subscriptionTier,
     });
 
     return NextResponse.json(data);

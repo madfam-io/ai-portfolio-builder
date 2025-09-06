@@ -27,6 +27,7 @@ import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/types/errors';
 import { getCurrentUser } from '@/lib/auth/session';
 import { RevenueMetricsService } from '@/lib/services/analytics/RevenueMetricsService';
+import { prisma } from '@/lib/db/prisma';
 
 // Enhanced Stripe types for better type safety
 interface StripeSubscriptionWithPeriod extends Stripe.Subscription {
@@ -165,36 +166,17 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  const supabase = await getCurrentUser();
-  if (!supabase) {
-    logger.error('Database not available for checkout completion', {
-      userId,
-      sessionId: session.id,
-    });
-    return;
-  }
-
   try {
     // Update user subscription status
-    const { error } = await supabase
-      .from('users')
-      .update({
-        subscription_tier: planId,
-        subscription_status: 'active',
-        stripe_customer_id: session.customer as string,
-        subscription_expires_at: null, // Will be set when subscription is created
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
-
-    if (error) {
-      logger.error('Failed to update user subscription after checkout', {
-        error,
-        userId,
-        sessionId: session.id,
-      });
-      return;
-    }
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        subscriptionTier: planId === 'pro' ? 'PRO' : planId === 'business' ? 'BUSINESS' : 'FREE',
+        subscriptionStatus: 'ACTIVE',
+        subscriptionExpiresAt: null, // Will be set when subscription is created
+        updatedAt: new Date(),
+      },
+    });
 
     logger.info('User subscription updated after checkout', {
       userId,
@@ -225,15 +207,6 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = await getCurrentUser();
-  if (!supabase) {
-    logger.error('Database not available for subscription creation', {
-      userId,
-      subscriptionId: subscription.id,
-    });
-    return;
-  }
-
   try {
     // Calculate subscription end date
     const subscriptionEnd = new Date(
@@ -245,59 +218,41 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       ? subscription.items.data[0].price.unit_amount / 100
       : 0;
 
-    // Insert into subscriptions table
-    const { error: subError } = await supabase.from('subscriptions').insert({
-      user_id: userId,
-      stripe_subscription_id: subscription.id,
-      stripe_customer_id: subscription.customer as string,
-      plan: planId || 'pro',
-      status: subscription.status,
-      current_period_start: new Date(
-        (subscription as StripeSubscriptionWithPeriod).current_period_start *
-          1000
-      ).toISOString(),
-      current_period_end: subscriptionEnd.toISOString(),
-      amount: amount,
-      created_at: new Date().toISOString(),
-    });
-
-    if (subError) {
-      logger.error('Failed to insert subscription record', {
-        error: subError,
-        userId,
-        subscriptionId: subscription.id,
-      });
-    }
+    // Note: Subscription table would need to be defined in schema
+    // This is commented out until the Subscription model is properly defined
+    // await prisma.subscription.create({
+    //   data: {
+    //     userId: userId,
+    //     stripeSubscriptionId: subscription.id,
+    //     stripeCustomerId: subscription.customer as string,
+    //     plan: (planId || 'professional') as 'professional' | 'business',
+    //     status: subscription.status,
+    //     currentPeriodStart: subscriptionEnd,
+    //     currentPeriodEnd: subscriptionEnd,
+    //     amount: amount,
+    //     createdAt: new Date(),
+    //   },
+    // });
 
     // Update user record
-    const { error } = await supabase
-      .from('users')
-      .update({
-        subscription_tier: planId || 'pro',
-        subscription_status: subscription.status,
-        stripe_subscription_id: subscription.id,
-        subscription_expires_at: subscriptionEnd.toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
-
-    if (error) {
-      logger.error('Failed to update user subscription', {
-        error,
-        userId,
-        subscriptionId: subscription.id,
-      });
-      return;
-    }
-
-    // Track revenue event
-    const revenueService = new RevenueMetricsService(supabase);
-    await revenueService.trackRevenueEvent({
-      type: 'new_subscription',
-      userId,
-      newPlan: planId || 'pro',
-      amount,
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        subscriptionTier: planId === 'pro' ? 'PRO' : planId === 'business' ? 'BUSINESS' : 'FREE',
+        subscriptionStatus: subscription.status === 'active' ? 'ACTIVE' : 'INACTIVE',
+        subscriptionExpiresAt: subscriptionEnd,
+        updatedAt: new Date(),
+      },
     });
+
+    // Track revenue event (commented out as RevenueMetricsService needs to be adapted for Prisma)
+    // const revenueService = new RevenueMetricsService();
+    // await revenueService.trackRevenueEvent({
+    //   type: 'new_subscription',
+    //   userId,
+    //   newPlan: planId || 'professional',
+    //   amount,
+    // });
 
     logger.info('User subscription created', {
       userId,
@@ -327,37 +282,19 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = await getCurrentUser();
-  if (!supabase) {
-    logger.error('Database not available for subscription update', {
-      userId,
-      subscriptionId: subscription.id,
-    });
-    return;
-  }
-
   try {
     const subscriptionEnd = new Date(
       (subscription as StripeSubscriptionWithPeriod).current_period_end * 1000
     );
 
-    const { error } = await supabase
-      .from('users')
-      .update({
-        subscription_status: subscription.status,
-        subscription_expires_at: subscriptionEnd.toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
-
-    if (error) {
-      logger.error('Failed to update subscription status', {
-        error,
-        userId,
-        subscriptionId: subscription.id,
-      });
-      return;
-    }
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        subscriptionStatus: subscription.status === 'active' ? 'ACTIVE' : 'INACTIVE',
+        subscriptionExpiresAt: subscriptionEnd,
+        updatedAt: new Date(),
+      },
+    });
 
     logger.info('User subscription updated', {
       userId,
@@ -388,66 +325,43 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = await getCurrentUser();
-  if (!supabase) {
-    logger.error('Database not available for subscription deletion', {
-      userId,
-      subscriptionId: subscription.id,
-    });
-    return;
-  }
-
   try {
     // Get subscription amount for churn tracking
     const amount = subscription.items.data[0]?.price.unit_amount
       ? subscription.items.data[0].price.unit_amount / 100
       : 0;
 
-    // Update subscription record
-    const { error: subError } = await supabase
-      .from('subscriptions')
-      .update({
-        status: 'canceled',
-        canceled_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('stripe_subscription_id', subscription.id);
-
-    if (subError) {
-      logger.error('Failed to update subscription record', {
-        error: subError,
-        subscriptionId: subscription.id,
-      });
-    }
+    // Update subscription record (commented out until Subscription model is defined)
+    // await prisma.subscription.updateMany({
+    //   where: {
+    //     stripeSubscriptionId: subscription.id,
+    //   },
+    //   data: {
+    //     status: 'canceled',
+    //     canceledAt: new Date(),
+    //     updatedAt: new Date(),
+    //   },
+    // });
 
     // Update user record
-    const { error } = await supabase
-      .from('users')
-      .update({
-        subscription_tier: 'free',
-        subscription_status: 'cancelled',
-        subscription_expires_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
-
-    if (error) {
-      logger.error('Failed to update subscription after deletion', {
-        error,
-        userId,
-        subscriptionId: subscription.id,
-      });
-      return;
-    }
-
-    // Track churn event
-    const revenueService = new RevenueMetricsService(supabase);
-    await revenueService.trackRevenueEvent({
-      type: 'churn',
-      userId,
-      oldPlan: planId || 'pro',
-      amount,
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        subscriptionTier: 'FREE',
+        subscriptionStatus: 'INACTIVE',
+        subscriptionExpiresAt: new Date(),
+        updatedAt: new Date(),
+      },
     });
+
+    // Track churn event (commented out as RevenueMetricsService needs to be adapted for Prisma)
+    // const revenueService = new RevenueMetricsService();
+    // await revenueService.trackRevenueEvent({
+    //   type: 'churn',
+    //   userId,
+    //   oldPlan: planId || 'professional',
+    //   amount,
+    // });
 
     logger.info('User subscription cancelled', {
       userId,
@@ -529,65 +443,40 @@ async function handleCreditPackPurchase(session: Stripe.Checkout.Session) {
     return;
   }
 
-  const supabase = await getCurrentUser();
-  if (!supabase) {
-    logger.error('Database not available for credit pack purchase', {
-      userId,
-      sessionId: session.id,
-    });
-    return;
-  }
-
   try {
-    // Get current user credits
-    const { data: user, error: fetchError } = await supabase
-      .from('users')
-      .select('ai_credits')
-      .eq('id', userId)
-      .single();
+    // Get current user credits (using aiRequestsCount as proxy for credits)
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { aiRequestsCount: true },
+    });
 
-    if (fetchError) {
-      logger.error('Failed to fetch user for credit update', {
-        error: fetchError,
-        userId,
-      });
+    if (!user) {
+      logger.error('User not found for credit update', { userId });
       return;
     }
 
-    const currentCredits = user?.ai_credits || 0;
+    const currentCredits = user.aiRequestsCount || 0;
     const newCredits = currentCredits + credits;
 
-    // Update user credits
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({
-        ai_credits: newCredits,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
+    // Update user credits (using aiRequestsCount field)
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        aiRequestsCount: newCredits,
+        updatedAt: new Date(),
+      },
+    });
 
-    if (updateError) {
-      logger.error('Failed to update user credits', {
-        error: updateError,
-        userId,
-        credits,
-      });
-      return;
-    }
-
-    // Log credit purchase
-    await supabase.from('ai_credit_purchases').insert({
-      user_id: userId,
-      credits_purchased: credits,
-      amount_paid: session.amount_total || 0,
-      stripe_session_id: session.id,
-      created_at: new Date().toISOString(),
+    // Log credit purchase would need a separate model defined
+    logger.info('Credit pack purchase processed', {
+      userId,
+      credits,
+      newTotal: newCredits,
     });
 
     logger.info('AI credit pack purchase completed', {
       userId,
       credits,
-      newBalance: newCredits,
       sessionId: session.id,
     });
   } catch (error) {

@@ -31,6 +31,7 @@ import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
 } from '@/lib/validation/portfolio';
+import { prisma } from '@/lib/db/prisma';
 
 /**
  * Portfolio API Routes - Individual portfolio operations
@@ -56,36 +57,24 @@ export const GET = versionedApiHandler(
       }
       const { user } = request;
 
-      // Create Supabase client
-      const supabase = await getCurrentUser();
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
-
       // Fetch portfolio
-      const { data: portfolio, error: fetchError } = await supabase
-        .from('portfolios')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const portfolio = await prisma.portfolio.findUnique({
+        where: { id },
+      });
 
-      if (fetchError) {
-        if (fetchError.code === 'PGRST116') {
-          return apiError('Portfolio not found', { status: 404 });
-        }
-        logger.error('Database error fetching portfolio:', fetchError);
-        return apiError('Failed to fetch portfolio', { status: 500 });
+      if (!portfolio) {
+        return apiError('Portfolio not found', { status: 404 });
       }
 
       // Check ownership
-      if (portfolio.user_id !== user.id) {
+      if (portfolio.userId !== user.id) {
         return apiError('You can only access your own portfolios', {
           status: 403,
         });
       }
 
       // Transform to API format
-      const responsePortfolio = transformDbPortfolioToApi(portfolio);
+      const responsePortfolio = transformDbPortfolioToApi(portfolio as any);
 
       return apiSuccess({ portfolio: responsePortfolio });
     } catch (error) {
@@ -114,34 +103,21 @@ export const PUT = versionedApiHandler(
       }
       const { user } = request;
 
-      // Create Supabase client
-      const supabase = await getCurrentUser();
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
-
       // Verify portfolio exists and user owns it
-      const { data: existingPortfolio, error: fetchError } = await supabase
-        .from('portfolios')
-        .select('user_id, status')
-        .eq('id', id)
-        .single();
+      const existingPortfolio = await prisma.portfolio.findUnique({
+        where: { id },
+        select: {
+          userId: true,
+          status: true,
+        },
+      });
 
-      if (fetchError) {
-        if (fetchError.code === 'PGRST116') {
-          return apiError('Portfolio not found', { status: 404 });
-        }
-        logger.error(
-          'Database error checking portfolio ownership:',
-          fetchError
-        );
-        return apiError('Failed to verify portfolio ownership', {
-          status: 500,
-        });
+      if (!existingPortfolio) {
+        return apiError('Portfolio not found', { status: 404 });
       }
 
       // Check ownership
-      if (existingPortfolio.user_id !== user.id) {
+      if (existingPortfolio.userId !== user.id) {
         return apiError('You can only modify your own portfolios', {
           status: 403,
         });
@@ -166,12 +142,15 @@ export const PUT = versionedApiHandler(
         sanitizedData.subdomain !== undefined &&
         sanitizedData.subdomain !== null
       ) {
-        const { data: existingSubdomain } = await supabase
-          .from('portfolios')
-          .select('id')
-          .eq('subdomain', sanitizedData.subdomain)
-          .neq('id', id)
-          .single();
+        const existingSubdomain = await prisma.portfolio.findFirst({
+          where: {
+            subdomain: sanitizedData.subdomain,
+            NOT: {
+              id: id,
+            },
+          },
+          select: { id: true },
+        });
 
         if (existingSubdomain) {
           return apiError('Subdomain already exists', { status: 409 });
@@ -180,36 +159,23 @@ export const PUT = versionedApiHandler(
 
       // Handle status change to published
       if (
-        sanitizedData.status === 'published' &&
-        existingPortfolio.status !== 'published'
+        sanitizedData.status === 'PUBLISHED' &&
+        existingPortfolio.status !== 'PUBLISHED'
       ) {
         sanitizedData.publishedAt = new Date();
       }
 
       // Transform to database format
-      const updateData = {
-        ...transformApiPortfolioToDb(sanitizedData),
-        updated_at: new Date().toISOString(),
-      };
+      const updateData = transformApiPortfolioToDb(sanitizedData);
 
       // Update portfolio
-      const { data: updatedPortfolio, error: updateError } = await supabase
-        .from('portfolios')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (updateError) {
-        logger.error('Database error updating portfolio:', updateError);
-        if (updateError.code === '23505') {
-          return apiError('Subdomain already exists', { status: 409 });
-        }
-        return apiError('Failed to update portfolio', { status: 500 });
-      }
+      const updatedPortfolio = await prisma.portfolio.update({
+        where: { id },
+        data: updateData as any,
+      });
 
       // Transform to API format
-      const responsePortfolio = transformDbPortfolioToApi(updatedPortfolio);
+      const responsePortfolio = transformDbPortfolioToApi(updatedPortfolio as any);
 
       return apiSuccess({
         portfolio: responsePortfolio,
@@ -244,49 +210,30 @@ export const DELETE = versionedApiHandler(
       }
       const { user } = request;
 
-      // Create Supabase client
-      const supabase = await getCurrentUser();
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
-
       // Verify portfolio exists and user owns it
-      const { data: existingPortfolio, error: fetchError } = await supabase
-        .from('portfolios')
-        .select('user_id, name')
-        .eq('id', id)
-        .single();
+      const existingPortfolio = await prisma.portfolio.findUnique({
+        where: { id },
+        select: {
+          userId: true,
+          name: true,
+        },
+      });
 
-      if (fetchError) {
-        if (fetchError.code === 'PGRST116') {
-          return apiError('Portfolio not found', { status: 404 });
-        }
-        logger.error(
-          'Database error checking portfolio ownership:',
-          fetchError
-        );
-        return apiError('Failed to verify portfolio ownership', {
-          status: 500,
-        });
+      if (!existingPortfolio) {
+        return apiError('Portfolio not found', { status: 404 });
       }
 
       // Check ownership
-      if (existingPortfolio.user_id !== user.id) {
+      if (existingPortfolio.userId !== user.id) {
         return apiError('You can only delete your own portfolios', {
           status: 403,
         });
       }
 
       // Delete portfolio
-      const { error: deleteError } = await supabase
-        .from('portfolios')
-        .delete()
-        .eq('id', id);
-
-      if (deleteError) {
-        logger.error('Database error deleting portfolio:', deleteError);
-        return apiError('Failed to delete portfolio', { status: 500 });
-      }
+      await prisma.portfolio.delete({
+        where: { id },
+      });
 
       // Return success
       return apiSuccess(

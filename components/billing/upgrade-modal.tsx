@@ -64,7 +64,7 @@ export function UpgradeModal({
         });
       }
       // If successful, user will be redirected to Stripe
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',

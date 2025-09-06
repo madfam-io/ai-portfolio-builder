@@ -179,7 +179,7 @@ class HealthMonitor {
             : 'Redis unavailable, using memory cache',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch {
         return {
           name: 'redis',
           status: 'degraded',
@@ -204,7 +204,7 @@ class HealthMonitor {
             : 'HuggingFace API unavailable',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch {
         return {
           name: 'huggingface',
           status: 'degraded',
@@ -228,7 +228,7 @@ class HealthMonitor {
             : 'Stripe API unavailable',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch {
         return {
           name: 'stripe',
           status: 'degraded',
@@ -260,7 +260,7 @@ class HealthMonitor {
             cpu: cpuUsage,
           },
         };
-      } catch (_error) {
+      } catch {
         return {
           name: 'system',
           status: 'unhealthy',
@@ -284,7 +284,7 @@ class HealthMonitor {
             : 'Portfolio generation failed',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch {
         return {
           name: 'portfolio_generation',
           status: 'unhealthy',
@@ -410,7 +410,7 @@ export async function handleHealthCheck(): Promise<Response> {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
-  } catch (_error) {
+  } catch {
     return new Response(
       JSON.stringify({
         overall: 'unhealthy',
@@ -456,7 +456,7 @@ export async function handleReadinessCheck(): Promise<Response> {
         },
       }
     );
-  } catch (_error) {
+  } catch {
     return new Response(
       JSON.stringify({
         ready: false,

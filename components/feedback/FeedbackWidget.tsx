@@ -165,7 +165,7 @@ export function FeedbackWidget({
         setIsOpen(false);
         onClose?.();
       }, 2000);
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Submission Failed',
         description: 'Please try again or contact support.',

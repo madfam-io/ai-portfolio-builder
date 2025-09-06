@@ -75,7 +75,7 @@ export function withEncryption(
             status: response.status,
             headers: response.headers,
           });
-        } catch (_error) {
+        } catch {
           // If response is not JSON, return as is
           return response;
         }

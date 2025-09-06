@@ -454,7 +454,7 @@ class EnhancedPostHogService {
   private getStoredDistinctId(): string | undefined {
     try {
       return localStorage.getItem('posthog_distinct_id') || undefined;
-    } catch (_error) {
+    } catch {
       return undefined;
     }
   }

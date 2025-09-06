@@ -72,19 +72,16 @@ function SignUpContent() {
         return;
       }
 
-      if (data.user !== null && data.user !== undefined) {
-        if (
-          data.user.email_confirmed_at !== null &&
-          data.user.email_confirmed_at !== undefined
-        ) {
+      if (data && data.user !== null && data.user !== undefined) {
+        if (data.requiresEmailVerification) {
+          // Show success message for email confirmation
+          setSuccess(true);
+        } else {
           // Email already confirmed, redirect to dashboard with plan info
           const redirectUrl = selectedPlan
             ? `/dashboard?plan=${selectedPlan}`
             : '/dashboard';
           router.push(redirectUrl);
-        } else {
-          // Show success message for email confirmation
-          setSuccess(true);
         }
       }
     } catch (err) {

@@ -131,7 +131,7 @@ function BillingContent() {
           variant: 'destructive',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',
@@ -155,7 +155,7 @@ function BillingContent() {
           variant: 'destructive',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Access Failed',
         description: 'An unexpected error occurred',
@@ -187,7 +187,7 @@ function BillingContent() {
       } else {
         throw new Error('No checkout URL received');
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Purchase Failed',
         description: 'Failed to start credit purchase. Please try again.',

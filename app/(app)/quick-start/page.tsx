@@ -31,13 +31,21 @@ export const metadata: Metadata = {
 
 export default async function QuickStartPage() {
   // Check if user is authenticated
-  const user = await getCurrentUser();
+  const currentUser = await getCurrentUser();
+  
+  // Transform user object to match expected interface
+  const user = currentUser ? {
+    id: currentUser.id,
+    email: currentUser.email,
+    name: currentUser.name || undefined,
+    image: currentUser.image || undefined,
+  } : null;
 
   // Get user profile for recommendations
   let userProfile;
-  if (user) {
+  if (currentUser) {
     const profile = await prisma.user.findUnique({
-      where: { id: user.id },
+      where: { id: currentUser.id },
       select: {
         industry: true,
         experienceLevel: true,

@@ -14,7 +14,7 @@
 import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from '../index';
 import type { SeedingOptions } from '@/lib/database/seeder';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PrismaClient } from '@prisma/client';
 
 /**
  * Generate portfolio analytics
@@ -55,12 +55,12 @@ export function generatePortfolioAnalytics(
 
     analytics.push({
       id: `portfolio-analytics-${portfolioId}-${dateString}`,
-      portfolio_id: portfolioId,
+      portfolioId: portfolioId,
       date: dateString,
       views,
-      unique_visitors: uniqueVisitors,
-      avg_time_spent: avgTimeSpent,
-      bounce_rate: bounceRate,
+      uniqueVisitors: uniqueVisitors,
+      avgTimeSpent: avgTimeSpent,
+      bounceRate: bounceRate,
       referrers: JSON.stringify(referrerData),
       devices: JSON.stringify({
         desktop: Math.floor(views * 0.6),
@@ -73,7 +73,7 @@ export function generatePortfolioAnalytics(
         Spain: Math.floor(views * 0.2),
         Other: Math.floor(views * 0.1),
       }),
-      created_at: new Date(
+      createdAt: new Date(
         date.getTime() + Math.random() * 24 * 60 * 60 * 1000
       ),
     });
@@ -86,9 +86,16 @@ export function generatePortfolioAnalytics(
  * Seed portfolio analytics table
  */
 export async function seedPortfolioAnalytics(
-  client: SupabaseClient,
+  client: PrismaClient,
   options: SeedingOptions
 ): Promise<number> {
+  // NOTE: PortfolioAnalytic model does not exist in the current Prisma schema
+  // The following code is commented out until the model is added to the schema
+  
+  logger.info('Skipping portfolio analytics seeding - PortfolioAnalytic model not found in schema');
+  return 0;
+  
+  /*
   const config = getSeedConfig(options.mode);
   const { analyticsDays } = config;
 
@@ -96,9 +103,7 @@ export async function seedPortfolioAnalytics(
 
   try {
     // Check for existing analytics
-    const { count: existingCount } = await client
-      .from('portfolio_analytics')
-      .select('*', { count: 'exact', head: true });
+    const existingCount = await client.portfolioAnalytic.count();
 
     if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
@@ -108,16 +113,10 @@ export async function seedPortfolioAnalytics(
     }
 
     // Get all published portfolios
-    const { data: portfolios, error: portfoliosError } = await client
-      .from('portfolios')
-      .select('id')
-      .eq('status', 'published');
-
-    if (portfoliosError || !portfolios) {
-      throw new Error(
-        `Failed to fetch portfolios: ${portfoliosError?.message}`
-      );
-    }
+    const portfolios = await client.portfolio.findMany({
+      where: { status: 'published' },
+      select: { id: true }
+    });
 
     if (portfolios.length === 0) {
       logger.warn(
@@ -140,20 +139,12 @@ export async function seedPortfolioAnalytics(
     for (let i = 0; i < allAnalytics.length; i += batchSize) {
       const batch = allAnalytics.slice(i, i + batchSize);
 
-      const { data, error } = await client
-        .from('portfolio_analytics')
-        .insert(batch)
-        .select('id');
+      const result = await client.portfolioAnalytic.createMany({
+        data: batch,
+        skipDuplicates: true
+      });
 
-      if (error) {
-        logger.error(
-          `Error inserting portfolio analytics batch ${i / batchSize + 1}:`,
-          error
-        );
-        throw error;
-      }
-
-      insertedCount += data?.length || 0;
+      insertedCount += result.count;
     }
 
     logger.info(
@@ -167,4 +158,5 @@ export async function seedPortfolioAnalytics(
     );
     throw error;
   }
+  */
 }

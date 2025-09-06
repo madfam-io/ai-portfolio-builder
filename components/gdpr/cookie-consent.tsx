@@ -86,7 +86,7 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
 
         setConsents(newConsents);
       }
-    } catch (_error) {
+    } catch {
       // Failed to check consent status
     }
   }, [user, consents]);
@@ -178,7 +178,7 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
         title: 'Preferences Saved',
         description: 'Your cookie preferences have been saved successfully.',
       });
-    } catch (_error) {
+    } catch {
       // Failed to save consents
       toast({
         title: t.error || 'Error',
@@ -194,8 +194,8 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
     // Apply analytics consent
     if (consents.analytics) {
       // Enable analytics tracking
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('consent', 'update', {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('consent', 'update', {
           analytics_storage: 'granted',
         });
       }
@@ -204,8 +204,8 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
     // Apply marketing consent
     if (consents.marketing) {
       // Enable marketing tracking
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('consent', 'update', {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('consent', 'update', {
           ad_storage: 'granted',
         });
       }
@@ -220,7 +220,7 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
       const response = await fetch('https://api.ipify.org?format=json');
       const data = await response.json();
       return data.ip || 'unknown';
-    } catch (_error) {
+    } catch {
       return 'unknown';
     }
   };

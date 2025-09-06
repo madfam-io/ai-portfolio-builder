@@ -19,7 +19,13 @@ import { ArrowLeft, Sparkles, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import type { User } from '@supabase/supabase-js';
+
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+}
 
 interface QuickStartHeaderProps {
   user: User | null;

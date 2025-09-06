@@ -88,7 +88,12 @@ export default function ProfilePage(): React.ReactElement {
         website,
       };
 
-      const { error } = await updateUserMetadata(metadata);
+      if (!user) {
+        setError('User not authenticated');
+        return;
+      }
+
+      const { error } = await updateUserMetadata(user.id, metadata);
 
       if (error) {
         setError(error.message);
@@ -124,7 +129,12 @@ export default function ProfilePage(): React.ReactElement {
     }
 
     try {
-      const { error } = await updatePassword(newPassword);
+      if (!user) {
+        setError('User not authenticated');
+        return;
+      }
+
+      const { error } = await updatePassword(user.id, newPassword);
 
       if (error) {
         setError(error.message);

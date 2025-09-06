@@ -107,7 +107,7 @@ export function EditorContent() {
         title: t.success || 'Success',
         description: t.portfolioSaved || 'Portfolio saved successfully',
       });
-    } catch (_error) {
+    } catch {
       performanceMonitor.endTimer('portfolioSave');
       toast({
         title: t.error || 'Error',
@@ -193,7 +193,7 @@ export function EditorContent() {
         description:
           t.contentEnhanced || 'Your content has been enhanced with AI',
       });
-    } catch (_error) {
+    } catch {
       performanceMonitor.endTimer('aiProcessing');
       toast({
         title: t.error || 'Error',
@@ -231,7 +231,7 @@ export function EditorContent() {
         try {
           await savePortfolio();
           setLastSaved(new Date());
-        } catch (_error) {
+        } catch {
           // Error handling already in savePortfolio
         } finally {
           setIsSaving(false);

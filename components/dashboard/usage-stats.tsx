@@ -73,7 +73,7 @@ export function UsageStats({
           variant: 'destructive',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',

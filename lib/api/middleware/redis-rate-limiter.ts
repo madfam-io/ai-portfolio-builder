@@ -88,7 +88,7 @@ class RedisRateLimiter {
     key: string,
     config: RateLimitConfig
   ): Promise<RateLimitResult> {
-    if (isRedisAvailable()) {
+    if (isRedisAvailable) {
       return this.checkRedisRateLimit(key, config);
     } else {
       logger.warn('Redis unavailable, falling back to in-memory rate limiting');
@@ -109,15 +109,12 @@ class RedisRateLimiter {
     const resetTime = new Date((window + 1) * config.windowMs);
 
     try {
-      // Use Redis pipeline for atomic operations
-      const pipeline = redis.pipeline();
-
       // Increment counter and set expiration
-      pipeline.incr(redisKey);
-      pipeline.expire(redisKey, Math.ceil(config.windowMs / 1000));
-
-      const results = await pipeline.exec();
-      const current = (results?.[0]?.[1] as number) || 0;
+      const current = await redis.incr(redisKey);
+      if (current === 1) {
+        // First request in window, set expiration
+        await redis.expire(redisKey, Math.ceil(config.windowMs / 1000));
+      }
 
       const remaining = Math.max(0, config.max - current);
       const success = current <= config.max;

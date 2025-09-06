@@ -47,7 +47,7 @@ export class DomainAnalyticsService {
           userAgent,
           visitorId: this.generateVisitorId(),
           sessionId: this.generateSessionId(),
-        }
+        },
       });
     } catch (error) {
       logger.error(
@@ -69,9 +69,9 @@ export class DomainAnalyticsService {
         domainId,
         createdAt: {
           gte: dateRange.from,
-          lte: dateRange.to
-        }
-      }
+          lte: dateRange.to,
+        },
+      },
     });
 
     const pageViews = events?.filter(e => e.eventType === 'page_view') || [];
@@ -149,9 +149,9 @@ export class DomainAnalyticsService {
         eventType: 'page_view',
         createdAt: {
           gte: dateRange.from,
-          lte: dateRange.to
-        }
-      }
+          lte: dateRange.to,
+        },
+      },
     });
 
     const allVisitors = new Set(events?.map(e => e.visitorId) || []);
@@ -188,7 +188,7 @@ export class DomainAnalyticsService {
           domainId,
           eventType: `ssl_${eventType}`,
           metadata: details,
-        }
+        },
       });
     } catch (error) {
       logger.error(

@@ -14,30 +14,29 @@
  */
 
 /**
- * @fileoverview Supabase Migration Runner
+ * @fileoverview Prisma Migration Runner
  * @module scripts/run-migration
  *
- * Script to run SQL migrations against the Supabase database
+ * Script to run SQL migrations using Prisma
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { PrismaClient } from '@prisma/client';
 import fs from 'fs/promises';
 import path from 'path';
 
 async function runMigration() {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Missing Supabase environment variables');
+    if (!process.env.DATABASE_URL) {
+      throw new Error('Missing DATABASE_URL environment variable');
     }
 
-    // Create Supabase admin client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
+    // Create Prisma client
+    const prisma = new PrismaClient({
+      log: ['error', 'warn'],
+      datasources: {
+        db: {
+          url: process.env.DATABASE_URL,
+        },
       },
     });
 
@@ -48,7 +47,7 @@ async function runMigration() {
         'Usage: pnpm tsx scripts/run-migration.ts <migration-file>'
       );
       console.error(
-        'Example: pnpm tsx scripts/run-migration.ts supabase/migrations/001_create_portfolios_table.sql'
+        'Example: pnpm tsx scripts/run-migration.ts prisma/migrations/001_create_portfolios_table.sql'
       );
       process.exit(1);
     }
@@ -61,45 +60,37 @@ async function runMigration() {
     console.log('Migration SQL preview (first 200 chars):');
     console.log(migrationSQL.substring(0, 200) + '...');
 
-    // Execute migration
-    const { error } = await supabase.rpc('exec_sql', {
-      sql: migrationSQL,
-    });
-
-    if (error) {
-      // If exec_sql doesn't exist, try direct execution
-      console.log('exec_sql RPC not available, trying alternative method...');
-
+    // Execute raw SQL migration using Prisma
+    try {
       // Split migration into individual statements
       const statements = migrationSQL
         .split(';')
         .filter(stmt => stmt.trim().length > 0)
-        .map(stmt => stmt.trim() + ';');
+        .map(stmt => stmt.trim());
 
       console.log(`Found ${statements.length} SQL statements to execute`);
 
-      // Note: Direct SQL execution is not available in Supabase client
-      // You'll need to run migrations through Supabase Dashboard or CLI
-      console.error(
-        '\n⚠️  Direct SQL execution is not available through the Supabase JS client.'
-      );
-      console.error(
-        'Please run this migration using one of the following methods:'
-      );
-      console.error('\n1. Supabase Dashboard:');
-      console.error(
-        '   - Go to https://app.supabase.com/project/djdioapdziwrjqbqzykf/sql/new'
-      );
-      console.error('   - Paste the migration SQL and run it');
-      console.error('\n2. Supabase CLI:');
-      console.error('   - Install: npm install -g supabase');
-      console.error('   - Run: supabase db push');
+      // Execute each statement
+      for (const [index, statement] of statements.entries()) {
+        if (statement.trim()) {
+          console.log(`Executing statement ${index + 1}/${statements.length}...`);
+          await prisma.$executeRawUnsafe(statement);
+        }
+      }
 
+      console.log('✅ Migration completed successfully!');
+    } catch (migrationError) {
+      console.error('❌ Migration execution failed:', migrationError);
+      console.error(
+        '\n⚠️  If you need to run complex migrations, consider using Prisma migrate:'
+      );
+      console.error('   - npx prisma migrate dev --name migration_name');
+      console.error('   - npx prisma db push');
       console.log('\n📋 Migration file location:', migrationPath);
-      process.exit(1);
+      throw migrationError;
+    } finally {
+      await prisma.$disconnect();
     }
-
-    console.log('✅ Migration completed successfully!');
   } catch (error) {
     console.error('❌ Migration failed:', error);
     process.exit(1);

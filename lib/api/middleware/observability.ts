@@ -76,7 +76,7 @@ async function trackSuccessResponse(
       method: String(metadata.method),
       path: String(metadata.path),
       status: 'success',
-      status_code: statusCode,
+      status_code: String(statusCode),
     });
   }
 
@@ -87,7 +87,7 @@ async function trackSuccessResponse(
       {
         ...metadata,
         duration_ms: duration,
-        status_code: statusCode,
+        status_code: String(statusCode),
         success: true,
       }
     );
@@ -116,14 +116,14 @@ async function trackErrorResponse(
       method: String(metadata.method),
       path: String(metadata.path),
       error_type: errorType,
-      status_code: statusCode,
+      status_code: String(statusCode),
     });
 
     recordPerformanceMetric('apiResponseTime', duration, {
       method: String(metadata.method),
       path: String(metadata.path),
       status: 'error',
-      status_code: statusCode,
+      status_code: String(statusCode),
     });
   }
 
@@ -134,7 +134,7 @@ async function trackErrorResponse(
       {
         ...metadata,
         duration_ms: duration,
-        status_code: statusCode,
+        status_code: String(statusCode),
         error: errorMessage,
         error_type: errorType,
       }
@@ -277,7 +277,7 @@ export function withObservability<T extends RouteHandler<any>>(
     }
   };
 
-  return withAPMTracking(wrappedHandler) as T;
+  return withAPMTracking('api-observable', wrappedHandler) as T;
 }
 
 /**

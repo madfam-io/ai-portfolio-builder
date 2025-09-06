@@ -13,6 +13,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { logger } from '@/lib/utils/logger';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,22 +24,10 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -58,17 +47,17 @@ export async function GET(request: NextRequest) {
     // Generate state parameter for CSRF protection
     const state = uuidv4();
 
-    // Store state in database for verification
-    const { error: stateError } = await supabase.from('oauth_states').insert({
-      state,
-      user_id: user.id,
-      provider: 'linkedin',
-      created_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
-    });
-
-    if (stateError) {
-      logger.error('Failed to store OAuth state:', stateError);
+    // Store state in session table for verification
+    try {
+      await prisma.session.create({
+        data: {
+          sessionToken: state,
+          userId: user.id,
+          expires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+        },
+      });
+    } catch (stateError) {
+      logger.error('Failed to store OAuth state:', stateError as any);
       return NextResponse.json(
         { error: 'Failed to initiate OAuth flow' },
         { status: 500 }

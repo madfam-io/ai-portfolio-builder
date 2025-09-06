@@ -165,7 +165,7 @@ export function CustomDomainSettings({
           description: t.domainRemovedDesc || 'Custom domain has been removed',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: t.failedToRemoveDomain || 'Failed to remove domain',
@@ -201,7 +201,7 @@ export function CustomDomainSettings({
             setTimeout(checkStatus, 5000); // Check again in 5 seconds
           }
         }
-      } catch (_error) {
+      } catch {
         // Failed to check domain status
       }
     };

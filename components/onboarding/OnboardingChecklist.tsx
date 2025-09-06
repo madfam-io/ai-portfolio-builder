@@ -113,19 +113,14 @@ export function OnboardingChecklist() {
   const remainingTasks = checklistItems.length - completedItems.size;
 
   const handleAction = (item: ChecklistItem) => {
-    track.user.action(
-      'checklist_item_clicked',
-      'system',
-      async () => {
-        if (item.route) {
-          await router.push(item.route);
-        }
-      },
-      {
-        item_id: item.id,
-        item_title: item.title,
-      }
-    );
+    track('checklist_item_clicked', {
+      item_id: item.id,
+      item_title: item.title,
+    });
+    
+    if (item.route) {
+      router.push(item.route);
+    }
   };
 
   const handleDismiss = () => {

@@ -16,7 +16,7 @@ import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from './index';
 
 import type { SeedingOptions } from '@/lib/database/seeder';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PrismaClient } from '@prisma/client';
 
 interface PortfolioTemplate {
   name: string;
@@ -235,7 +235,7 @@ function generatePortfolio(
   userId: string,
   index: number,
   template?: PortfolioTemplate
-): unknown {
+): any {
   const templates = ['developer', 'designer', 'consultant'];
   const selectedTemplate =
     template?.template || templates[index % templates.length];
@@ -250,13 +250,12 @@ function generatePortfolio(
   const subdomain = `${baseData.name.toLowerCase().replace(/\s+/g, '')}-${index}`;
 
   return {
-    id: `portfolio-${userId}-${index}`,
-    user_id: userId,
+    userId: userId,
     name: baseData.name,
     title: baseData.title,
     bio: baseData.bio,
     tagline: baseData.tagline || 'Mi tagline profesional',
-    avatar_url: `https://i.pravatar.cc/300?u=${userId}-${index}`,
+    avatarUrl: `https://i.pravatar.cc/300?u=${userId}-${index}`,
     contact: JSON.stringify(
       baseData.contact || {
         email: `${baseData.name.toLowerCase().replace(/\s+/g, '.')}@ejemplo.com`,
@@ -269,33 +268,29 @@ function generatePortfolio(
     projects: JSON.stringify(baseData.projects || []),
     skills: JSON.stringify(baseData.skills || []),
     certifications: JSON.stringify(baseData.certifications || []),
-    template: selectedTemplate,
+    template: selectedTemplate?.toUpperCase() as any || 'DEVELOPER', // Convert to enum with fallback
     customization: JSON.stringify({
       primaryColor: ['#6366f1', '#ec4899', '#10b981'][index % 3],
       fontFamily: ['Inter', 'Poppins', 'Roboto'][index % 3],
     }),
-    ai_settings: JSON.stringify({
-      enhanceBio: true,
-      enhanceProjectDescriptions: true,
-      generateSkillsFromExperience: false,
-      tone: 'professional',
-      targetLength: 'detailed',
-    }),
-    status: index === 0 ? 'published' : index % 3 === 0 ? 'published' : 'draft',
-    subdomain: subdomain.substring(0, 20), // Ensure subdomain length limit
-    meta_title: `${baseData.name} - ${baseData.title}`,
-    meta_description:
-      baseData.bio?.substring(0, 160) || 'Portfolio profesional',
-    views: Math.floor(Math.random() * 500),
-    last_viewed_at: new Date(
-      Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-    ),
-    published_at:
+    // AI settings not in current schema
+    // aiSettings: JSON.stringify({
+    //   enhanceBio: true,
+    //   enhanceProjectDescriptions: true,
+    //   generateSkillsFromExperience: false,
+    //   tone: 'professional',
+    //   targetLength: 'detailed',
+    // }),
+    status: index === 0 ? 'PUBLISHED' : index % 3 === 0 ? 'PUBLISHED' : 'DRAFT',
+    // subdomain not in current schema
+    // SEO fields not in current schema
+    // seoTitle: `${baseData.name} - ${baseData.title}`,
+    // metaDescription: baseData.bio?.substring(0, 160) || 'Portfolio profesional',
+    publishedAt:
       index === 0 || index % 3 === 0
         ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
         : null,
-    created_at: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000),
-    updated_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+    // createdAt and updatedAt are auto-managed by Prisma
   };
 }
 
@@ -303,7 +298,7 @@ function generatePortfolio(
  * Seed portfolios table with realistic data
  */
 export async function seedPortfolios(
-  client: SupabaseClient,
+  client: PrismaClient,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -313,13 +308,9 @@ export async function seedPortfolios(
 
   try {
     // Get all users to create portfolios for
-    const { data: users, error: usersError } = await client
-      .from('users')
-      .select('id');
-
-    if (usersError || !users) {
-      throw new Error(`Failed to fetch users: ${usersError?.message}`);
-    }
+    const users = await client.user.findMany({
+      select: { id: true },
+    });
 
     if (users.length === 0) {
       logger.warn('No users found, skipping portfolio seeding');
@@ -327,9 +318,7 @@ export async function seedPortfolios(
     }
 
     // Check for existing portfolios
-    const { count: existingCount } = await client
-      .from('portfolios')
-      .select('*', { count: 'exact', head: true });
+    const existingCount = await client.portfolio.count();
 
     if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
@@ -368,20 +357,18 @@ export async function seedPortfolios(
     for (let i = 0; i < portfolios.length; i += batchSize) {
       const batch = portfolios.slice(i, i + batchSize);
 
-      const { data, error } = await client
-        .from('portfolios')
-        .insert(batch)
-        .select('id');
-
-      if (error) {
+      try {
+        const result = await client.portfolio.createMany({
+          data: batch,
+        });
+        insertedCount += result.count;
+      } catch (error) {
         logger.error(
           `Error inserting portfolio batch ${i / batchSize + 1}:`,
-          error
+          error as Error
         );
         throw error;
       }
-
-      insertedCount += data?.length || 0;
     }
 
     // Update user portfolio counts
@@ -402,20 +389,19 @@ export async function seedPortfolios(
  * Update user portfolio counts after seeding
  */
 async function updateUserPortfolioCounts(
-  client: SupabaseClient,
+  client: PrismaClient,
   users: Array<{ id: string }>
 ): Promise<void> {
   try {
     for (const user of users) {
-      const { count } = await client
-        .from('portfolios')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+      const count = await client.portfolio.count({
+        where: { userId: user.id },
+      });
 
-      await client
-        .from('users')
-        .update({ portfolio_count: count })
-        .eq('id', user.id);
+      await client.user.update({
+        where: { id: user.id },
+        data: { portfolioCount: count },
+      });
     }
 
     logger.info('Updated user portfolio counts');

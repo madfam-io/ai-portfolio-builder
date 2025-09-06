@@ -139,8 +139,5 @@ export const authOptions: any = {
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
 
-// For NextAuth v5 compatibility - simplified auth function
-export const auth = async () => {
-  // For now, return null - this needs proper implementation
-  return null;
-};
+// For NextAuth v5 compatibility - auth function
+export const auth = NextAuth(authOptions).auth;

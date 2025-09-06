@@ -12,7 +12,6 @@
  */
 
 import { auth } from '@/app/api/auth/[...nextauth]/route';
-// NextAuth v5 uses auth() instead of getServerSession
 import { prisma } from '@/lib/db/prisma';
 
 export async function getCurrentUser() {

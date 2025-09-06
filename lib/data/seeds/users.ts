@@ -16,7 +16,7 @@ import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from './index';
 
 import type { SeedingOptions } from '@/lib/database/seeder';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PrismaClient } from '@prisma/client';
 
 /**
  * @fileoverview User Seed Data
@@ -119,10 +119,10 @@ const USER_TEMPLATES = [
 /**
  * Generate additional users beyond templates
  */
-function generateUser(index: number): Record<string, unknown> {
+function generateUser(index: number): any {
   const languages = ['es', 'en'];
   const currencies = ['MXN', 'USD', 'EUR'];
-  const tiers = ['free', 'pro', 'business'];
+  const tiers = ['FREE', 'PRO', 'BUSINESS'];
   const timezones = [
     'America/Mexico_City',
     'America/New_York',
@@ -200,7 +200,7 @@ function generateUser(index: number): Record<string, unknown> {
  * Seed users table with realistic test data
  */
 export async function seedUsers(
-  client: SupabaseClient,
+  client: PrismaClient,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -210,9 +210,7 @@ export async function seedUsers(
 
   try {
     // Check for existing users
-    const { count: existingCount } = await client
-      .from('users')
-      .select('*', { count: 'exact', head: true });
+    const existingCount = await client.user.count();
 
     if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(`Users table already has ${existingCount} records, skipping`);
@@ -228,25 +226,22 @@ export async function seedUsers(
       if (!template) continue;
 
       users.push({
-        id: `00000000-0000-0000-0000-00000000000${i + 1}`, // Predictable IDs for testing
+        // id: `00000000-0000-0000-0000-00000000000${i + 1}`, // Prisma auto-generates IDs
         email: template.email,
-        full_name: template.full_name,
-        avatar_url: template.profile.avatar_url,
-        subscription_tier: template.subscription_tier,
-        subscription_status: 'active',
-        subscription_expires_at: new Date(
+        name: template.full_name,
+        image: template.profile.avatar_url,
+        subscriptionTier: template.subscription_tier.toUpperCase() as any,
+        subscriptionStatus: 'ACTIVE' as any,
+        subscriptionExpiresAt: new Date(
           Date.now() + 365 * 24 * 60 * 60 * 1000
         ), // 1 year from now
-        portfolio_count: 0,
-        ai_requests_count: Math.floor(Math.random() * 50),
-        ai_requests_reset_at: new Date(),
-        preferred_language: template.preferred_language,
-        preferred_currency: template.preferred_currency,
+        portfolioCount: 0,
+        aiRequestsCount: Math.floor(Math.random() * 50),
+        aiRequestsResetAt: new Date(),
+        preferredLanguage: template.preferred_language,
+        preferredCurrency: template.preferred_currency,
         timezone: template.timezone,
-        created_at: new Date(
-          Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000
-        ), // Random within last 90 days
-        updated_at: new Date(),
+        // createdAt and updatedAt are auto-managed by Prisma
       });
     }
 
@@ -254,25 +249,22 @@ export async function seedUsers(
     for (let i = USER_TEMPLATES.length; i < usersCount; i++) {
       const userData = generateUser(i);
       users.push({
-        id: `00000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`,
+        // id: `00000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`, // Prisma auto-generates IDs
         email: userData.email,
-        full_name: userData.full_name,
-        avatar_url: (userData.profile as { avatar_url: string }).avatar_url,
-        subscription_tier: userData.subscription_tier,
-        subscription_status: 'active',
-        subscription_expires_at: new Date(
+        name: userData.full_name,
+        image: (userData.profile as { avatar_url: string }).avatar_url,
+        subscriptionTier: (userData.subscription_tier as string).toUpperCase() as any,
+        subscriptionStatus: 'ACTIVE' as any,
+        subscriptionExpiresAt: new Date(
           Date.now() + 365 * 24 * 60 * 60 * 1000
         ),
-        portfolio_count: 0,
-        ai_requests_count: Math.floor(Math.random() * 30),
-        ai_requests_reset_at: new Date(),
-        preferred_language: userData.preferred_language,
-        preferred_currency: userData.preferred_currency,
+        portfolioCount: 0,
+        aiRequestsCount: Math.floor(Math.random() * 30),
+        aiRequestsResetAt: new Date(),
+        preferredLanguage: userData.preferred_language,
+        preferredCurrency: userData.preferred_currency,
         timezone: userData.timezone,
-        created_at: new Date(
-          Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000
-        ),
-        updated_at: new Date(),
+        // createdAt and updatedAt are auto-managed by Prisma
       });
     }
 
@@ -283,20 +275,18 @@ export async function seedUsers(
     for (let i = 0; i < users.length; i += batchSize) {
       const batch = users.slice(i, i + batchSize);
 
-      const { data, error } = await client
-        .from('users')
-        .insert(batch)
-        .select('id');
-
-      if (error) {
+      try {
+        const result = await client.user.createMany({
+          data: batch,
+        });
+        insertedCount += result.count;
+      } catch (error) {
         logger.error(
           `Error inserting user batch ${i / batchSize + 1}:`,
           error as Error
         );
         throw error;
       }
-
-      insertedCount += data?.length || 0;
     }
 
     logger.info(`Successfully seeded ${insertedCount} users`);

@@ -143,7 +143,7 @@ export default function TemplatePreviewPage({ params }: PageProps) {
         title: 'Purchase initiated',
         description: 'Redirecting to checkout...',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Purchase failed',
         description: 'Unable to process purchase. Please try again.',

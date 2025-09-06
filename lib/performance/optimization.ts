@@ -266,7 +266,7 @@ export class BundleOptimizer {
       try {
         const component = await importFn();
         return component;
-      } catch (_error) {
+      } catch {
         // Component loading error handled
         // Return fallback component
         return {
@@ -369,7 +369,7 @@ export class PortfolioPerformanceOptimizer {
         metrics,
         success: this.monitor.meetsPerformanceTarget(),
       };
-    } catch (_error) {
+    } catch {
       // Portfolio optimization error handled
       this.monitor.endTimer('portfolioCreation');
 

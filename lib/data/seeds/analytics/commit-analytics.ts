@@ -14,7 +14,7 @@
 import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from '../index';
 import type { SeedingOptions } from '@/lib/database/seeder';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PrismaClient } from '@prisma/client';
 
 /**
  * Generate commit analytics for a repository
@@ -44,14 +44,14 @@ export function generateCommitAnalytics(
 
     analytics.push({
       id: `commit-analytics-${repositoryId}-${dateString}`,
-      repository_id: repositoryId,
-      commit_date: dateString,
-      commit_count: commitCount,
-      unique_authors: uniqueAuthors,
+      repositoryId: repositoryId,
+      commitDate: dateString,
+      commitCount: commitCount,
+      uniqueAuthors: uniqueAuthors,
       additions,
       deletions,
-      peak_hour: peakHour,
-      created_at: new Date(
+      peakHour: peakHour,
+      createdAt: new Date(
         date.getTime() + Math.random() * 24 * 60 * 60 * 1000
       ),
     });
@@ -64,9 +64,16 @@ export function generateCommitAnalytics(
  * Seed commit analytics table
  */
 export async function seedCommitAnalytics(
-  client: SupabaseClient,
+  client: PrismaClient,
   options: SeedingOptions
 ): Promise<number> {
+  // NOTE: CommitAnalytic model does not exist in the current Prisma schema
+  // The following code is commented out until the model is added to the schema
+  
+  logger.info('Skipping commit analytics seeding - CommitAnalytic model not found in schema');
+  return 0;
+  
+  /*
   const config = getSeedConfig(options.mode);
   const { analyticsDays } = config;
 
@@ -74,9 +81,7 @@ export async function seedCommitAnalytics(
 
   try {
     // Check for existing analytics
-    const { count: existingCount } = await client
-      .from('commit_analytics')
-      .select('*', { count: 'exact', head: true });
+    const existingCount = await client.commitAnalytic.count();
 
     if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
@@ -86,14 +91,10 @@ export async function seedCommitAnalytics(
     }
 
     // Get all repositories
-    const { data: repositories, error: reposError } = await client
-      .from('repositories')
-      .select('id')
-      .eq('is_active', true);
-
-    if (reposError || !repositories) {
-      throw new Error(`Failed to fetch repositories: ${reposError?.message}`);
-    }
+    const repositories = await client.repository.findMany({
+      where: { isActive: true },
+      select: { id: true }
+    });
 
     if (repositories.length === 0) {
       logger.warn('No repositories found, skipping commit analytics seeding');
@@ -114,20 +115,12 @@ export async function seedCommitAnalytics(
     for (let i = 0; i < allAnalytics.length; i += batchSize) {
       const batch = allAnalytics.slice(i, i + batchSize);
 
-      const { data, error } = await client
-        .from('commit_analytics')
-        .insert(batch)
-        .select('id');
+      const result = await client.commitAnalytic.createMany({
+        data: batch,
+        skipDuplicates: true
+      });
 
-      if (error) {
-        logger.error(
-          `Error inserting commit analytics batch ${i / batchSize + 1}:`,
-          error
-        );
-        throw error;
-      }
-
-      insertedCount += data?.length || 0;
+      insertedCount += result.count;
     }
 
     logger.info(
@@ -141,4 +134,5 @@ export async function seedCommitAnalytics(
     );
     throw error;
   }
+  */
 }

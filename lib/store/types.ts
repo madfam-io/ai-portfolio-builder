@@ -11,9 +11,20 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { type User } from '@supabase/supabase-js';
-
 import { type Portfolio } from '@/types/portfolio';
+
+// Define User type locally instead of importing from Supabase
+export interface User {
+  id: string;
+  email?: string;
+  email_verified?: boolean;
+  phone?: string;
+  phone_verified?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  app_metadata?: Record<string, any>;
+  user_metadata?: Record<string, any>;
+}
 
 /**
  * Global Store Types

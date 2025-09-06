@@ -78,7 +78,6 @@ export interface BulkExperimentOperation {
  * Universal Experiment Manager for administrative operations
  */
 export class ExperimentManager {
-
   /**
    * Pre-built experiment templates for common use cases
    */
@@ -622,11 +621,11 @@ export class ExperimentManager {
     try {
       const existingExperiments = await prisma.landingPageExperiment.findMany({
         where: {
-          status: 'active'
+          status: 'active',
         },
         include: {
-          variants: true
-        }
+          variants: true,
+        },
       });
 
       for (const oldExperiment of existingExperiments || []) {
@@ -644,8 +643,8 @@ export class ExperimentManager {
           targeting: {
             userSegments: [],
             userTiers: [],
-            geographicRegions: oldExperiment.target_audience?.geo || [],
-            deviceTypes: oldExperiment.target_audience?.device || [],
+            geographicRegions: (oldExperiment.target_audience as any)?.geo || [],
+            deviceTypes: (oldExperiment.target_audience as any)?.device || [],
             trafficAllocation: (oldExperiment.traffic_percentage || 100) / 100,
             customRules: [],
             excludeRules: [],
@@ -653,31 +652,20 @@ export class ExperimentManager {
 
           variants:
             oldExperiment.variants?.map(
-              (variant: {
-                id: string;
-                name: string;
-                description?: string;
-                is_control: boolean;
-                traffic_percentage?: number;
-                components?: Record<string, unknown>;
-                content?: Record<string, unknown>;
-                theme_overrides?: Record<string, unknown>;
-                visitors?: number;
-                conversions?: number;
-              }) => ({
+              (variant: any) => ({
                 id: variant.id,
                 name: variant.name,
                 description: variant.description || '',
-                isControl: variant.is_control,
-                allocation: (variant.traffic_percentage || 0) / 100,
+                isControl: variant.isControl || variant.is_control || false,
+                allocation: (variant.trafficPercentage || variant.traffic_percentage || 0) / 100,
                 config: {
                   componentProps: variant.components || {},
-                  cssOverrides: variant.theme_overrides || {},
+                  cssOverrides: (variant.themeOverrides || variant.theme_overrides || {}) as Record<string, string>,
                 },
                 performance: {
-                  assignments: variant.visitors || 0,
-                  exposures: variant.visitors || 0,
-                  conversions: variant.conversions || 0,
+                  assignments: variant.visitorCount || variant.visitors || 0,
+                  exposures: variant.visitorCount || variant.visitors || 0,
+                  conversions: variant.conversionCount || variant.conversions || 0,
                   revenue: 0,
                 },
               })
@@ -732,9 +720,9 @@ export class ExperimentManager {
           },
 
           tags: ['migrated', 'landing-page'],
-          createdBy: oldExperiment.created_by || 'system',
-          createdAt: new Date(oldExperiment.created_at),
-          updatedAt: new Date(oldExperiment.updated_at),
+          createdBy: (oldExperiment as any).created_by || 'system',
+          createdAt: new Date((oldExperiment as any).created_at || oldExperiment.createdAt),
+          updatedAt: new Date((oldExperiment as any).updated_at || oldExperiment.updatedAt),
         };
 
         await universalExperimentEngine.createExperiment(newExperiment);

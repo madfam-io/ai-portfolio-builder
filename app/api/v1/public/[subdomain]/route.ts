@@ -20,6 +20,7 @@ import { type RouteContext } from '@/lib/api/versioning';
 import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
+import { prisma } from '@/lib/db/prisma';
 
 // Using RouteContext from versioning
 
@@ -43,48 +44,33 @@ export const GET = versionedApiHandler(
         return apiError('Subdomain is required', { status: 400 });
       }
 
-      // Create Supabase client
-      const supabase = await getCurrentUser();
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
-
       // Fetch published portfolio by subdomain
-      const { data: portfolio, error: fetchError } = await supabase
-        .from('portfolios')
-        .select('*')
-        .eq('subdomain', subdomain)
-        .eq('status', 'published')
-        .single();
-
-      if (fetchError) {
-        if (fetchError.code === 'PGRST116') {
-          return apiError('Portfolio not found', { status: 404 });
-        }
-        logger.error('Database error fetching public portfolio:', fetchError);
-        return apiError('Failed to fetch portfolio', { status: 500 });
-      }
+      const portfolio = await prisma.portfolio.findFirst({
+        where: {
+          subdomain: subdomain,
+          status: 'PUBLISHED',
+        },
+      });
 
       if (!portfolio) {
         return apiError('Portfolio not found', { status: 404 });
       }
 
       // Update view count
-      const { error: updateError } = await supabase
-        .from('portfolios')
-        .update({
-          views: (portfolio.views || 0) + 1,
-          last_viewed_at: new Date().toISOString(),
-        })
-        .eq('id', portfolio.id);
-
-      if (updateError) {
+      try {
+        await prisma.portfolio.update({
+          where: { id: portfolio.id },
+          data: {
+            totalViews: (portfolio.totalViews || 0) + 1,
+          },
+        });
+      } catch (updateError) {
         // Log error but don't fail the request
-        logger.error('Failed to update view count:', updateError);
+        logger.error('Failed to update view count:', updateError as Error);
       }
 
       // Transform to API format
-      const responsePortfolio = transformDbPortfolioToApi(portfolio);
+      const responsePortfolio = transformDbPortfolioToApi(portfolio as any);
 
       // Remove sensitive data for public view
       const publicPortfolio = {
@@ -96,8 +82,8 @@ export const GET = versionedApiHandler(
       return apiSuccess({
         portfolio: publicPortfolio,
         meta: {
-          views: portfolio.views || 0,
-          publishedAt: portfolio.published_at,
+          views: portfolio.totalViews || 0,
+          publishedAt: portfolio.publishedAt,
         },
       });
     } catch (error) {

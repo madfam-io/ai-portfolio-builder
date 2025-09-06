@@ -56,8 +56,9 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     // Determine user type and start onboarding if needed
     if (isNewUser && !completedFlows.includes('new-user-flow')) {
       startOnboarding('new');
-      track.user.action('onboarding_started', user.id, async () => {}, {
+      track('onboarding_started', {
         flow: 'new-user-flow',
+        user_id: user.id,
       });
     } else if (
       !isNewUser &&
@@ -65,8 +66,9 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
       !completedFlows.includes('returning-user-flow')
     ) {
       startOnboarding('returning');
-      track.user.action('onboarding_started', user.id, async () => {}, {
+      track('onboarding_started', {
         flow: 'returning-user-flow',
+        user_id: user.id,
       });
     }
   }, [user, completedFlows, startOnboarding]);

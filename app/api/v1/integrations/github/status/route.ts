@@ -15,7 +15,6 @@ import { NextResponse } from 'next/server';
 
 import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { decrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -47,21 +46,17 @@ export async function GET(): Promise<Response> {
       });
     }
 
-    // Decrypt access token to check rate limits
+    // Check rate limits using access token
     let rateLimit = null;
     try {
-      const decryptedToken = decrypt({
-        encrypted: integration.encrypted_access_token,
-        iv: integration.access_token_iv,
-        tag: integration.access_token_tag,
-      });
+      const accessToken = integration.accessToken;
 
       // Check GitHub API rate limit
       const rateLimitResponse = await fetch(
         'https://api.github.com/rate_limit',
         {
           headers: {
-            Authorization: `token ${decryptedToken}`,
+            Authorization: `token ${accessToken}`,
             Accept: 'application/vnd.github.v3+json',
           },
         }

@@ -23,101 +23,48 @@ import {
 } from '@/lib/api/response-helpers';
 import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
+import { prisma } from '@/lib/db/prisma';
 import type { CreateVariantInput } from '@/types/portfolio-variants';
 
-// Using RouteContext from auth middleware
-
 // Helper function to transform variant data
-function transformVariant(variant: Record<string, unknown>) {
+function transformVariant(variant: any) {
   return {
     id: variant.id,
-    portfolioId: variant.portfolio_id,
+    portfolioId: variant.portfolioId,
     name: variant.name,
-    slug: variant.slug,
-    isDefault: variant.is_default,
-    isPublished: variant.is_published,
-    contentOverrides: variant.content_overrides || {},
-    audienceProfile: variant.audience_profile || {
-      id: variant.audience_profile_id,
-      type: 'general',
-      name: 'General Audience',
-    },
-    aiOptimization: variant.ai_optimization || {},
-    analytics: variant.analytics || {},
-    createdAt: variant.created_at,
-    updatedAt: variant.updated_at,
+    description: variant.description,
+    content: variant.content,
+    customization: variant.customization,
+    views: variant.views,
+    conversions: variant.conversions,
+    conversionRate: variant.conversionRate,
+    isActive: variant.isActive,
+    isControl: variant.isControl,
+    createdAt: variant.createdAt,
+    updatedAt: variant.updatedAt,
   };
 }
 
 // Helper function to verify portfolio ownership
 async function verifyPortfolioOwnership(
-  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
-    ? T
-    : never,
   portfolioId: string,
   userId: string
 ) {
-  if (!supabase) {
-    return {
-      portfolio: null,
-      error: new Error('Database connection not available'),
-    };
+  try {
+    const portfolio = await prisma.portfolio.findFirst({
+      where: {
+        id: portfolioId,
+        userId: userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return { portfolio, error: null };
+  } catch (error) {
+    return { portfolio: null, error };
   }
-
-  const { data: portfolio, error } = await supabase
-    .from('portfolios')
-    .select('id')
-    .eq('id', portfolioId)
-    .eq('user_id', userId)
-    .single();
-
-  return { portfolio, error };
-}
-
-// Helper function to create audience profile
-async function createAudienceProfile(
-  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
-    ? T
-    : never,
-  userId: string,
-  body: CreateVariantInput
-) {
-  if (!body.audienceDetails) {
-    return { profileId: null };
-  }
-
-  const audienceData = {
-    user_id: userId,
-    type: body.audienceType,
-    name: body.audienceDetails.name || body.name,
-    description: body.audienceDetails.description,
-    industry: body.audienceDetails.industry,
-    company_size: body.audienceDetails.companySize,
-    key_priorities: body.audienceDetails.keyPriorities || [],
-    pain_points: body.audienceDetails.painPoints || [],
-    decision_criteria: body.audienceDetails.decisionCriteria || [],
-    important_keywords: body.audienceDetails.importantKeywords || [],
-    avoid_keywords: body.audienceDetails.avoidKeywords || [],
-    communication_style: body.audienceDetails.communicationStyle,
-    preferred_length: body.audienceDetails.preferredLength,
-  };
-
-  if (!supabase) {
-    return { error: new Error('Database connection not available') };
-  }
-
-  const { data: profile, error } = await supabase
-    .from('audience_profiles')
-    .insert(audienceData)
-    .select()
-    .single();
-
-  if (error) {
-    logger.error('Failed to create audience profile:', error as Error);
-    return { error };
-  }
-
-  return { profileId: profile.id };
 }
 
 /**
@@ -135,36 +82,24 @@ export const GET = versionedApiHandler(
       if (!portfolioId || typeof portfolioId !== 'string') {
         return apiError('Invalid portfolio ID', { status: 400 });
       }
-      const supabase = await getCurrentUser();
-
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
 
       // Verify user owns the portfolio
       const { portfolio, error: portfolioError } =
-        await verifyPortfolioOwnership(supabase, portfolioId, request.user.id);
+        await verifyPortfolioOwnership(portfolioId, request.user.id);
 
       if (portfolioError || !portfolio) {
         return apiError('Portfolio not found', { status: 404 });
       }
 
-      // Get all variants with audience profiles
-      const { data: variants, error: variantsError } = await supabase
-        .from('portfolio_variants')
-        .select(
-          `
-          *,
-          audience_profile:audience_profiles(*)
-        `
-        )
-        .eq('portfolio_id', portfolioId)
-        .order('created_at', { ascending: true });
-
-      if (variantsError) {
-        logger.error('Failed to fetch variants:', variantsError);
-        return apiError('Failed to fetch variants', { status: 500 });
-      }
+      // Get all variants
+      const variants = await prisma.portfolioVariant.findMany({
+        where: {
+          portfolioId: portfolioId,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
 
       // Transform to match TypeScript types
       const transformedVariants = variants?.map(transformVariant) || [];
@@ -196,72 +131,42 @@ export const POST = versionedApiHandler(
         return apiError('Invalid portfolio ID', { status: 400 });
       }
       const body: CreateVariantInput = await request.json();
-      const supabase = await getCurrentUser();
-
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
 
       // Verify user owns the portfolio
       const { portfolio, error: portfolioError } =
-        await verifyPortfolioOwnership(supabase, portfolioId, request.user.id);
+        await verifyPortfolioOwnership(portfolioId, request.user.id);
 
       if (portfolioError || !portfolio) {
         return apiError('Portfolio not found', { status: 404 });
       }
 
-      // Create or get audience profile
-      const { profileId: audienceProfileId, error: profileError } =
-        await createAudienceProfile(supabase, request.user.id, body);
-
-      if (profileError) {
-        return apiError('Failed to create audience profile', { status: 500 });
-      }
-
-      // Generate slug from name
-      const slug = body.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
-
-      // Copy content overrides from base variant if specified
-      let contentOverrides = {};
+      // Copy content from base variant if specified
+      let baseContent = {};
+      let baseCustomization = {};
       if (body.basedOnVariant) {
-        const { data: baseVariant } = await supabase
-          .from('portfolio_variants')
-          .select('content_overrides')
-          .eq('id', body.basedOnVariant)
-          .single();
+        const baseVariant = await prisma.portfolioVariant.findUnique({
+          where: { id: body.basedOnVariant },
+          select: { content: true, customization: true },
+        });
 
         if (baseVariant) {
-          contentOverrides = baseVariant.content_overrides || {};
+          baseContent = baseVariant.content || {};
+          baseCustomization = baseVariant.customization || {};
         }
       }
 
       // Create the variant
-      const { data: variant, error: variantError } = await supabase
-        .from('portfolio_variants')
-        .insert({
-          portfolio_id: portfolioId,
-          audience_profile_id: audienceProfileId,
+      const variant = await prisma.portfolioVariant.create({
+        data: {
+          portfolioId: portfolioId,
           name: body.name,
-          slug,
-          is_default: false,
-          is_published: false,
-          content_overrides: contentOverrides,
-        })
-        .select(
-          `
-          *,
-          audience_profile:audience_profiles(*)
-        `
-        )
-        .single();
-
-      if (variantError) {
-        logger.error('Failed to create variant:', variantError);
-        return apiError('Failed to create variant', { status: 500 });
-      }
+          description: (body as any).description || null,
+          content: baseContent,
+          customization: baseCustomization,
+          isActive: true,
+          isControl: false,
+        },
+      });
 
       // Transform to match TypeScript types
       const transformedVariant = transformVariant(variant);

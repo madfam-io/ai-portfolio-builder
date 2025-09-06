@@ -274,7 +274,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
                           const newArray = [...value];
                           newArray[index] = parsed;
                           handleDataUpdate(property.key, newArray);
-                        } catch (_error) {
+                        } catch {
                           // Invalid JSON, don't update
                         }
                       }}

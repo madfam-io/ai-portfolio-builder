@@ -131,7 +131,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Check if subdomain exists in database
     const existing = await prisma.portfolio.findUnique({
       where: { subdomain },
-      select: { id: true }
+      select: { id: true },
     });
 
     const available = !existing;
@@ -159,9 +159,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 /**
  * Generate alternative subdomain suggestions
  */
-async function generateSuggestions(
-  subdomain: string
-): Promise<string[]> {
+async function generateSuggestions(subdomain: string): Promise<string[]> {
   const suggestions: string[] = [];
   const maxSuggestions = 5;
 
@@ -184,7 +182,7 @@ async function generateSuggestions(
 
     const existing = await prisma.portfolio.findUnique({
       where: { subdomain: variation },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!existing) {

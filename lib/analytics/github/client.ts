@@ -69,36 +69,23 @@ export class GitHubAnalyticsClient {
    * Initialize the client with a user's GitHub integration
    */
   async initialize(userId: string): Promise<void> {
-    const supabase = await createClient();
-    if (!supabase) {
-      throw new Error('Database connection not available');
-    }
+    // Fetch user's GitHub integration using Prisma
+    const integration = await prisma.gitHubIntegration.findFirst({
+      where: {
+        userId: userId,
+        isActive: true,
+      },
+    });
 
-    // Fetch user's GitHub integration
-    const { data: integration, error } = await supabase
-      .from('github_integrations')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .single();
-
-    if (error || !integration) {
+    if (!integration) {
       throw new Error('No active GitHub integration found');
     }
 
-    this.integration = integration as GitHubIntegration;
+    this.integration = integration as unknown as GitHubIntegration;
 
-    // Get the access token (handle both encrypted and legacy formats)
-    let accessToken: string | null = null;
-
-    if (hasEncryptedTokens(integration)) {
-      // New encrypted format
-      accessToken = decryptAccessToken(integration);
-    } else if (hasLegacyTokens(integration)) {
-      // Legacy unencrypted format
-      accessToken = integration.access_token;
-      logger.warn('Using legacy unencrypted token - migration required');
-    }
+    // Get the access token - using the plain accessToken from Prisma
+    // The encryption handling is not needed with the current Prisma schema
+    let accessToken: string | null = integration.accessToken;
 
     if (!accessToken) {
       throw new Error('Failed to retrieve access token');

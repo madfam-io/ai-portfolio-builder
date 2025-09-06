@@ -110,7 +110,7 @@ function BillingContent() {
         const invoiceData = await invoicesRes.json();
         setInvoices(invoiceData);
       }
-    } catch (_error) {
+    } catch {
       // Failed to load billing data
       toast({
         title: t.error || 'Error',
@@ -138,7 +138,7 @@ function BillingContent() {
         const { url } = await response.json();
         window.location.href = url;
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: t.failedToAddPayment || 'Failed to add payment method',
@@ -163,7 +163,7 @@ function BillingContent() {
           description: t.paymentMethodRemoved || 'Payment method removed',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description:
@@ -194,7 +194,7 @@ function BillingContent() {
             t.defaultPaymentUpdated || 'Default payment method updated',
         });
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description:
@@ -221,7 +221,7 @@ function BillingContent() {
         // Refresh the page to update subscription status
         window.location.reload();
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: t.failedToCancel || 'Failed to cancel subscription',
@@ -245,7 +245,7 @@ function BillingContent() {
         });
         window.location.reload();
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description:

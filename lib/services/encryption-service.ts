@@ -23,7 +23,7 @@ import {
   decryptJsonField,
   ENCRYPTED_FIELDS,
 } from '@/lib/utils/encryption';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 // Define types for encrypted data
@@ -310,22 +310,16 @@ export const decryptPortfolioContact = (portfolioData: any): any => {
  * Find user by encrypted email
  */
 export const findUserByEmail = async (email: string): Promise<any | null> => {
-  const supabase = await createClient();
-  if (!supabase) {
-    throw new Error('Supabase client not available');
-  }
-  if (!supabase) {
-    throw new Error('Supabase client not available');
+  if (!prisma) {
+    throw new Error('Database client not available');
   }
   const emailHash = hashForIndex(email);
 
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('email_hash', emailHash)
-    .single();
+  const data = await prisma.user.findFirst({
+    where: { emailHash }
+  });
 
-  if (error || !data) return null;
+  if (!data) return null;
 
   // Decrypt the data before returning
   return decryptUserData(data);
@@ -335,26 +329,38 @@ export const findUserByEmail = async (email: string): Promise<any | null> => {
  * Update encrypted records in batch
  */
 const updateEncryptedRecords = async (
-  supabase: any,
   tableName: string,
   records: any[]
 ): Promise<{ successCount: number }> => {
   let successCount = 0;
 
   for (const record of records) {
-    const { error: updateError } = await supabase
-      .from(tableName)
-      .update(record)
-      .eq('id', record.id);
-
-    if (updateError) {
+    try {
+      // Update using Prisma based on table name
+      switch (tableName) {
+        case 'users':
+          await prisma.user.update({
+            where: { id: record.id },
+            data: record
+          });
+          break;
+        case 'portfolios':
+          await prisma.portfolio.update({
+            where: { id: record.id },
+            data: record
+          });
+          break;
+        default:
+          logger.warn('Unknown table for encryption migration', { tableName });
+          continue;
+      }
+      successCount++;
+    } catch (updateError) {
       logger.error('Failed to encrypt record', {
         tableName,
         recordId: record.id,
         error: updateError,
       });
-    } else {
-      successCount++;
     }
   }
 
@@ -368,30 +374,41 @@ export const migrateTableToEncryption = async (
   tableName: string,
   batchSize: number = 100
 ): Promise<{ success: boolean; error?: string }> => {
-  const supabase = await createClient();
-  if (!supabase) {
-    throw new Error('Supabase client not available');
+  if (!prisma) {
+    throw new Error('Database client not available');
   }
 
   try {
     // Update migration status
-    await supabase
-      .from('encryption_migration_status')
-      .update({ status: 'in_progress' })
-      .eq('table_name', tableName);
+    await prisma.encryptionMigrationStatus.update({
+      where: { tableName },
+      data: { status: 'in_progress' }
+    });
 
     let offset = 0;
     let hasMore = true;
     let totalEncrypted = 0;
 
     while (hasMore) {
-      // Fetch batch
-      const { data: records, error: fetchError } = await supabase
-        .from(tableName)
-        .select('*')
-        .range(offset, offset + batchSize - 1);
-
-      if (fetchError) throw fetchError;
+      let records: any[] = [];
+      
+      // Fetch batch based on table name
+      switch (tableName) {
+        case 'users':
+          records = await prisma.user.findMany({
+            skip: offset,
+            take: batchSize
+          });
+          break;
+        case 'portfolios':
+          records = await prisma.portfolio.findMany({
+            skip: offset,
+            take: batchSize
+          });
+          break;
+        default:
+          throw new Error(`Unsupported table: ${tableName}`);
+      }
 
       if (!records || records.length === 0) {
         hasMore = false;
@@ -403,9 +420,6 @@ export const migrateTableToEncryption = async (
         switch (tableName) {
           case 'users':
             return encryptUserData(record);
-          case 'linkedin_connections':
-          case 'github_integrations':
-            return encryptOAuthTokens(record);
           case 'portfolios':
             return encryptPortfolioContact(record);
           default:
@@ -415,30 +429,29 @@ export const migrateTableToEncryption = async (
 
       // Update records
       const updateResults = await updateEncryptedRecords(
-        supabase,
         tableName,
         encryptedRecords
       );
       totalEncrypted += updateResults.successCount;
 
       // Update progress
-      await supabase
-        .from('encryption_migration_status')
-        .update({ encrypted_records: totalEncrypted })
-        .eq('table_name', tableName);
+      await prisma.encryptionMigrationStatus.update({
+        where: { tableName },
+        data: { encryptedRecords: totalEncrypted }
+      });
 
       offset += batchSize;
     }
 
     // Mark as completed
-    await supabase
-      .from('encryption_migration_status')
-      .update({
+    await prisma.encryptionMigrationStatus.update({
+      where: { tableName },
+      data: {
         status: 'completed',
-        migration_completed_at: new Date().toISOString(),
-        encrypted_records: totalEncrypted,
-      })
-      .eq('table_name', tableName);
+        migrationCompletedAt: new Date(),
+        encryptedRecords: totalEncrypted,
+      }
+    });
 
     logger.info('Encryption migration completed', {
       tableName,
@@ -450,13 +463,13 @@ export const migrateTableToEncryption = async (
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
 
-    await supabase
-      .from('encryption_migration_status')
-      .update({
+    await prisma.encryptionMigrationStatus.update({
+      where: { tableName },
+      data: {
         status: 'failed',
-        error_message: errorMessage,
-      })
-      .eq('table_name', tableName);
+        errorMessage,
+      }
+    });
 
     logger.error('Encryption migration failed', {
       tableName,
@@ -471,22 +484,20 @@ export const migrateTableToEncryption = async (
  * Get encryption migration status
  */
 export const getEncryptionMigrationStatus = async () => {
-  const supabase = await createClient();
-  if (!supabase) {
-    throw new Error('Supabase client not available');
+  if (!prisma) {
+    throw new Error('Database client not available');
   }
 
-  const { data, error } = await supabase
-    .from('encryption_migration_status')
-    .select('*')
-    .order('created_at', { ascending: true });
+  try {
+    const data = await prisma.encryptionMigrationStatus.findMany({
+      orderBy: { createdAt: 'asc' }
+    });
 
-  if (error) {
+    return data || [];
+  } catch (error) {
     logger.error('Failed to get encryption migration status', { error });
     return [];
   }
-
-  return data || [];
 };
 
 /**

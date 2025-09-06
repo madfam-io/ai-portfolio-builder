@@ -11,9 +11,9 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PrismaClient } from '@prisma/client';
 
 /**
  * @fileoverview Database Seeding Engine
@@ -44,7 +44,7 @@ export interface SeedingResult {
  * Handles intelligent seeding with conflict detection and incremental updates
  */
 export class DatabaseSeeder {
-  private client: SupabaseClient | null = null;
+  private client: PrismaClient | null = null;
   private options: SeedingOptions;
 
   constructor(options: SeedingOptions = { mode: 'demo' }) {
@@ -59,7 +59,7 @@ export class DatabaseSeeder {
    * Initialize the seeder with database connection
    */
   async initialize(): Promise<void> {
-    this.client = await createClient();
+    this.client = prisma;
     if (!this.client) {
       throw new Error('Failed to initialize database connection');
     }
@@ -72,29 +72,29 @@ export class DatabaseSeeder {
   async needsSeeding(): Promise<boolean> {
     try {
       // Check if core tables have data
-      const tables = ['users', 'portfolios', 'subscription_plans'];
+      if (!this.client) {
+        logger.error('Database client not initialized');
+        return false;
+      }
 
-      for (const table of tables) {
-        if (!this.client) {
-          logger.error('Database client not initialized');
-          return false;
-        }
+      try {
+        const userCount = await this.client.user.count();
+        const portfolioCount = await this.client.portfolio.count();
 
-        const { count, error } = await this.client
-          .from(table)
-          .select('*', { count: 'exact', head: true });
-
-        if (error) {
-          logger.warn(`Error checking table ${table}:`, {
-            error: (error as Error).message,
-          });
-          continue;
-        }
-
-        if (count === 0) {
-          logger.info(`Table ${table} is empty, seeding needed`);
+        if (userCount === 0) {
+          logger.info('User table is empty, seeding needed');
           return true;
         }
+
+        if (portfolioCount === 0) {
+          logger.info('Portfolio table is empty, seeding needed');
+          return true;
+        }
+      } catch (error) {
+        logger.warn('Error checking tables:', {
+          error: (error as Error).message,
+        });
+        return true; // Assume seeding is needed if we can't check
       }
 
       logger.info('Database appears to be populated');
@@ -119,15 +119,9 @@ export class DatabaseSeeder {
         return false;
       }
 
-      const { error } = await this.client
-        .from('subscription_plans')
-        .select('id')
-        .limit(1);
+      // Test basic connectivity with a simple query
+      await this.client.user.findFirst();
 
-      if (error) {
-        logger.error('Database validation failed:', error as Error);
-        return false;
-      }
 
       logger.info('Database connectivity validated');
       return true;
@@ -226,19 +220,36 @@ export class DatabaseSeeder {
           continue;
         }
 
-        const { error } = await this.client
-          .from(table)
-          .delete()
-          .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all except system records
-
-        if (error) {
-          logger.warn(`Error clearing table ${table}:`, {
-            error: error.message,
-            code: error.code,
-            details: error.details,
-          });
-        } else {
+        try {
+          // Use Prisma deleteMany for clearing tables
+          switch (table) {
+            case 'users':
+              await this.client.user.deleteMany({
+                where: {
+                  NOT: {
+                    id: '00000000-0000-0000-0000-000000000000'
+                  }
+                }
+              });
+              break;
+            case 'portfolios':
+              await this.client.portfolio.deleteMany({
+                where: {
+                  NOT: {
+                    id: '00000000-0000-0000-0000-000000000000'
+                  }
+                }
+              });
+              break;
+            default:
+              logger.warn(`Table ${table} not handled in Prisma migration`);
+              continue;
+          }
           logger.info(`Cleared table ${table}`);
+        } catch (error) {
+          logger.warn(`Error clearing table ${table}:`, {
+            error: (error as Error).message,
+          });
         }
       }
 
@@ -261,31 +272,33 @@ export class DatabaseSeeder {
     lastSeeded?: Date;
   }> {
     try {
-      const tables = [
-        'users',
-        'portfolios',
-        'repositories',
-        'github_integrations',
-        'code_metrics',
-      ];
-
       const tableStats: Record<string, number> = {};
       let totalRecords = 0;
 
-      for (const table of tables) {
-        if (!this.client) {
-          logger.error('Database client not initialized');
-          continue;
-        }
+      if (!this.client) {
+        logger.error('Database client not initialized');
+        return {
+          isSeeded: false,
+          tableStats: {},
+        };
+      }
 
-        const { count, error } = await this.client
-          .from(table)
-          .select('*', { count: 'exact', head: true });
+      try {
+        // Get counts using Prisma for main tables
+        const userCount = await this.client.user.count();
+        const portfolioCount = await this.client.portfolio.count();
 
-        if (!error) {
-          tableStats[table] = count || 0;
-          totalRecords += count || 0;
-        }
+        tableStats['users'] = userCount;
+        tableStats['portfolios'] = portfolioCount;
+        
+        totalRecords = userCount + portfolioCount;
+        
+        // Note: repositories, github_integrations, and code_metrics would need 
+        // to be added to Prisma schema if they exist
+      } catch (error) {
+        logger.warn('Error getting table counts:', {
+          error: (error as Error).message,
+        });
       }
 
       return {

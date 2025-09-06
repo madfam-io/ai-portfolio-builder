@@ -89,10 +89,12 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
   const userContext = user
     ? {
         plan: 'free', // TODO: Get from user subscription when implemented
-        accountAge: Math.floor(
-          (Date.now() - new Date(user.created_at).getTime()) /
-            (1000 * 60 * 60 * 24)
-        ),
+        accountAge: user.created_at
+          ? Math.floor(
+              (Date.now() - new Date(user.created_at).getTime()) /
+                (1000 * 60 * 60 * 24)
+            )
+          : 0,
         portfoliosCreated: portfolios.length,
         lastActivity: new Date(),
       }

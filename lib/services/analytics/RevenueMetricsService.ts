@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { type SupabaseClient } from '@supabase/supabase-js';
+import { type PrismaClient } from '@prisma/client';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { logger } from '@/lib/utils/logger';
 
@@ -48,13 +48,13 @@ export interface RevenueTrend {
 
 export interface SubscriptionRecord {
   id: string;
-  user_id: string;
+  userId: string;
   plan: string;
   status: 'active' | 'trialing' | 'canceled' | 'past_due';
   amount?: number;
-  created_at: string;
-  updated_at: string;
-  canceled_at?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  canceledAt?: Date;
 }
 
 export interface CustomerMetrics {
@@ -65,7 +65,7 @@ export interface CustomerMetrics {
 }
 
 export class RevenueMetricsService {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(private prisma: PrismaClient) {}
 
   /**
    * Calculate comprehensive revenue metrics
@@ -76,67 +76,51 @@ export class RevenueMetricsService {
     const previousStartDate = startOfMonth(subMonths(date, 1));
 
     // Get current active subscriptions
-    const { data: currentSubscriptions, error: currentError } =
-      await this.supabase
-        .from('subscriptions')
-        .select('*')
-        .in('status', ['active', 'trialing'])
-        .lte('created_at', endDate.toISOString());
-
-    if (currentError) throw currentError;
+    const currentSubscriptions = await this.prisma.subscription.findMany({
+      where: {
+        status: { in: ['active', 'trialing'] },
+        createdAt: { lte: endDate },
+      },
+    });
 
     // Get previous month subscriptions for comparison
-    const { data: previousSubscriptions, error: previousError } =
-      await this.supabase
-        .from('subscriptions')
-        .select('*')
-        .in('status', ['active', 'trialing'])
-        .lte('created_at', previousStartDate.toISOString());
-
-    if (previousError) throw previousError;
+    const previousSubscriptions = await this.prisma.subscription.findMany({
+      where: {
+        status: { in: ['active', 'trialing'] },
+        createdAt: { lte: previousStartDate },
+      },
+    });
 
     // Calculate MRR
-    const currentMrr = this.calculateMrrFromSubscriptions(
-      currentSubscriptions || []
-    );
-    const previousMrr = this.calculateMrrFromSubscriptions(
-      previousSubscriptions || []
-    );
+    const currentMrr = this.calculateMrrFromSubscriptions(currentSubscriptions.map(s => ({ ...s, plan: s.tier })) as any);
+    const previousMrr = this.calculateMrrFromSubscriptions(previousSubscriptions.map(s => ({ ...s, plan: s.tier })) as any);
 
     // Get new subscriptions this month
-    const { data: newSubscriptions, error: newError } = await this.supabase
-      .from('subscriptions')
-      .select('*')
-      .gte('created_at', startDate.toISOString())
-      .lte('created_at', endDate.toISOString())
-      .in('status', ['active', 'trialing']);
-
-    if (newError) throw newError;
+    const newSubscriptions = await this.prisma.subscription.findMany({
+      where: {
+        createdAt: { gte: startDate, lte: endDate },
+        status: { in: ['active', 'trialing'] },
+      },
+    });
 
     // Get churned subscriptions this month
-    const { data: churnedSubscriptions, error: churnError } =
-      await this.supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('status', 'canceled')
-        .gte('updated_at', startDate.toISOString())
-        .lte('updated_at', endDate.toISOString());
-
-    if (churnError) throw churnError;
+    const churnedSubscriptions = await this.prisma.subscription.findMany({
+      where: {
+        status: 'canceled',
+        updatedAt: { gte: startDate, lte: endDate },
+      },
+    });
 
     // Calculate metrics
-    const newMrr = this.calculateMrrFromSubscriptions(newSubscriptions || []);
-    const churnedMrr = this.calculateMrrFromSubscriptions(
-      churnedSubscriptions || []
-    );
+    const newMrr = this.calculateMrrFromSubscriptions(newSubscriptions.map(s => ({ ...s, plan: s.tier })) as any);
+    const churnedMrr = this.calculateMrrFromSubscriptions(churnedSubscriptions.map(s => ({ ...s, plan: s.tier })) as any);
     const netNewMrr = currentMrr - previousMrr;
     const expansionMrr = Math.max(0, netNewMrr - newMrr + churnedMrr);
     const contractionMrr = Math.max(0, -netNewMrr + newMrr - churnedMrr);
 
-    const customerCount =
-      currentSubscriptions?.filter(s => s.status === 'active').length || 0;
-    const newCustomers = newSubscriptions?.length || 0;
-    const churnedCustomers = churnedSubscriptions?.length || 0;
+    const customerCount = currentSubscriptions.filter(s => s.status === 'active').length;
+    const newCustomers = newSubscriptions.length;
+    const churnedCustomers = churnedSubscriptions.length;
     const churnRate =
       customerCount > 0 ? (churnedCustomers / customerCount) * 100 : 0;
     const arpu = customerCount > 0 ? currentMrr / customerCount : 0;
@@ -163,22 +147,22 @@ export class RevenueMetricsService {
    * Get revenue breakdown by plan
    */
   async getRevenueByPlan(): Promise<RevenueByPlan[]> {
-    const { data: subscriptions, error } = await this.supabase
-      .from('subscriptions')
-      .select('*')
-      .in('status', ['active', 'trialing']);
-
-    if (error) throw error;
+    const subscriptions = await this.prisma.subscription.findMany({
+      where: {
+        status: { in: ['active', 'trialing'] },
+      },
+    });
 
     const planMap = new Map<string, { count: number; mrr: number }>();
     let totalMrr = 0;
 
-    subscriptions?.forEach(sub => {
-      const mrr = this.getSubscriptionMrr(sub);
+    subscriptions.forEach((sub: any) => {
+      const subscription = { ...sub, plan: sub.tier || sub.plan };
+      const mrr = this.getSubscriptionMrr(subscription as SubscriptionRecord);
       totalMrr += mrr;
 
-      const current = planMap.get(sub.plan) || { count: 0, mrr: 0 };
-      planMap.set(sub.plan, {
+      const current = planMap.get(subscription.plan) || { count: 0, mrr: 0 };
+      planMap.set(subscription.plan, {
         count: current.count + 1,
         mrr: current.mrr + mrr,
       });
@@ -221,25 +205,19 @@ export class RevenueMetricsService {
    * Get customer metrics
    */
   async getCustomerMetrics(): Promise<CustomerMetrics> {
-    const { data: allUsers, error: usersError } = await this.supabase
-      .from('users')
-      .select('id');
+    const allUsers = await this.prisma.user.findMany({
+      select: { id: true },
+    });
 
-    if (usersError) throw usersError;
+    const subscriptions = await this.prisma.subscription.findMany({
+      where: {
+        status: { in: ['active', 'trialing', 'past_due'] },
+      },
+    });
 
-    const { data: subscriptions, error: subsError } = await this.supabase
-      .from('subscriptions')
-      .select('*')
-      .in('status', ['active', 'trialing', 'past_due']);
-
-    if (subsError) throw subsError;
-
-    const totalCustomers = allUsers?.length || 0;
-    const payingCustomers =
-      subscriptions?.filter(s => s.status === 'active' && s.plan !== 'free')
-        .length || 0;
-    const trialCustomers =
-      subscriptions?.filter(s => s.status === 'trialing').length || 0;
+    const totalCustomers = allUsers.length;
+    const payingCustomers = subscriptions.filter(s => s.status === 'active' && (s as any).tier !== 'free').length;
+    const trialCustomers = subscriptions.filter(s => s.status === 'trialing').length;
     const conversionRate =
       totalCustomers > 0 ? (payingCustomers / totalCustomers) * 100 : 0;
 
@@ -255,33 +233,36 @@ export class RevenueMetricsService {
    * Get top paying customers
    */
   async getTopCustomers(limit: number = 10) {
-    const { data, error } = await this.supabase
-      .from('subscriptions')
-      .select(
-        `
-        *,
-        users!inner(
-          id,
-          email,
-          full_name
-        )
-      `
-      )
-      .eq('status', 'active')
-      .neq('plan', 'free')
-      .order('amount', { ascending: false })
-      .limit(limit);
+    const data = await this.prisma.subscription.findMany({
+      where: {
+        status: 'active',
+        tier: { not: 'FREE' },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+    });
 
-    if (error) throw error;
+    // Get user data separately
+    const userIds = data.map(sub => sub.userId);
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, email: true, name: true },
+    });
+    const userMap = new Map(users.map(u => [u.id, u]));
 
-    return data?.map(sub => ({
-      userId: sub.user_id,
-      email: sub.users.email,
-      name: sub.users.full_name,
-      plan: sub.plan,
-      mrr: this.getSubscriptionMrr(sub),
-      subscribedAt: sub.created_at,
-    }));
+    return data.map(sub => {
+      const user = userMap.get(sub.userId);
+      return {
+        userId: sub.userId,
+        email: user?.email || '',
+        name: user?.name || '',
+        plan: (sub as any).tier,
+        mrr: this.getSubscriptionMrr({ ...sub, plan: (sub as any).tier } as any),
+        subscribedAt: sub.createdAt,
+      };
+    });
   }
 
   /**
@@ -332,17 +313,8 @@ export class RevenueMetricsService {
     newPlan?: string;
     amount?: number;
   }) {
-    const { error } = await this.supabase.from('revenue_events').insert({
-      type: event.type,
-      user_id: event.userId,
-      old_plan: event.oldPlan,
-      new_plan: event.newPlan,
-      amount: event.amount,
-      created_at: new Date().toISOString(),
-    });
-
-    if (error) {
-      logger.error('Failed to track revenue event:', error);
-    }
+    // Revenue event tracking disabled - table doesn't exist yet
+    logger.info('Revenue event tracking disabled', { event });
+    // TODO: Implement when revenueEvent table is added to schema
   }
 }

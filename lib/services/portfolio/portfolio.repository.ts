@@ -61,7 +61,7 @@ export class PortfolioRepository {
 
       const data = await prisma.portfolio.findMany({
         where: { userId },
-        orderBy: { updatedAt: 'desc' }
+        orderBy: { updatedAt: 'desc' },
       });
 
       return data.map(PortfolioMapper.fromDatabase);
@@ -81,7 +81,7 @@ export class PortfolioRepository {
       }
 
       const data = await prisma.portfolio.findUnique({
-        where: { id }
+        where: { id },
       });
 
       return data ? PortfolioMapper.fromDatabase(data) : null;
@@ -134,7 +134,7 @@ export class PortfolioRepository {
       });
 
       const created = await prisma.portfolio.create({
-        data: dbData
+        data: dbData,
       });
 
       return PortfolioMapper.fromDatabase(created);
@@ -165,7 +165,7 @@ export class PortfolioRepository {
 
       const updated = await prisma.portfolio.update({
         where: { id },
-        data: dbData
+        data: dbData,
       });
 
       return updated ? PortfolioMapper.fromDatabase(updated) : null;
@@ -185,7 +185,7 @@ export class PortfolioRepository {
       }
 
       await prisma.portfolio.delete({
-        where: { id }
+        where: { id },
       });
 
       return true;
@@ -209,10 +209,10 @@ export class PortfolioRepository {
       }
 
       const data = await prisma.portfolio.findFirst({
-        where: { 
+        where: {
           subdomain,
-          status: 'published'
-        }
+          status: 'published',
+        },
       });
 
       return data ? PortfolioMapper.fromDatabase(data) : null;
@@ -240,7 +240,7 @@ export class PortfolioRepository {
 
       const data = await prisma.portfolio.findFirst({
         where: { subdomain },
-        select: { id: true }
+        select: { id: true },
       });
 
       return !data;
@@ -262,11 +262,11 @@ export class PortfolioRepository {
       }
 
       const data = await prisma.portfolio.findMany({
-        where: { 
+        where: {
           userId,
-          status: 'published'
+          status: 'published',
         },
-        orderBy: { updatedAt: 'desc' }
+        orderBy: { updatedAt: 'desc' },
       });
 
       return data.map(PortfolioMapper.fromDatabase);
@@ -287,9 +287,9 @@ export class PortfolioRepository {
         where: { id },
         data: {
           views: {
-            increment: 1
-          }
-        }
+            increment: 1,
+          },
+        },
       });
     } catch (error) {
       logger.error('Repository error in incrementViews:', error as Error);

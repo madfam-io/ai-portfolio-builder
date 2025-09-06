@@ -123,7 +123,7 @@ export function ExperimentProvider({
         } else {
           context.userSegment = 'returning_user';
         }
-      } catch (_error) {
+      } catch {
         // localStorage not available - silently continue
       }
     }

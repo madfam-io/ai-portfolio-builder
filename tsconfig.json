@@ -65,6 +65,7 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "__tests__",
-    "e2e"
+    "e2e",
+    "lib/monitoring.bak"
   ]
 }

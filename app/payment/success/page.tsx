@@ -119,7 +119,7 @@ export default function PaymentSuccess() {
         } else {
           throw new Error('Payment verification failed');
         }
-      } catch (_error) {
+      } catch {
         // Payment verification error
         toast({
           title: t.verificationFailed || 'Verification Failed',

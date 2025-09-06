@@ -97,9 +97,24 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
 
   const supabaseMock = mockOverrides.supabase || defaultSupabaseMock;
 
-  // Mock Supabase
-  jest.doMock('@/lib/supabase/server', () => ({
-    createClient: jest.fn().mockResolvedValue(supabaseMock),
+  // Mock Prisma
+  jest.doMock('@/lib/db/prisma', () => ({
+    prisma: {
+      user: {
+        findFirst: jest.fn().mockResolvedValue({ id: 'user_123', email: 'test@example.com' }),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+      portfolio: {
+        findFirst: jest.fn(),
+        findMany: jest.fn().mockResolvedValue([]),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+      },
+    },
   }));
 
   // Mock logger
@@ -427,10 +442,16 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
     },
   }));
 
-  // Mock createSupabaseClient (old import)
-  jest.doMock('@/lib/supabase/server', () => ({
-    createClient: jest.fn().mockResolvedValue(supabaseMock),
-    createSupabaseClient: jest.fn().mockResolvedValue(supabaseMock), // For legacy imports
+  // Additional Prisma mock for legacy compatibility
+  jest.doMock('@/lib/db/connection', () => ({
+    getConnection: jest.fn().mockResolvedValue({
+      user: {
+        findFirst: jest.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+      },
+    }),
   }));
 };
 

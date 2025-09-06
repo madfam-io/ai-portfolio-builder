@@ -17,13 +17,17 @@
  * This script populates the database with initial premium templates for the marketplace
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const prisma = new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
+});
 
 const premiumTemplates = [
   {
@@ -410,25 +414,30 @@ const premiumTemplates = [
 
 async function seedPremiumTemplates() {
   console.log('Starting premium template seeding...');
-
+  console.log('⚠️  Note: Premium templates table does not exist in current Prisma schema.');
+  console.log('This script needs to be updated to match the current database schema.');
+  console.log('Current schema has TemplateType enum and template field in Portfolio model.');
+  
+  // Uncomment and modify the following code once premium_templates model is added to schema:
+  /*
   for (const template of premiumTemplates) {
     try {
-      const { error } = await supabase
-        .from('premium_templates')
-        .insert(template);
-
-      if (error) {
-        console.error(`Failed to insert template ${template.name}:`, error);
-      } else {
-        console.log(`✓ Inserted template: ${template.name}`);
-      }
+      await prisma.premiumTemplate.create({
+        data: template
+      });
+      console.log(`✓ Inserted template: ${template.name}`);
     } catch (error) {
       console.error(`Error inserting template ${template.name}:`, error);
     }
   }
+  */
 
   console.log('Premium template seeding completed!');
 }
 
 // Run the seeding
-seedPremiumTemplates().catch(console.error);
+seedPremiumTemplates()
+  .catch(console.error)
+  .finally(() => {
+    prisma.$disconnect();
+  });

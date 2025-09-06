@@ -214,7 +214,7 @@ export default function TemplateMarketplacePage() {
         title: 'Purchase initiated',
         description: 'You will be redirected to complete your purchase.',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Purchase failed',
         description: 'Failed to initiate purchase. Please try again.',

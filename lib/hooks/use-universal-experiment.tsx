@@ -114,7 +114,7 @@ export function UniversalExperimentProvider({
       }
 
       setAssignments(allAssignments);
-    } catch (_error) {
+    } catch {
       // Error handled silently
     } finally {
       setIsLoading(false);
@@ -214,7 +214,7 @@ export function useComponentExperiment(
       if (onExposure && variantConfig) {
         onExposure(variantConfig.id);
       }
-    } catch (_error) {
+    } catch {
       // Error handled silently
     }
   }, [
@@ -256,7 +256,7 @@ export function useComponentExperiment(
         if (onConversion) {
           onConversion(metricId, value);
         }
-      } catch (_error) {
+      } catch {
         // Error handled silently
       }
     },

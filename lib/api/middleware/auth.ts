@@ -100,7 +100,7 @@ export async function authenticateUser(
     // Fetch additional user data if needed
     const profile = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { role: true }
+      select: { role: true },
     });
 
     if (!profile) {

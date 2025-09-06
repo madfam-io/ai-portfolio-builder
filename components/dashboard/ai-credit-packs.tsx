@@ -55,7 +55,7 @@ export default function AICreditPacks({
         title: 'Purchase initiated',
         description: 'You will be redirected to complete your purchase.',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: t.error || 'Error',
         description: 'Failed to initiate purchase',

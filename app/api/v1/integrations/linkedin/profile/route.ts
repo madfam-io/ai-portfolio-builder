@@ -13,6 +13,7 @@
 
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { LinkedInParser } from '@/lib/services/integrations/linkedin/parser';
 import { logger } from '@/lib/utils/logger';
@@ -23,36 +24,25 @@ import { logger } from '@/lib/utils/logger';
  */
 export async function GET() {
   try {
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Get LinkedIn connection
-    const { data: connection, error: connectionError } = await supabase
-      .from('linkedin_connections')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
+    // Get LinkedIn connection from Account table
+    const connection = await prisma.account.findFirst({
+      where: {
+        userId: user.id,
+        provider: 'linkedin',
+      },
+    });
 
-    if (connectionError || !connection) {
+    if (!connection) {
       return NextResponse.json(
         { error: 'LinkedIn not connected' },
         { status: 404 }
@@ -60,7 +50,10 @@ export async function GET() {
     }
 
     // Check if token has expired
-    if (new Date(connection.expires_at) < new Date()) {
+    const expiresAt = connection.expires_at
+      ? new Date(connection.expires_at * 1000)
+      : new Date(0);
+    if (expiresAt < new Date()) {
       // TODO: Implement token refresh if refresh token is available
       return NextResponse.json(
         { error: 'LinkedIn token expired' },
@@ -74,7 +67,7 @@ export async function GET() {
     // Fetch full profile
     try {
       const linkedInProfile = await linkedInClient.fetchFullProfile(
-        connection.access_token
+        connection.access_token || ''
       );
 
       // Parse profile data into portfolio format
@@ -87,11 +80,8 @@ export async function GET() {
         );
       }
 
-      // Update last sync timestamp
-      await supabase
-        .from('linkedin_connections')
-        .update({ last_sync_at: new Date().toISOString() })
-        .eq('user_id', user.id);
+      // Update last sync timestamp (skipping for now as Account model doesn't have last_sync_at)
+      // Could be added later if needed
 
       return NextResponse.json({
         success: true,
@@ -126,36 +116,26 @@ export async function GET() {
  */
 export async function DELETE() {
   try {
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Get LinkedIn connection
-    const { data: connection, error: connectionError } = await supabase
-      .from('linkedin_connections')
-      .select('access_token')
-      .eq('user_id', user.id)
-      .single();
+    // Get LinkedIn connection from Account table
+    const connection = await prisma.account.findFirst({
+      where: {
+        userId: user.id,
+        provider: 'linkedin',
+      },
+      select: { id: true, access_token: true },
+    });
 
-    if (connectionError || !connection) {
+    if (!connection) {
       return NextResponse.json(
         { error: 'LinkedIn not connected' },
         { status: 404 }
@@ -164,16 +144,15 @@ export async function DELETE() {
 
     // Revoke access (LinkedIn doesn't support programmatic revocation)
     const linkedInClient = new LinkedInClient();
-    await linkedInClient.revokeAccess(connection.access_token);
+    await linkedInClient.revokeAccess(connection.access_token || '');
 
     // Delete connection from database
-    const { error: deleteError } = await supabase
-      .from('linkedin_connections')
-      .delete()
-      .eq('user_id', user.id);
-
-    if (deleteError) {
-      logger.error('Failed to delete LinkedIn connection:', deleteError);
+    try {
+      await prisma.account.delete({
+        where: { id: connection.id },
+      });
+    } catch (deleteError) {
+      logger.error('Failed to delete LinkedIn connection:', deleteError as any);
       return NextResponse.json(
         { error: 'Failed to disconnect LinkedIn' },
         { status: 500 }

@@ -240,7 +240,7 @@ export class LinkedInClient {
         lastSync: new Date().toISOString(),
         scope: LINKEDIN_OAUTH_CONFIG.scope.split(' '),
       };
-    } catch (_error) {
+    } catch {
       return {
         isConnected: false,
         lastSync: new Date().toISOString(),

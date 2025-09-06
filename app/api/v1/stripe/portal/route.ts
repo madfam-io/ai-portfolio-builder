@@ -26,6 +26,7 @@ import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
 import { getAppUrl } from '@/lib/config/env';
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 
 /**
  * POST /api/v1/stripe/portal
@@ -58,21 +59,16 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
       );
     }
 
-    const { data: userData, error } = await supabase
-      .from('users')
-      .select('stripe_customer_id, subscription_status')
-      .eq('id', user.id)
-      .single();
+    // Get user's Stripe customer ID from payments
+    const payment = await prisma.payment.findFirst({
+      where: { userId: user.id },
+      select: {
+        stripeCustomerId: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-    if (error || !userData) {
-      logger.error('Failed to fetch user data for portal', {
-        error,
-        userId: user.id,
-      });
-      throw new AppError('User data not found', 'USER_DATA_NOT_FOUND', 404);
-    }
-
-    if (!userData.stripe_customer_id) {
+    if (!payment?.stripeCustomerId) {
       throw new AppError(
         'No active subscription found',
         'NO_STRIPE_CUSTOMER',
@@ -85,14 +81,14 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
 
     // Create portal session
     const session = await stripeService.createPortalSession({
-      customerId: userData.stripe_customer_id,
+      customerId: payment.stripeCustomerId!,
       returnUrl,
     });
 
     logger.info('Portal session created successfully', {
       sessionId: session.id,
       userId: user.id,
-      customerId: userData.stripe_customer_id,
+      customerId: payment.stripeCustomerId,
     });
 
     return NextResponse.json({

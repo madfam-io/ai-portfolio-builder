@@ -442,16 +442,12 @@ export class DemoPortfolioService {
     sessionStorage.removeItem(`demo-portfolio-${temporaryId}`);
 
     // Track conversion
-    await track.user.action(
-      'demo_portfolio_converted',
-      userId,
-      async () => {},
-      {
-        demo_id: temporaryPortfolio.demo_id,
-        temporary_id: temporaryId,
-        permanent_id: portfolio.id,
-      }
-    );
+    track('demo_portfolio_converted', {
+      demo_id: temporaryPortfolio.demo_id,
+      temporary_id: temporaryId,
+      permanent_id: portfolio.id,
+      user_id: userId,
+    });
 
     return portfolio.id;
   }

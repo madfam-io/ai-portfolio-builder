@@ -16,16 +16,16 @@ import { logger } from '@/lib/utils/logger';
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
-  const next = requestUrl.searchParams.get('next') || '/dashboard';
+  const _next = requestUrl.searchParams.get('next') || '/dashboard';
 
   // Redirect to NextAuth callback handler
   logger.info('Redirecting to NextAuth callback handler');
-  
+
   // Forward all search params to NextAuth callback
   const nextAuthUrl = new URL('/api/auth/callback/github', requestUrl.origin);
   requestUrl.searchParams.forEach((value, key) => {
     nextAuthUrl.searchParams.set(key, value);
   });
-  
+
   return NextResponse.redirect(nextAuthUrl);
 }

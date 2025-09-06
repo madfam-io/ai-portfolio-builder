@@ -738,7 +738,7 @@ class GDPRService {
       const cacheKey = `consent:${userId}:all`;
       const cached = await redis.get(cacheKey);
       return cached ? JSON.parse(cached) : null;
-    } catch (_error) {
+    } catch {
       return null;
     }
   }
@@ -750,7 +750,7 @@ class GDPRService {
     try {
       const cacheKey = `consent:${userId}:all`;
       await redis.setex(cacheKey, 86400, JSON.stringify(consent));
-    } catch (_error) {
+    } catch {
       // Ignore cache errors
     }
   }

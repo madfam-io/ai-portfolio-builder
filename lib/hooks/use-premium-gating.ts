@@ -110,11 +110,11 @@ export function usePremiumFeature({
       }
 
       return result.allowed;
-    } catch (_error) {
+    } catch (error) {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
         allowed: false,
       }));
       return false;
@@ -131,7 +131,7 @@ export function usePremiumFeature({
 
       // Refresh access check after tracking
       await checkAccess();
-    } catch (_error) {
+    } catch {
       // Error handled silently
     }
   }, [userId, feature, userTier, autoTrack, checkAccess]);
@@ -189,7 +189,7 @@ export function useUserTier(userId: string, initialTier: string = 'free') {
         reasons: recommendations.keyBenefits,
         potentialRevenue: recommendations.monthlyValue,
       });
-    } catch (_error) {
+    } catch {
       // Error handled silently
     } finally {
       setLoading(false);
@@ -262,7 +262,7 @@ export function useFeatureUsage(userId: string, userTier: string = 'free') {
         },
       };
       setUsageData(mockUsage);
-    } catch (_error) {
+    } catch {
       // Error handled silently
     } finally {
       setLoading(false);

@@ -70,17 +70,15 @@ export function useOnboarding(options: UseOnboardingOptions = {}) {
       const currentStep = getCurrentStep();
       if (!currentStep) return;
 
-      await track.user.action(
-        'onboarding_step_completed',
-        user?.id || 'anonymous',
-        () => Promise.resolve(completeStep(currentStep.id, metadata)),
-        {
-          step_id: currentStep.id,
-          step_title: currentStep.title,
-          flow_id: currentFlow?.id,
-          ...metadata,
-        }
-      );
+      track('onboarding_step_completed', {
+        step_id: currentStep.id,
+        step_title: currentStep.title,
+        flow_id: currentFlow?.id,
+        user_id: user?.id || 'anonymous',
+        ...metadata,
+      });
+      
+      await completeStep(currentStep.id, metadata);
     },
     [completeStep, getCurrentStep, currentFlow, user]
   );
@@ -91,17 +89,15 @@ export function useOnboarding(options: UseOnboardingOptions = {}) {
       const currentStep = getCurrentStep();
       if (!currentStep) return;
 
-      await track.user.action(
-        'onboarding_step_skipped',
-        user?.id || 'anonymous',
-        () => Promise.resolve(skipStep(currentStep.id)),
-        {
-          step_id: currentStep.id,
-          step_title: currentStep.title,
-          flow_id: currentFlow?.id,
-          reason,
-        }
-      );
+      track('onboarding_step_skipped', {
+        step_id: currentStep.id,
+        step_title: currentStep.title,
+        flow_id: currentFlow?.id,
+        user_id: user?.id || 'anonymous',
+        reason,
+      });
+      
+      await skipStep(currentStep.id);
     },
     [skipStep, getCurrentStep, currentFlow, user]
   );
@@ -110,12 +106,10 @@ export function useOnboarding(options: UseOnboardingOptions = {}) {
   const startPageTour = useCallback(
     (page: 'dashboard' | 'editor' | 'portfolio') => {
       startTour(page);
-      track.user.action(
-        'product_tour_started',
-        user?.id || 'anonymous',
-        async () => {},
-        { page }
-      );
+      track('product_tour_started', {
+        page,
+        user_id: user?.id || 'anonymous',
+      });
     },
     [startTour, user]
   );
@@ -221,12 +215,10 @@ export function useOnboardingTracking() {
 
   const trackEvent = useCallback(
     async (event: string, properties?: Record<string, unknown>) => {
-      await track.user.action(
-        `onboarding_${event}`,
-        user?.id || 'anonymous',
-        async () => {},
-        properties
-      );
+      track(`onboarding_${event}`, {
+        user_id: user?.id || 'anonymous',
+        ...properties,
+      });
     },
     [user]
   );

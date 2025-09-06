@@ -66,34 +66,41 @@ jest.mock('@/lib/auth/supabase-client', () => ({
   supabase: mockSupabaseClient,
  }));
 
-  
-  // Mock Supabase server client with authenticated user
-  jest.mock('@/lib/supabase/server', () => ({
-    createClient: jest.fn(() => ({
-      auth: {
-        getUser: jest.fn().mockResolvedValue({
-          data: {
-            user: {
-              id: 'test-user-id',
-              email: 'test@example.com',
-              name: 'Test User',
-            },
-          },
-          error: null,
-        }),
+  // Mock Prisma for client-side usage
+  jest.mock('@/lib/db/prisma', () => ({
+    prisma: {
+      user: {
+        findFirst: jest.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
       },
-      from: jest.fn(() => ({
-        select: jest.fn().mockReturnThis(),
-        insert: jest.fn().mockReturnThis(),
-        update: jest.fn().mockReturnThis(),
-        delete: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
-          data: {},
-          error: null,
+    },
+  }));
+
+  
+  // Mock Prisma client
+  jest.mock('@/lib/db/prisma', () => ({
+    prisma: {
+      user: {
+        findFirst: jest.fn().mockResolvedValue({
+          id: 'test-user-id',
+          email: 'test@example.com',
+          name: 'Test User',
         }),
-      })),
-    })),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+      portfolio: {
+        findFirst: jest.fn(),
+        findMany: jest.fn().mockResolvedValue([]),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+      },
+    },
   }));
 
   // Mock AI services
